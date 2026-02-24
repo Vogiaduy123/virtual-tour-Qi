@@ -7,14 +7,20 @@
   - `/uploads/*`
   - `/backend/tiles/*`
 
-## 2) Cập nhật proxy cho admin
-- Mở file `netlify.toml`
-- Thay toàn bộ `https://YOUR_BACKEND_DOMAIN` thành domain backend thật của bạn.
+## 2) Cấu hình domain backend cho admin
+- Mở file `public/admin-runtime-config.js`
+- Sửa thành:
+
+```js
+window.ADMIN_API_BASE_URL = "https://virtual-tour-api.onrender.com";
+```
+
+- Chỉ cần sửa 1 dòng này khi đổi backend.
 
 ## 3) Push cấu hình lên GitHub
 ```bash
-git add netlify.toml HUONG_DAN_DEPLOY_ADMIN.md
-git commit -m "Add admin-only deploy config for Netlify"
+git add public/admin-runtime-config.js netlify.toml HUONG_DAN_DEPLOY_ADMIN.md
+git commit -m "Configure admin-only deployment"
 git push
 ```
 
@@ -34,5 +40,5 @@ git push
   - `/admin-tour.html`
 
 ## Lưu ý
-- Nếu backend chưa bật CORS, giữ cơ chế proxy như trên để tránh lỗi CORS.
-- Khi đổi domain backend, chỉ cần sửa lại `netlify.toml` và redeploy.
+- Backend hiện đã dùng `cors()` nên admin deploy khác domain vẫn gọi API được.
+- Khi đổi domain backend, chỉ cần sửa lại `public/admin-runtime-config.js` và redeploy.

@@ -1,20 +1,2 @@
 [build]
   publish = "public"
-
-[[redirects]]
-  from = "/api/*"
-  to = "https://YOUR_BACKEND_DOMAIN/api/:splat"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/uploads/*"
-  to = "https://YOUR_BACKEND_DOMAIN/uploads/:splat"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/backend/tiles/*"
-  to = "https://YOUR_BACKEND_DOMAIN/backend/tiles/:splat"
-  status = 200
-  force = true
