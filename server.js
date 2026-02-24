@@ -8,7 +8,7 @@ const path = require("path");
 const adminRoutes = require("./public/admin-api");
 
 const app = express();
-const PORT = Number(process.env.PORT) || 3000;
+const PORT = process.env.PORT || 3000;
 
 /* ===== DATA FILES ===== */
 const DATA_FILE = path.join(__dirname, "data", "rooms.json");
@@ -570,12 +570,7 @@ async function getCombinedData(config) {
   let pm25Value = 25 + Math.random() * 20;
   let pmSource = "Simulated";
   
-  // Try to fetch real PM2.5 from configured API  // ...existing code...
-  const PORT = Number(process.env.PORT) || 3000;
-  // ...existing code...
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running at http://0.0.0.0:${PORT}`);
-  });
+  // Try to fetch real PM2.5 from configured API
   try {
     const pm25Url = `${airApi.url}?token=${airApi.token}`;
     const pm25Response = await fetch(pm25Url);
@@ -583,12 +578,11 @@ async function getCombinedData(config) {
     
     console.log("📡 WAQI Full Response:", pm25Data.status, "PM2.5:", pm25Data.data?.iaqi?.pm25?.v, "AQI:", pm25Data.data?.aqi);
     
-    // Check PM2.5 value from iaqi
-    if (pm25Data.status === "ok" && pm25Data.data?.iaqi?.pm25?.v && typeof pm25Data.data.iaqi.pm25.v === 'number') {
+    if (pm25Data.status === "ok" && pm25Data.data?.iaqi?.pm25?.v && typeof pm25Data.data.iaqi.pm25.v === "number") {
       pm25Value = pm25Data.data.iaqi.pm25.v;
       pmSource = "Real (WAQI PM2.5)";
       console.log("✅ PM2.5 API OK:", pm25Value + " µg/m³");
-    } else if (pm25Data.status === "ok" && pm25Data.data?.aqi && typeof pm25Data.data.aqi === 'number' && pm25Data.data.aqi > 0) {
+    } else if (pm25Data.status === "ok" && pm25Data.data?.aqi && typeof pm25Data.data.aqi === "number" && pm25Data.data.aqi > 0) {
       pm25Value = pm25Data.data.aqi;
       pmSource = "Real (WAQI AQI)";
       console.log("✅ AQI API OK:", pm25Value);
@@ -724,5 +718,5 @@ app.use("/api/admin", adminRoutes);
 
 /* ===== START ===== */
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log("Server running");
 });
