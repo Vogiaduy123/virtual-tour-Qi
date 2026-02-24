@@ -1,1 +1,1 @@
-window.ADMIN_API_BASE_URL = "";
+window.ADMIN_API_BASE_URL = "https://virtual-tour-qi.onrender.com";
