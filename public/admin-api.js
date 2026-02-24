@@ -11,6 +11,13 @@ const { generateCubeTiles } = require("../generate-tiles");
 
 const router = express.Router();
 
+const UPLOADS_DIR = path.join(__dirname, "../uploads");
+const MEDIA_UPLOADS_DIR = path.join(UPLOADS_DIR, "media");
+
+if (!fs.existsSync(MEDIA_UPLOADS_DIR)) {
+  fs.mkdirSync(MEDIA_UPLOADS_DIR, { recursive: true });
+}
+
 /* ===== DATA FILE ===== */
 const DATA_FILE = path.join(__dirname, "../data/rooms.json");
 const MINIMAP_FILE = path.join(__dirname, "../data/minimap.json");
@@ -73,7 +80,7 @@ const minimapStorage = multer.diskStorage({
 });
 
 const mediaStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/media"),
+  destination: (req, file, cb) => cb(null, MEDIA_UPLOADS_DIR),
   filename: (req, file, cb) => {
     const timestamp = Date.now();
     const ext = path.extname(file.originalname);
@@ -121,6 +128,21 @@ const uploadMedia = multer({
   },
   limits: { fileSize: 50 * 1024 * 1024 } // 50MB limit
 });
+
+function uploadMediaWithJsonError(req, res, next) {
+  uploadMedia.single("media")(req, res, err => {
+    if (!err) return next();
+
+    if (err instanceof multer.MulterError) {
+      if (err.code === "LIMIT_FILE_SIZE") {
+        return res.status(413).json({ success: false, error: "File quá lớn (tối đa 50MB)" });
+      }
+      return res.status(400).json({ success: false, error: err.message });
+    }
+
+    return res.status(400).json({ success: false, error: err.message || "Upload failed" });
+  });
+}
 
 /* ===== UPLOAD PANORAMA ===== */
 router.post("/upload-panorama", uploadPanorama.single("panorama"), async (req, res) => {
@@ -361,7 +383,7 @@ router.delete("/rooms/:roomId", (req, res) => {
 /* ===== MEDIA HOTSPOT MANAGEMENT ===== */
 
 // Upload media file
-router.post("/media/upload", uploadMedia.single("media"), (req, res) => {
+router.post("/media/upload", uploadMediaWithJsonError, (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ success: false, error: "No media file uploaded" });

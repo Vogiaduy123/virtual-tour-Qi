@@ -1656,14 +1656,18 @@
                 method: 'POST',
                 body: formData
               });
-              
-              const uploadData = await uploadRes.json();
-              
-              if (!uploadData.success) {
-                alert('Lỗi upload: ' + uploadData.error);
-                return;
+
+              const contentType = uploadRes.headers.get('content-type') || '';
+              if (!contentType.includes('application/json')) {
+                const errorText = await uploadRes.text();
+                throw new Error(`Upload thất bại (${uploadRes.status}): ${errorText.slice(0, 150)}`);
               }
-              
+
+              const uploadData = await uploadRes.json();
+              if (!uploadRes.ok || !uploadData.success) {
+                throw new Error(uploadData.error || `Upload thất bại (${uploadRes.status})`);
+              }
+
               mediaUrl = uploadData.media.url;
             }
           }
