@@ -1,0 +1,110 @@
+HƯỚNG DẪN SỬ DỤNG PROJECT VIRTUAL TOUR
+======================================
+
+1) YÊU CẦU MÔI TRƯỜNG
+---------------------
+- Node.js: khuyến nghị Node.js 18+ (vì server có sử dụng fetch).
+- NPM: đi kèm Node.js.
+- Hệ điều hành: Windows/Linux/macOS đều được.
+
+2) CÀI ĐẶT VÀ CHẠY DỰ ÁN
+------------------------
+B1. Mở terminal tại thư mục project:
+    d:\virtual-tour
+
+B2. Cài dependency:
+    npm install
+
+B3. Chạy server:
+    npm start
+    (hoặc: node server.js)
+
+B4. Truy cập:
+- Trang xem tour (user):
+  http://localhost:3000/
+- Dashboard admin:
+  http://localhost:3000/admin.html
+
+Mặc định server chạy cổng 3000.
+
+3) CÁC TRANG ADMIN CHÍNH
+------------------------
+- Upload panorama:
+  http://localhost:3000/admin-upload.html
+- Quản lý phòng:
+  http://localhost:3000/admin-rooms.html
+- Chỉnh minimap:
+  http://localhost:3000/admin-minimap.html
+- Chỉnh kịch bản tour:
+  http://localhost:3000/admin-tour.html
+- Cấu hình API:
+  http://localhost:3000/admin-api-config.html
+
+4) LUỒNG THAO TÁC ĐỀ XUẤT (NHANH)
+---------------------------------
+B1. Upload ảnh panorama ở trang admin-upload.
+    - Nhập tên phòng
+    - Chọn tầng (lấy theo minimap)
+    - Bấm Upload & Generate Tiles
+
+B2. Vào admin-rooms để kiểm tra phòng và hotspot.
+
+B3. Vào admin-minimap:
+    - Chọn tầng/minimap
+    - Upload ảnh minimap cho tầng
+    - Đặt marker cho phòng
+    - Lưu minimap
+    - Có thể đổi tên minimap/tầng
+
+B4. Vào admin-tour:
+    - Đặt tên kịch bản
+    - Đặt "Thời gian xoay camera (ms)"
+      (số lớn hơn => xoay chậm hơn)
+    - Thêm các điểm dừng
+    - Lưu kịch bản
+
+B5. Mở trang user (/) để xem kết quả.
+
+5) CÁC FILE DỮ LIỆU QUAN TRỌNG
+------------------------------
+- data/rooms.json            : danh sách phòng + hotspot
+- data/minimap.json          : danh sách tầng + tên + marker
+- data/tour-scenario.json    : kịch bản auto tour
+- data/sensors.json          : dữ liệu cảm biến
+- data/api-config.json       : cấu hình API môi trường
+
+6) THƯ MỤC OUTPUT/UPLOAD
+------------------------
+- uploads/                   : ảnh upload gốc
+- backend/tiles/             : tile panorama sinh ra
+
+7) LỖI THƯỜNG GẶP VÀ CÁCH XỬ LÝ
+-------------------------------
+A. Không vào được localhost:3000
+- Kiểm tra terminal có dòng: "Server running at http://localhost:3000"
+- Nếu chưa có, chạy lại: npm start
+
+B. Báo lỗi cổng 3000 đang được sử dụng
+- Tắt process node cũ đang chiếm cổng
+- Chạy lại server
+
+C. Upload fail
+- Kiểm tra định dạng file (JPG/PNG/WEBP)
+- Kiểm tra kết nối đến server
+
+D. Đổi tên minimap không lưu
+- Đảm bảo server đã restart sau khi cập nhật code
+- Thử refresh trang admin-minimap
+
+8) LỆNH NHANH (WINDOWS POWERSHELL)
+----------------------------------
+Chạy server:
+  npm start
+
+Dừng tất cả node (nếu bị treo):
+  Get-CimInstance Win32_Process | Where-Object { $_.Name -eq 'node.exe' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }
+
+9) GHI CHÚ
+----------
+- Đây là hướng dẫn vận hành nhanh cho team.
+- Nếu thay đổi API/flow, cập nhật file này để đồng bộ.

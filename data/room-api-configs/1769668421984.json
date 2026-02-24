@@ -1,0 +1,17 @@
+{
+  "weatherApi": {
+    "provider": "openweathermap",
+    "url": "https://api.openweathermap.org/data/2.5/weather",
+    "apiKey": "bce5ee254644957ef51a0314ba2f36f7",
+    "params": {
+      "lat": 21.0245,
+      "lon": 105.8412,
+      "units": "metric"
+    }
+  },
+  "airQualityApi": {
+    "provider": "waqi",
+    "url": "https://api.waqi.info/feed/@1583/",
+    "token": "d61e181df66964a513acd018c7cdb9c9993226d1"
+  }
+}

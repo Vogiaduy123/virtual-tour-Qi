@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Chỉnh sửa Minimap</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+      color: #2c3e50;
+    }
+
+    .admin-header {
+      background: white;
+      border-bottom: 1px solid #e1e8ed;
+      padding: 16px 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: 12px;
+    }
+
+    .nav-link {
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+      background: #ecf0f6;
+      color: #2c3e50;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 40px;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover {
+      background: #e3e9f3;
+      transform: translateY(-1px);
+    }
+
+    .nav-link.active {
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      color: white;
+    }
+
+    .nav-link.special {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .menu-button {
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: #2196F3;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      height: 40px;
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    .menu-button:hover {
+      background: #0b7dda;
+      transform: translateY(-1px);
+    }
+
+    .menu-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: white;
+      border: 1px solid #e1e8ed;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      min-width: 200px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .admin-menu:hover .menu-dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      text-decoration: none;
+      color: #2c3e50;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .menu-item:last-child {
+      border-bottom: none;
+    }
+
+    .menu-item:hover {
+      background: #f8f9fa;
+      padding-left: 20px;
+    }
+
+    .menu-item.active {
+      background: #e3e9f3;
+      color: #3498db;
+      font-weight: 600;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 20px;
+      padding: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .floor-selector {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      align-items: center;
+    }
+    .floor-selector select {
+      margin-bottom: 0;
+      flex: 1;
+      min-height: 5px;
+      padding: 12px 14px;
+      font-size: 15px;
+      font-weight: 700;
+      border: 2px solid #d7dde7;
+      border-radius: 10px;
+    }
+    .floor-selector .btn {
+      white-space: nowrap;
+      min-height: 52px;
+      padding: 0 16px;
+      font-size: 16px;
+    }
+    .panel {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      padding: 20px;
+    }
+    .panel h2 {
+      margin: 0 0 14px;
+      font-size: 16px;
+      color: #333;
+      border-bottom: 2px solid #e7e7e7;
+      padding-bottom: 8px;
+    }
+    .field {
+      margin-bottom: 14px;
+    }
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #444;
+      font-size: 13px;
+    }
+    .field input[type="file"],
+    .field input[type="text"],
+    .field select {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.2s ease;
+    }
+    .btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+    .btn:hover:not(:disabled) {
+      box-shadow: 0 10px 20px rgba(52,152,219,0.3);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: #f4f4f4;
+      color: #555;
+      border: 1px solid #ddd;
+    }
+    .muted {
+      color: #777;
+      font-size: 13px;
+      margin: 0;
+    }
+    #mapContainer {
+      position: relative;
+      background: #111;
+      border-radius: 12px;
+      overflow: hidden;
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #mapImage {
+      max-width: 100%;
+      display: block;
+      pointer-events: none;
+      user-select: none;
+    }
+    #markerLayer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .marker {
+      position: absolute;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #ff5722;
+      border: 3px solid #fff;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+      color: #fff;
+      font-weight: 700;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      pointer-events: auto;
+      user-select: none;
+      transition: box-shadow 0.15s ease;
+    }
+    .marker:hover {
+      box-shadow: 0 10px 20px rgba(0,0,0,0.45);
+    }
+    .marker.dragging {
+      opacity: 0.9;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.55);
+    }
+    .marker-list {
+      max-height: 260px;
+      overflow-y: auto;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 10px;
+      background: #fafafa;
+    }
+    .marker-item {
+      padding: 10px;
+      border-radius: 6px;
+      background: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: white;
+      background: #4caf50;
+    }
+    .flex-row { display: flex; gap: 8px; align-items: center; }
+  </style>
+</head>
+<body>
+  <!-- ===== HEADER ===== -->
+  <div class="admin-header">
+    <div class="header-content">
+      <div class="header-title">🏢 Virtual Tour Admin</div>
+      <div class="header-nav">
+        <a href="admin-upload.html" class="nav-link">📤 Upload</a>
+        <a href="admin-rooms.html" class="nav-link">🏠 Quản lý Phòng</a>
+        <a href="admin-minimap.html" class="nav-link active">🗺️ Minimap</a>
+        <a href="admin-tour.html" class="nav-link special">⚡ Kịch bản</a>
+        <div class="admin-menu">
+          <button class="menu-button">
+            ☰ Menu
+            <span style="font-size: 10px;">▼</span>
+          </button>
+          <div class="menu-dropdown">
+            <a href="admin.html" class="menu-item">🏠 Dashboard</a>
+            <a href="admin-upload.html" class="menu-item">📤 Upload Panorama</a>
+            <a href="admin-rooms.html" class="menu-item">🏠 Quản lý Phòng</a>
+            <a href="admin-minimap.html" class="menu-item active">🗺️ Minimap</a>
+            <a href="admin-tour.html" class="menu-item">⚡ Kịch bản Tour</a>
+            <a href="index.html" class="menu-item" style="border-top: 1px solid #e1e8ed; margin-top: 8px; padding-top: 16px;">👁️ Xem Tour</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="panel">
+      <div class="floor-selector">
+        <select id="floorSelect"></select>
+        <button class="btn btn-secondary" id="btnAddFloor" type="button">+ Thêm tầng</button>
+      </div>
+
+      <h2>Tên minimap</h2>
+      <div class="field">
+        <label>Tên tầng hiện tại</label>
+        <input type="text" id="floorNameInput" placeholder="Nhập tên minimap/tầng">
+      </div>
+      <button class="btn btn-secondary" id="btnRenameFloor">✏️ Cập nhật tên</button>
+
+      <h2>Ảnh minimap</h2>
+      <div class="field">
+        <label>Chọn ảnh minimap (JPG/PNG/WEBP)</label>
+        <input type="file" id="minimapFile" accept="image/jpeg,image/png,image/webp">
+      </div>
+      <button class="btn" id="btnUpload">⬆️ Upload minimap</button>
+      <p class="muted" style="margin-top: 8px;">Sau khi upload, ảnh sẽ hiển thị bên phải để bạn đặt marker.</p>
+
+      <h2 style="margin-top: 24px;">Thêm marker</h2>
+      <div class="field">
+        <label>Chọn phòng</label>
+        <select id="roomSelect">
+          <option value="">-- Chọn phòng --</option>
+        </select>
+      </div>
+      <button class="btn btn-secondary" id="btnToggleAdd">➕ Chế độ thêm: TẮT</button>
+      <p class="muted" style="margin-top: 8px;">Bật chế độ thêm, sau đó click lên minimap để đặt marker. Kéo thả marker để chỉnh vị trí.</p>
+
+      <h2 style="margin-top: 24px;">Danh sách marker</h2>
+      <div id="markerList" class="marker-list">
+        <p class="muted">Chưa có marker</p>
+      </div>
+      <button class="btn" id="btnSave" style="margin-top: 12px; width: 100%;">💾 Lưu minimap</button>
+    </div>
+
+    <div class="panel">
+      <h2>Xem trước & thao tác</h2>
+      <div id="mapContainer">
+        <img id="mapImage" alt="Minimap preview">
+        <div id="markerLayer"></div>
+        <p class="muted" id="mapPlaceholder" style="position:absolute;">Chưa có ảnh minimap</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let rooms = [];
+    let minimapData = { floors: [] }; // New structure
+    let currentFloorId = 1;
+    let addMode = false;
+    let dragState = null;
+
+    const minimapFile = document.getElementById('minimapFile');
+    const btnUpload = document.getElementById('btnUpload');
+    const btnToggleAdd = document.getElementById('btnToggleAdd');
+    const btnSave = document.getElementById('btnSave');
+    const roomSelect = document.getElementById('roomSelect');
+    const mapImage = document.getElementById('mapImage');
+    const mapContainer = document.getElementById('mapContainer');
+    const markerLayer = document.getElementById('markerLayer');
+    const markerList = document.getElementById('markerList');
+    const mapPlaceholder = document.getElementById('mapPlaceholder');
+    const floorSelect = document.getElementById('floorSelect');
+    const btnAddFloor = document.getElementById('btnAddFloor');
+    const floorNameInput = document.getElementById('floorNameInput');
+    const btnRenameFloor = document.getElementById('btnRenameFloor');
+
+    init();
+
+    async function init() {
+      await loadRooms();
+      await loadMinimap();
+      renderFloorTabs();
+      bindUI();
+    }
+
+    function bindUI() {
+      btnUpload.addEventListener('click', uploadMinimapImage);
+      btnToggleAdd.addEventListener('click', toggleAddMode);
+      btnSave.addEventListener('click', saveMinimap);
+      btnRenameFloor.addEventListener('click', renameCurrentFloor);
+      floorSelect.addEventListener('change', () => switchFloor(Number(floorSelect.value)));
+      btnAddFloor.addEventListener('click', addNewFloor);
+      mapImage.addEventListener('load', renderMarkers);
+      mapContainer.addEventListener('click', handleAddMarker);
+    }
+
+    function getCurrentFloor() {
+      return minimapData.floors.find(f => f.id === currentFloorId) || null;
+    }
+
+    function renderFloorTabs() {
+      floorSelect.innerHTML = '';
+
+      minimapData.floors.forEach(floor => {
+        const option = document.createElement('option');
+        option.value = floor.id;
+        option.textContent = floor.name;
+        floorSelect.appendChild(option);
+      });
+
+      floorSelect.value = String(currentFloorId);
+    }
+
+    function switchFloor(floorId) {
+      currentFloorId = floorId;
+      renderFloorTabs();
+      const floor = getCurrentFloor();
+      floorNameInput.value = floor?.name || '';
+      if (floor && floor.image) {
+        mapPlaceholder.style.display = 'none';
+        mapImage.src = floor.image;
+      } else {
+        mapPlaceholder.style.display = 'flex';
+        mapImage.src = '';
+      }
+      renderRoomOptions();
+      renderMarkers();
+      renderMarkerList();
+    }
+
+    function addNewFloor() {
+      const floorName = prompt('Tên tầng mới:', `Tầng ${minimapData.floors.length + 1}`);
+      if (!floorName) return;
+      
+      const newId = minimapData.floors.length > 0 
+        ? Math.max(...minimapData.floors.map(f => f.id)) + 1 
+        : 1;
+      
+      minimapData.floors.push({
+        id: newId,
+        name: floorName,
+        image: "",
+        markers: []
+      });
+
+      currentFloorId = newId;
+      floorNameInput.value = floorName;
+      switchFloor(newId);
+    }
+
+    async function loadRooms() {
+      try {
+        const res = await fetch('/api/rooms');
+        rooms = await res.json();
+        renderRoomOptions();
+      } catch (err) {
+        console.error('Load rooms error', err);
+      }
+    }
+
+    function renderRoomOptions() {
+      const floor = getCurrentFloor();
+      const floorRooms = rooms.filter(r => (r.floor || 1) === currentFloorId);
+      
+      roomSelect.innerHTML = '<option value="">-- Chọn phòng --</option>';
+      floorRooms.forEach(r => {
+        roomSelect.innerHTML += `<option value="${r.id}">${r.name}</option>`;
+      });
+    }
+
+    async function loadMinimap() {
+      try {
+        const res = await fetch('/api/admin/minimap');
+        const data = await res.json();
+        if (data.success) {
+          minimapData = data.minimap || { floors: [] };
+          if (minimapData.floors.length === 0) {
+            minimapData.floors.push({
+              id: 1,
+              name: "Tầng 1",
+              image: "",
+              markers: []
+            });
+          }
+          currentFloorId = minimapData.floors[0].id;
+          const floor = getCurrentFloor();
+          floorNameInput.value = floor?.name || '';
+          if (floor && floor.image) {
+            mapPlaceholder.style.display = 'none';
+            mapImage.src = floor.image;
+          }
+          renderFloorTabs();
+          renderRoomOptions();
+          renderMarkers();
+          renderMarkerList();
+        }
+      } catch (err) {
+        console.error('Load minimap error', err);
+      }
+    }
+
+    async function renameCurrentFloor() {
+      const floor = getCurrentFloor();
+      if (!floor) {
+        alert('Không tìm thấy tầng hiện tại');
+        return;
+      }
+
+      const newName = floorNameInput.value.trim();
+      if (!newName) {
+        alert('Tên minimap không được để trống');
+        floorNameInput.focus();
+        return;
+      }
+
+      btnRenameFloor.disabled = true;
+      btnRenameFloor.textContent = 'Đang cập nhật...';
+      try {
+        const res = await fetch(`/api/admin/minimap/floor/${currentFloorId}/name`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ floorName: newName })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          minimapData = data.minimap;
+          const updatedFloor = getCurrentFloor();
+          floorNameInput.value = updatedFloor?.name || newName;
+          renderFloorTabs();
+          alert('Đã cập nhật tên minimap');
+        } else {
+          alert(data.error || 'Cập nhật tên thất bại');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Lỗi cập nhật tên minimap');
+      } finally {
+        btnRenameFloor.disabled = false;
+        btnRenameFloor.textContent = '✏️ Cập nhật tên';
+      }
+    }
+
+    async function uploadMinimapImage() {
+      if (!minimapFile.files[0]) {
+        alert('Chọn file minimap trước');
+        return;
+      }
+      const formData = new FormData();
+      formData.append('minimap', minimapFile.files[0]);
+      formData.append('floorId', currentFloorId);
+      formData.append('floorName', getCurrentFloor()?.name || `Tầng ${currentFloorId}`);
+
+      btnUpload.disabled = true;
+      btnUpload.textContent = 'Đang upload...';
+      try {
+        const res = await fetch('/api/admin/minimap/upload-image', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+          minimapData = data.minimap;
+          const floor = getCurrentFloor();
+          if (floor && floor.image) {
+            mapPlaceholder.style.display = 'none';
+            mapImage.src = floor.image;
+          }
+          renderMarkers();
+          renderMarkerList();
+          alert('Upload minimap thành công');
+        } else {
+          alert(data.error || 'Upload thất bại');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Lỗi upload minimap');
+      } finally {
+        btnUpload.disabled = false;
+        btnUpload.textContent = '⬆️ Upload minimap';
+      }
+    }
+
+    function toggleAddMode() {
+      addMode = !addMode;
+      btnToggleAdd.textContent = addMode ? '✅ Chế độ thêm: BẬT' : '➕ Chế độ thêm: TẮT';
+      btnToggleAdd.style.background = addMode ? '#4caf50' : '#f4f4f4';
+      btnToggleAdd.style.color = addMode ? 'white' : '#555';
+    }
+
+    function handleAddMarker(e) {
+      if (!addMode) return;
+      const floor = getCurrentFloor();
+      if (!floor || !floor.image) {
+        alert('Upload ảnh minimap trước');
+        return;
+      }
+      const roomId = Number(roomSelect.value);
+      if (!roomId) {
+        alert('Chọn phòng trước khi đặt marker');
+        return;
+      }
+      const rect = mapContainer.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = (e.clientY - rect.top) / rect.height;
+      floor.markers.push({ x, y, roomId });
+      renderMarkers();
+      renderMarkerList();
+    }
+
+    function renderMarkers() {
+      markerLayer.innerHTML = '';
+      const floor = getCurrentFloor();
+      if (!floor || !floor.image || !mapImage.complete) return;
+      floor.markers.forEach((m, idx) => {
+        const el = document.createElement('div');
+        el.className = 'marker';
+        el.dataset.index = idx;
+        el.textContent = idx + 1;
+        el.style.left = (m.x * 100) + '%';
+        el.style.top = (m.y * 100) + '%';
+        markerLayer.appendChild(el);
+        makeDraggable(el);
+      });
+    }
+
+    function renderMarkerList() {
+      const floor = getCurrentFloor();
+      if (!floor || !floor.markers || floor.markers.length === 0) {
+        markerList.innerHTML = '<p class="muted">Chưa có marker</p>';
+        return;
+      }
+      markerList.innerHTML = floor.markers.map((m, idx) => {
+        const room = rooms.find(r => r.id === m.roomId);
+        return `
+          <div class="marker-item">
+            <div>
+              <div class="flex-row"><span class="badge">#${idx + 1}</span> <strong>${room ? room.name : 'Chưa gán phòng'}</strong></div>
+              <div class="muted">x: ${(m.x*100).toFixed(1)}% | y: ${(m.y*100).toFixed(1)}%</div>
+            </div>
+            <div class="flex-row">
+              <button class="btn btn-secondary" data-action="focus" data-idx="${idx}">Tới</button>
+              <button class="btn btn-danger" data-action="delete" data-idx="${idx}" style="background:#f44336;color:white;border:none;">Xóa</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      markerList.querySelectorAll('button[data-action="delete"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = Number(btn.dataset.idx);
+          floor.markers.splice(idx,1);
+          renderMarkers();
+          renderMarkerList();
+        });
+      });
+      markerList.querySelectorAll('button[data-action="focus"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = Number(btn.dataset.idx);
+          const marker = floor.markers[idx];
+          const el = markerLayer.querySelector(`[data-index="${idx}"]`);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+            el.style.boxShadow = '0 0 0 4px rgba(33,150,243,0.5)';
+            setTimeout(()=>{
+              el.style.boxShadow = '';
+            }, 1200);
+          }
+        });
+      });
+    }
+
+    function makeDraggable(el) {
+      el.addEventListener('pointerdown', (e) => {
+        dragState = {
+          idx: Number(el.dataset.index),
+          startX: e.clientX,
+          startY: e.clientY
+        };
+        el.classList.add('dragging');
+        el.setPointerCapture(e.pointerId);
+      });
+
+      el.addEventListener('pointermove', (e) => {
+        if (!dragState || dragState.idx !== Number(el.dataset.index)) return;
+        const rect = mapContainer.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = (e.clientY - rect.top) / rect.height;
+        const nx = Math.max(0, Math.min(1, x));
+        const ny = Math.max(0, Math.min(1, y));
+        el.style.left = (nx * 100) + '%';
+        el.style.top = (ny * 100) + '%';
+        const floor = getCurrentFloor();
+        floor.markers[dragState.idx].x = nx;
+        floor.markers[dragState.idx].y = ny;
+      });
+
+      el.addEventListener('pointerup', (e) => {
+        if (dragState && dragState.idx === Number(el.dataset.index)) {
+          el.classList.remove('dragging');
+          dragState = null;
+          renderMarkerList();
+        }
+      });
+    }
+
+    async function saveMinimap() {
+      const floor = getCurrentFloor();
+      if (!floor || !floor.image) {
+        alert('Upload ảnh minimap trước');
+        return;
+      }
+      try {
+        const res = await fetch(`/api/admin/minimap/floor/${currentFloorId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            image: floor.image,
+            markers: floor.markers,
+            floorName: floor.name
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          minimapData = data.minimap;
+          alert('Đã lưu minimap');
+        } else {
+          alert(data.error || 'Lưu minimap thất bại');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Lỗi lưu minimap');
+      }
+    }
+  </script>
+</body>
+</html>

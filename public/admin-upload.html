@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Panorama - Admin</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: #f5f7fa;
+      min-height: 100vh;
+      color: #2c3e50;
+    }
+
+    .admin-header {
+      background: white;
+      border-bottom: 1px solid #e1e8ed;
+      padding: 16px 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: 12px;
+    }
+
+    .nav-link {
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+      background: #ecf0f6;
+      color: #2c3e50;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 40px;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover {
+      background: #e3e9f3;
+      transform: translateY(-1px);
+    }
+
+    .nav-link.active {
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      color: white;
+    }
+
+    .nav-link.special {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .menu-button {
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: #2196F3;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      height: 40px;
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    .menu-button:hover {
+      background: #0b7dda;
+      transform: translateY(-1px);
+    }
+
+    .menu-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: white;
+      border: 1px solid #e1e8ed;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      min-width: 200px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .admin-menu:hover .menu-dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      text-decoration: none;
+      color: #2c3e50;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .menu-item:last-child {
+      border-bottom: none;
+    }
+
+    .menu-item:hover {
+      background: #f8f9fa;
+      padding-left: 20px;
+    }
+
+    .menu-item.active {
+      background: #e3e9f3;
+      color: #3498db;
+      font-weight: 600;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #e1e8ed;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .panel-header {
+      padding: 20px 24px;
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      color: white;
+    }
+
+    .panel-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .panel-subtitle {
+      font-size: 12px;
+      opacity: 0.85;
+      margin-top: 4px;
+    }
+
+    .panel-body {
+      padding: 24px;
+    }
+
+    .upload-area {
+      border: 2px dashed #bdc3c7;
+      border-radius: 8px;
+      padding: 48px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: #f8f9fa;
+      margin-bottom: 24px;
+    }
+
+    .upload-area:hover {
+      border-color: #3498db;
+      background: #ecf0f6;
+    }
+
+    .upload-area.dragging {
+      border-color: #3498db;
+      background: #e3e9f3;
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+    }
+
+    .upload-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .upload-text {
+      color: #2c3e50;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .upload-hint {
+      color: #7f8c8d;
+      font-size: 13px;
+    }
+
+    input[type="file"],
+    input[type="text"],
+    input[type="number"],
+    select {
+      display: block;
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      border: 1px solid #bdc3c7;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: inherit;
+      background: white;
+      color: #2c3e50;
+      transition: all 0.2s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+      background: #fafbfc;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .preview-image {
+      width: 100%;
+      border-radius: 6px;
+      margin-bottom: 16px;
+      max-height: 320px;
+      object-fit: cover;
+      display: none;
+      border: 1px solid #e1e8ed;
+    }
+
+    .preview-image.active {
+      display: block;
+    }
+
+    .file-info {
+      background: #ecf0f6;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      display: none;
+      border-left: 3px solid #3498db;
+    }
+
+    .file-info.active {
+      display: block;
+    }
+
+    .file-info p {
+      margin-bottom: 4px;
+      color: #555;
+    }
+
+    .file-info strong {
+      color: #2c3e50;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 11px 14px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: 10px;
+      letter-spacing: 0.3px;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 4px 16px rgba(52, 152, 219, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:disabled {
+      background: #bdc3c7;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: #ecf0f6;
+      color: #2c3e50;
+      border: 1px solid #bdc3c7;
+    }
+
+    .btn-secondary:hover {
+      background: #e3e9f3;
+      border-color: #95a5a6;
+    }
+
+    .progress-section {
+      margin-top: 20px;
+      display: none;
+    }
+
+    .progress-section.active {
+      display: block;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #e1e8ed;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3498db 0%, #2980b9 100%);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      text-align: center;
+      color: #7f8c8d;
+      font-size: 12px;
+    }
+
+    .console-output {
+      margin-top: 20px;
+      background: #1a1e23;
+      color: #d4d4d4;
+      padding: 12px;
+      border-radius: 6px;
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 11px;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+      border: 1px solid #2d3139;
+    }
+
+    .console-output.active {
+      display: block;
+    }
+
+    .console-output pre {
+      margin: 4px 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .success { color: #27ae60; }
+    .error { color: #e74c3c; }
+    .info { color: #3498db; }
+  </style>
+</head>
+<body>
+  <!-- ===== HEADER ===== -->
+  <div class="admin-header">
+    <div class="header-content">
+      <div class="header-title">🏢 Virtual Tour Admin</div>
+      <div class="header-nav">
+        <a href="admin-upload.html" class="nav-link active">📤 Upload</a>
+        <a href="admin-rooms.html" class="nav-link">🏠 Quản lý Phòng</a>
+        <a href="admin-minimap.html" class="nav-link">🗺️ Minimap</a>
+        <a href="admin-tour.html" class="nav-link special">⚡ Kịch bản</a>
+        <div class="admin-menu">
+          <button class="menu-button">
+            ☰ Menu
+            <span style="font-size: 10px;">▼</span>
+          </button>
+          <div class="menu-dropdown">
+            <a href="admin.html" class="menu-item">🏠 Dashboard</a>
+            <a href="admin-upload.html" class="menu-item active">📤 Upload Panorama</a>
+            <a href="admin-rooms.html" class="menu-item">🏠 Quản lý Phòng</a>
+            <a href="admin-minimap.html" class="menu-item">🗺️ Minimap</a>
+            <a href="admin-tour.html" class="menu-item">⚡ Kịch bản Tour</a>
+            <a href="index.html" class="menu-item" style="border-top: 1px solid #e1e8ed; margin-top: 8px; padding-top: 16px;">👁️ Xem Tour</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CONTAINER ===== -->
+  <div class="container">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">📤 Upload Panorama</div>
+        <div class="panel-subtitle">JPG, PNG, WEBP • Tối đa 20MB</div>
+      </div>
+
+      <div class="panel-body">
+        <div class="upload-area" id="uploadArea">
+          <div class="upload-icon">📷</div>
+          <div class="upload-text">Kéo thả ảnh vào đây</div>
+          <div class="upload-hint">hoặc bấm để chọn file</div>
+          <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp">
+        </div>
+
+        <img id="previewImage" class="preview-image" alt="Preview">
+        <div class="file-info" id="fileInfo">
+          <p><strong>File:</strong> <span id="fileName"></span></p>
+          <p><strong>Size:</strong> <span id="fileSize"></span></p>
+        </div>
+
+        <div class="form-group">
+          <label for="roomName">Tên phòng</label>
+          <input type="text" id="roomName" placeholder="Nhập tên phòng...">
+        </div>
+
+        <div class="form-group">
+          <label for="roomFloor">Tầng</label>
+          <select id="roomFloor"></select>
+        </div>
+
+        <button class="btn btn-primary" id="uploadBtn">📤 Upload & Generate Tiles</button>
+
+        <div class="progress-section" id="progressSection">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-text" id="progressText">Đang xử lý...</div>
+        </div>
+
+        <div class="console-output" id="consoleOutput"></div>
+
+        <button class="btn btn-secondary" id="resetBtn" style="display: none;">🔄 Upload ảnh khác</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const previewImage = document.getElementById('previewImage');
+    const fileInfo = document.getElementById('fileInfo');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const roomName = document.getElementById('roomName');
+    const roomFloor = document.getElementById('roomFloor');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const progressSection = document.getElementById('progressSection');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    const consoleOutput = document.getElementById('consoleOutput');
+
+    let selectedFile = null;
+    let defaultFloorId = '1';
+
+    initFloors();
+
+    // Handle upload area click
+    uploadArea.addEventListener('click', () => fileInput.click());
+
+    async function initFloors() {
+      try {
+        const res = await fetch('/api/admin/minimap');
+        const data = await res.json();
+
+        const floors = Array.isArray(data?.minimap?.floors) ? data.minimap.floors : [];
+        roomFloor.innerHTML = '';
+
+        if (floors.length === 0) {
+          roomFloor.innerHTML = '<option value="1">Tầng 1</option>';
+          defaultFloorId = '1';
+          return;
+        }
+
+        floors.forEach(floor => {
+          const floorId = String(floor.id || 1);
+          const floorName = floor.name || `Tầng ${floorId}`;
+          roomFloor.innerHTML += `<option value="${floorId}">${floorName}</option>`;
+        });
+
+        defaultFloorId = String(floors[0].id || 1);
+        roomFloor.value = defaultFloorId;
+      } catch (err) {
+        console.error('Load minimap floors error', err);
+        roomFloor.innerHTML = '<option value="1">Tầng 1</option>';
+        defaultFloorId = '1';
+      }
+    }
+
+    // Handle drag and drop
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('dragging');
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.classList.remove('dragging');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragging');
+      const files = e.dataTransfer.files;
+      if (files.length) handleFileSelect(files[0]);
+    });
+
+    // Handle file input change
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length) handleFileSelect(e.target.files[0]);
+    });
+
+    function handleFileSelect(file) {
+      if (!file.type.startsWith('image/')) {
+        alert('Vui lòng chọn file ảnh');
+        return;
+      }
+
+      selectedFile = file;
+      fileName.textContent = file.name;
+      fileSize.textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImage.src = e.target.result;
+        previewImage.classList.add('active');
+      };
+      reader.readAsDataURL(file);
+
+      fileInfo.classList.add('active');
+      uploadBtn.disabled = false;
+    }
+
+    // Handle upload
+    uploadBtn.addEventListener('click', async () => {
+      if (!selectedFile) {
+        alert('Vui lòng chọn ảnh');
+        return;
+      }
+
+      if (!roomName.value.trim()) {
+        alert('Vui lòng nhập tên phòng');
+        return;
+      }
+
+      uploadBtn.disabled = true;
+      progressSection.classList.add('active');
+      consoleOutput.classList.add('active');
+      consoleOutput.innerHTML = '<pre class="info">⏳ Đang upload ảnh...</pre>';
+
+      const formData = new FormData();
+      formData.append('panorama', selectedFile);
+      formData.append('name', roomName.value);
+      formData.append('floor', roomFloor.value);
+
+      try {
+        consoleOutput.innerHTML += '<pre class="info">⏳ Đang upload & tạo tiles...</pre>';
+
+        const res = await fetch('/api/admin/upload-panorama', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!res.ok) {
+          throw new Error(`Upload failed: ${res.statusText}`);
+        }
+
+        const data = await res.json();
+
+        if (!data.success) {
+          consoleOutput.innerHTML += '<pre class="error">❌ Lỗi: ' + data.error + '</pre>';
+          uploadBtn.disabled = false;
+          return;
+        }
+
+        const roomId = data.room.id;
+        consoleOutput.innerHTML += `<pre class="success">✅ Upload thành công!</pre>`;
+        consoleOutput.innerHTML += `<pre class="success">💾 Phòng: ${data.room.name}</pre>`;
+        consoleOutput.innerHTML += `<pre class="success">🎨 Tiles tạo thành công!</pre>`;
+        consoleOutput.innerHTML += `<pre class="success">📁 Đường dẫn: ${data.room.tilesPath}</pre>`;
+        consoleOutput.innerHTML += '<pre class="success">🎉 Hoàn thành! Chuyển tới Quản lý Phòng để thêm hotspot.</pre>';
+        
+        resetBtn.style.display = 'block';
+        uploadBtn.style.display = 'none';
+
+      } catch (err) {
+        consoleOutput.innerHTML += '<pre class="error">❌ Lỗi: ' + err.message + '</pre>';
+        uploadBtn.disabled = false;
+      }
+    });
+
+    // Reset button
+    resetBtn.addEventListener('click', () => {
+      selectedFile = null;
+      roomName.value = '';
+      roomFloor.value = defaultFloorId;
+      previewImage.classList.remove('active');
+      fileInfo.classList.remove('active');
+      consoleOutput.classList.remove('active');
+      progressSection.classList.remove('active');
+      uploadBtn.disabled = false;
+      uploadBtn.style.display = 'block';
+      resetBtn.style.display = 'none';
+      fileInput.value = '';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+{
+  "name": "Tour tham quan cong ty Qi",
+  "cameraPanDuration": 5000,
+  "stops": [
+    {
+      "id": 1771814245995,
+      "type": "room",
+      "roomId": 1769668397635,
+      "title": "aaaaaa",
+      "description": "vvvbbbvvv",
+      "duration": 1000
+    },
+    {
+      "id": 1771814332970,
+      "type": "room",
+      "roomId": 1769668421984,
+      "title": "ddddđ",
+      "description": "a\naaaaaa",
+      "duration": 1000,
+      "cameraEffect": "pan360"
+    },
+    {
+      "id": 1771816005754,
+      "type": "room",
+      "roomId": 1769668457253,
+      "title": "đfdffsd",
+      "description": "sdfadf",
+      "duration": 1000,
+      "cameraEffect": "pan360"
+    },
+    {
+      "id": 1771816016887,
+      "type": "room",
+      "roomId": 1769668497247,
+      "title": "qqqq",
+      "description": "sssssa",
+      "duration": 1000,
+      "cameraEffect": "pan360"
+    },
+    {
+      "id": 1771816017044,
+      "type": "room",
+      "roomId": 1769668532698,
+      "title": "abcd",
+      "description": "wwwsssxx",
+      "duration": 1000,
+      "cameraEffect": "pan360"
+    },
+    {
+      "id": 1771816017191,
+      "type": "room",
+      "roomId": 1769668600603,
+      "title": "ugiugig",
+      "description": "wqeqwer",
+      "duration": 1000,
+      "cameraEffect": "pan360"
+    },
+    {
+      "id": 1771816017336,
+      "type": "room",
+      "roomId": 1769668639049,
+      "title": "aaaaa",
+      "description": "sddđ",
+      "duration": 1000,
+      "cameraEffect": "pan360"
+    }
+  ]
+}

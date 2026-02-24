@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Virtual Tour Manager</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .admin-dashboard {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 600px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .dashboard-header {
+      padding: 40px 30px;
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      color: white;
+      text-align: center;
+    }
+
+    .dashboard-header h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .dashboard-header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .dashboard-body {
+      padding: 30px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .dashboard-card {
+      background: white;
+      border: 1px solid #e1e8ed;
+      border-radius: 8px;
+      padding: 24px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .dashboard-card:hover {
+      border-color: #3498db;
+      box-shadow: 0 8px 24px rgba(52, 152, 219, 0.15);
+      transform: translateY(-4px);
+    }
+
+    .dashboard-card-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+
+    .dashboard-card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 6px;
+    }
+
+    .dashboard-card-desc {
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+
+    .dashboard-footer {
+      padding: 20px 30px;
+      background: #f8f9fa;
+      text-align: center;
+      font-size: 12px;
+      color: #95a5a6;
+      border-top: 1px solid #e1e8ed;
+    }
+
+    @media (max-width: 600px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .dashboard-header h1 {
+        font-size: 24px;
+      }
+
+      .dashboard-body {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-dashboard">
+    <div class="dashboard-header">
+      <h1>🏢 Virtual Tour Admin</h1>
+      <p>Quản lý phòng, panorama & tư liệu</p>
+    </div>
+
+    <div class="dashboard-body">
+      <div class="dashboard-grid">
+        <a href="admin-upload.html" class="dashboard-card">
+          <div class="dashboard-card-icon">📤</div>
+          <div class="dashboard-card-title">Upload Panorama</div>
+          <div class="dashboard-card-desc">Tải lên ảnh 360° mới</div>
+        </a>
+
+        <a href="admin-rooms.html" class="dashboard-card">
+          <div class="dashboard-card-icon">🏠</div>
+          <div class="dashboard-card-title">Quản lý Phòng</div>
+          <div class="dashboard-card-desc">Thêm hotspot & tư liệu</div>
+        </a>
+
+        <a href="admin-minimap.html" class="dashboard-card">
+          <div class="dashboard-card-icon">🗺️</div>
+          <div class="dashboard-card-title">Minimap</div>
+          <div class="dashboard-card-desc">Chỉnh sửa bản đồ</div>
+        </a>
+
+        <a href="admin-tour.html" class="dashboard-card" style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-color: #667eea;">
+          <div class="dashboard-card-icon">⚡</div>
+          <div class="dashboard-card-title">Kịch bản Auto Tour</div>
+          <div class="dashboard-card-desc">Tạo tour tự động</div>
+        </a>
+
+        <a href="index.html" class="dashboard-card">
+          <div class="dashboard-card-icon">👁️</div>
+          <div class="dashboard-card-title">Xem Tour</div>
+          <div class="dashboard-card-desc">Trải nghiệm tour</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="dashboard-footer">
+      💡 Tip: Click vào từng mục để quản lý hoặc xem tour
+    </div>
+  </div>
+</body>
+</html>

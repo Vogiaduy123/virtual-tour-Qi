@@ -1,0 +1,55 @@
+{
+  "floors": [
+    {
+      "id": 1,
+      "name": "Sảnh Qi",
+      "image": "/uploads/minimap_1770013737048.png",
+      "markers": [
+        {
+          "x": 0.4068027418486926,
+          "y": 0.3446502214596595,
+          "roomId": 1769668397635
+        },
+        {
+          "x": 0.3804988316127232,
+          "y": 0.5462962962962963,
+          "roomId": 1769668421984
+        },
+        {
+          "x": 0.3170068234813457,
+          "y": 0.6519204598885996,
+          "roomId": 1769668457253
+        },
+        {
+          "x": 0.43628116529815053,
+          "y": 0.674554189046224,
+          "roomId": 1769668497247
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Tầng 1",
+      "image": "/uploads/minimap_1769054547450.webp",
+      "markers": []
+    },
+    {
+      "id": 3,
+      "name": "Tầng 2",
+      "image": "/uploads/minimap_1769054561410.webp",
+      "markers": []
+    },
+    {
+      "id": 4,
+      "name": "Tầng 3",
+      "image": "/uploads/minimap_1771812614470.png",
+      "markers": []
+    },
+    {
+      "id": 5,
+      "name": "Tòa nhà topaz",
+      "image": "/uploads/minimap_1771812794953.png",
+      "markers": []
+    }
+  ]
+}

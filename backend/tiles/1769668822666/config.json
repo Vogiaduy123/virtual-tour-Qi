@@ -1,0 +1,25 @@
+{
+  "type": "cube",
+  "levels": [
+    {
+      "tileSize": 512,
+      "size": 512,
+      "fallbackOnly": true
+    },
+    {
+      "tileSize": 512,
+      "size": 1024,
+      "fallbackOnly": false
+    },
+    {
+      "tileSize": 512,
+      "size": 2048,
+      "fallbackOnly": false
+    },
+    {
+      "tileSize": 512,
+      "size": 4096,
+      "fallbackOnly": false
+    }
+  ]
+}

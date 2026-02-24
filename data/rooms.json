@@ -1,0 +1,880 @@
+[
+  {
+    "id": 1769668397635,
+    "name": "Cổng trước",
+    "image": "/uploads/panorama_1769668397631.jpg",
+    "tilesPath": "tiles/1769668397635",
+    "floor": 1,
+    "hotspots": [
+      {
+        "yaw": -113.68,
+        "pitch": -5.98,
+        "target": 1769668421984,
+        "rotation": 300,
+        "color": "#c2c2c2"
+      }
+    ],
+    "mediaHotspots": [
+      {
+        "yaw": 162.65,
+        "pitch": -1.26,
+        "title": "Bãi giữ xe",
+        "description": "",
+        "mediaUrl": "",
+        "mediaType": "note"
+      }
+    ]
+  },
+  {
+    "id": 1769668421984,
+    "name": "Cổng vào",
+    "image": "/uploads/panorama_1769668421982.jpg",
+    "tilesPath": "tiles/1769668421984",
+    "floor": 1,
+    "hotspots": [
+      {
+        "yaw": -5.58,
+        "pitch": -6.81,
+        "target": 1769668457253,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": 125.44,
+        "pitch": -13.78,
+        "target": 1769668397635,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1769668457253,
+    "name": "Sảnh chính",
+    "image": "/uploads/panorama_1769668457250.jpg",
+    "tilesPath": "tiles/1769668457253",
+    "floor": 1,
+    "hotspots": [
+      {
+        "yaw": -91.3,
+        "pitch": -10.53,
+        "target": 1769668497247,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": 5.21,
+        "pitch": -17.73,
+        "target": 1769668532698,
+        "rotation": 30,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": 174.99,
+        "pitch": -20.93,
+        "target": 1769668421984,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1769668497247,
+    "name": "Sảnh lễ tân",
+    "image": "/uploads/panorama_1769668497246.jpg",
+    "tilesPath": "tiles/1769668497247",
+    "floor": 1,
+    "hotspots": [
+      {
+        "yaw": -105.83,
+        "pitch": -15.96,
+        "target": 1769668457253,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ],
+    "mediaHotspots": [
+      {
+        "yaw": -164.25,
+        "pitch": 3.02,
+        "title": "Khu vực lễ tân",
+        "description": "",
+        "mediaUrl": "",
+        "mediaType": "note"
+      }
+    ]
+  },
+  {
+    "id": 1769668532698,
+    "name": "sảnh cầu thang",
+    "image": "/uploads/panorama_1769668532696.jpg",
+    "tilesPath": "tiles/1769668532698",
+    "floor": 1,
+    "hotspots": [
+      {
+        "yaw": -85.86,
+        "pitch": -21.57,
+        "target": 1769668457253,
+        "rotation": 30,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": 108.81,
+        "pitch": -26.94,
+        "target": 1769668600603,
+        "rotation": 360,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1769668600603,
+    "name": "Thang lên tầng 1",
+    "image": "/uploads/panorama_1769668600602.jpg",
+    "tilesPath": "tiles/1769668600603",
+    "floor": 1,
+    "hotspots": [
+      {
+        "yaw": 162.12,
+        "pitch": -37.69,
+        "target": 1769668532698,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": 70.02,
+        "pitch": -1.99,
+        "target": 1769668639049,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ],
+    "mediaHotspots": [
+      {
+        "yaw": -62.36,
+        "pitch": -33.23,
+        "title": "Bình chữa cháy",
+        "description": "",
+        "mediaUrl": "",
+        "mediaType": "note"
+      }
+    ]
+  },
+  {
+    "id": 1769668639049,
+    "name": "Tầng 1",
+    "image": "/uploads/panorama_1769668639048.jpg",
+    "tilesPath": "tiles/1769668639049",
+    "floor": 2,
+    "hotspots": [
+      {
+        "yaw": -165,
+        "pitch": -34.47,
+        "target": 1769668600603,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": 150.13,
+        "pitch": -1,
+        "target": 1769668710027,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1769668710027,
+    "name": "Tầng 2",
+    "image": "/uploads/panorama_1769668710025.jpg",
+    "tilesPath": "tiles/1769668710027",
+    "floor": 3,
+    "hotspots": [
+      {
+        "yaw": 92.68,
+        "pitch": -45.72,
+        "target": 1769668746757,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": -20.79,
+        "pitch": -16.89,
+        "target": 1769668860551,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": 27.46,
+        "pitch": -39.11,
+        "target": 1769668639049,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ],
+    "mediaHotspots": [
+      {
+        "yaw": 69.53,
+        "pitch": 9.92,
+        "title": "Máy chấm công",
+        "description": "",
+        "mediaUrl": "",
+        "mediaType": "note"
+      }
+    ]
+  },
+  {
+    "id": 1769668746757,
+    "name": "Phòng Qi",
+    "image": "/uploads/panorama_1769668746756.jpg",
+    "tilesPath": "tiles/1769668746757",
+    "floor": 3,
+    "hotspots": [
+      {
+        "yaw": -7.45,
+        "pitch": -24.82,
+        "target": 1769668710027,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": -50.28,
+        "pitch": -26.99,
+        "target": 1769668822666,
+        "rotation": 270,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": 19.76,
+        "pitch": -5.55,
+        "target": 1769668791710,
+        "rotation": 90,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1769668791710,
+    "name": "Phòng Qi_1",
+    "image": "/uploads/panorama_1769668791709.jpg",
+    "tilesPath": "tiles/1769668791710",
+    "floor": 3,
+    "hotspots": [
+      {
+        "yaw": 88.28,
+        "pitch": -32.39,
+        "target": 1769668746757,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1769668822666,
+    "name": "Phòng Qi_2",
+    "image": "/uploads/panorama_1769668822665.jpg",
+    "tilesPath": "tiles/1769668822666",
+    "floor": 3,
+    "hotspots": [
+      {
+        "yaw": 93.69,
+        "pitch": -36.78,
+        "target": 1769668746757,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ],
+    "mediaHotspots": [
+      {
+        "yaw": -63.76,
+        "pitch": 24.56,
+        "title": "phòng Hội đồng quản trị",
+        "description": "",
+        "mediaUrl": "",
+        "mediaType": "note"
+      }
+    ]
+  },
+  {
+    "id": 1769668860551,
+    "name": "Tầng 3",
+    "image": "/uploads/panorama_1769668860548.jpg",
+    "tilesPath": "tiles/1769668860551",
+    "floor": 4,
+    "hotspots": [
+      {
+        "yaw": -155.05,
+        "pitch": -49.28,
+        "target": 1769668710027,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": -84.34,
+        "pitch": -46.61,
+        "target": 1769668901015,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1769668901015,
+    "name": "Tầng 3 cửa ra vào",
+    "image": "/uploads/panorama_1769668901013.jpg",
+    "tilesPath": "tiles/1769668901015",
+    "floor": 4,
+    "hotspots": [
+      {
+        "yaw": 47.32,
+        "pitch": -24.93,
+        "target": 1769668860551,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": -51.94,
+        "pitch": -28.25,
+        "target": 1769668938397,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": 129.58,
+        "pitch": -33.93,
+        "target": 1769669039212,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1769668938397,
+    "name": "Tầng 3 bàn ăn",
+    "image": "/uploads/panorama_1769668938395.jpg",
+    "tilesPath": "tiles/1769668938397",
+    "floor": 4,
+    "hotspots": [
+      {
+        "yaw": -45.91,
+        "pitch": -30.74,
+        "target": 1769668973593,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": 25.81,
+        "pitch": -31.29,
+        "target": 1769668901015,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1769668973593,
+    "name": "Tầng 3 cà phê",
+    "image": "/uploads/panorama_1769668973592.jpg",
+    "tilesPath": "tiles/1769668973593",
+    "floor": 4,
+    "hotspots": [
+      {
+        "yaw": 12.14,
+        "pitch": -32.43,
+        "target": 1769668938397,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ],
+    "mediaHotspots": [
+      {
+        "yaw": -55.26,
+        "pitch": -0.48,
+        "title": "máy pha cafe",
+        "description": "\n",
+        "mediaUrl": "",
+        "mediaType": "note"
+      },
+      {
+        "yaw": 110.53,
+        "pitch": -2.4,
+        "title": "bàn bida",
+        "description": "",
+        "mediaUrl": "",
+        "mediaType": "note"
+      }
+    ]
+  },
+  {
+    "id": 1769669039212,
+    "name": "Tầng 3 ban công",
+    "image": "/uploads/panorama_1769669039211.jpg",
+    "tilesPath": "tiles/1769669039212",
+    "floor": 4,
+    "hotspots": [
+      {
+        "yaw": -71.71,
+        "pitch": -27.02,
+        "target": 1769669089476,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": 31.47,
+        "pitch": -40.17,
+        "target": 1769668901015,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1769669089476,
+    "name": "Ban công",
+    "image": "/uploads/panorama_1769669089473.jpg",
+    "tilesPath": "tiles/1769669089476",
+    "floor": 4,
+    "hotspots": [
+      {
+        "yaw": 1.8,
+        "pitch": -23.96,
+        "target": 1769668901015,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": -80.88,
+        "pitch": -17.68,
+        "target": 1769669187612,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": 94.05,
+        "pitch": -17.65,
+        "target": 1769669142397,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1769669142397,
+    "name": "Ban công 1",
+    "image": "/uploads/panorama_1769669142394.jpg",
+    "tilesPath": "tiles/1769669142397",
+    "floor": 4,
+    "hotspots": [
+      {
+        "yaw": -3.65,
+        "pitch": -17.13,
+        "target": 1769669089476,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1769669187612,
+    "name": "Ban công 2",
+    "image": "/uploads/panorama_1769669187610.jpg",
+    "tilesPath": "tiles/1769669187612",
+    "floor": 4,
+    "hotspots": [
+      {
+        "yaw": -62.38,
+        "pitch": -21.13,
+        "target": 1769669089476,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1770863102225,
+    "name": "Lối vào hầm xe",
+    "image": "/uploads/panorama_1770863102110.jpg",
+    "tilesPath": "tiles/1770863102225",
+    "floor": 1,
+    "hotspots": [
+      {
+        "yaw": -6.1,
+        "pitch": -4.05,
+        "target": 1770863525990,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ],
+    "mediaHotspots": [
+      {
+        "yaw": -1.76,
+        "pitch": 15.05,
+        "title": "Địa chỉ",
+        "description": "92 Nguyễn Hữu Cảnh, Saigon Pearl, Bình Thạnh, Thành phố Hồ Chí Minh 848888, Việt Nam",
+        "mediaUrl": "92 Nguyễn Hữu Cảnh, Saigon Pearl, Bình Thạnh, Thành phố Hồ Chí Minh 848888, Việt Nam",
+        "mediaType": "note"
+      }
+    ]
+  },
+  {
+    "id": 1770863392271,
+    "name": "Hầm Xe",
+    "image": "/uploads/panorama_1770863392194.jpg",
+    "tilesPath": "tiles/1770863392271",
+    "floor": 2,
+    "hotspots": [
+      {
+        "yaw": 148.27,
+        "pitch": -5.72,
+        "target": 1770863525990,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": -75.12,
+        "pitch": -6.51,
+        "target": 1770863102225,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": -11.27,
+        "pitch": -5.76,
+        "target": 1770864294741,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1770863525990,
+    "name": "Rẽ phải vào kho ",
+    "image": "/uploads/panorama_1770863525915.jpg",
+    "tilesPath": "tiles/1770863525990",
+    "floor": 2,
+    "hotspots": [
+      {
+        "yaw": 104.82,
+        "pitch": -14.93,
+        "target": 1770863650535,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": -170.53,
+        "pitch": -5.67,
+        "target": 1770863392271,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1770863650535,
+    "name": "Đi thẳng vào kho",
+    "image": "/uploads/panorama_1770863650465.jpg",
+    "tilesPath": "tiles/1770863650535",
+    "floor": 2,
+    "hotspots": [
+      {
+        "yaw": 92.66,
+        "pitch": -8.68,
+        "target": 1770863776718,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": -8.17,
+        "pitch": -6.9,
+        "target": 1770863525990,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1770863776718,
+    "name": "Lối vào kho",
+    "image": "/uploads/panorama_1770863776652.jpg",
+    "tilesPath": "tiles/1770863776718",
+    "floor": 2,
+    "hotspots": [
+      {
+        "yaw": 130.31,
+        "pitch": -23.72,
+        "target": 1770863896218,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": 31.27,
+        "pitch": -7.92,
+        "target": 1770863650535,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1770863896218,
+    "name": "Cửa kho",
+    "image": "/uploads/panorama_1770863896151.jpg",
+    "tilesPath": "tiles/1770863896218",
+    "floor": 2,
+    "hotspots": [
+      {
+        "yaw": -157.34,
+        "pitch": -31.09,
+        "target": 1770863998478,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": 33.52,
+        "pitch": -22.34,
+        "target": 1770863776718,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1770863998478,
+    "name": "Phòng Kho",
+    "image": "/uploads/panorama_1770863998405.jpg",
+    "tilesPath": "tiles/1770863998478",
+    "floor": 2,
+    "hotspots": [
+      {
+        "yaw": 2.53,
+        "pitch": -42.8,
+        "target": 1770863896218,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": -46.54,
+        "pitch": -27.42,
+        "target": 1770864154219,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1770864154219,
+    "name": "Phòng Kho 2",
+    "image": "/uploads/panorama_1770864154157.jpg",
+    "tilesPath": "tiles/1770864154219",
+    "floor": 2,
+    "hotspots": [
+      {
+        "yaw": 27.95,
+        "pitch": -59.1,
+        "target": 1770863998478,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1770864294741,
+    "name": "Rẽ trái qua Phòng ISP",
+    "image": "/uploads/panorama_1770864294674.jpg",
+    "tilesPath": "tiles/1770864294741",
+    "floor": 2,
+    "hotspots": [
+      {
+        "yaw": 168.06,
+        "pitch": -2.54,
+        "target": 1770864444145,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": -34.14,
+        "pitch": -4,
+        "target": 1770863392271,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1770864444145,
+    "name": "Đi thẳng hướng ISP",
+    "image": "/uploads/panorama_1770864444077.jpg",
+    "tilesPath": "tiles/1770864444145",
+    "floor": 2,
+    "hotspots": [
+      {
+        "yaw": -165.79,
+        "pitch": -6.18,
+        "target": 1770864595235,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": 7.96,
+        "pitch": -4.3,
+        "target": 1770864294741,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1770864595235,
+    "name": "Rẻ trái ISP",
+    "image": "/uploads/panorama_1770864595162.jpg",
+    "tilesPath": "tiles/1770864595235",
+    "floor": 2,
+    "hotspots": [
+      {
+        "yaw": 80.48,
+        "pitch": -12.39,
+        "target": 1770864444145,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": 175.57,
+        "pitch": -8.84,
+        "target": 1770864715503,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1770864715503,
+    "name": "Lối vào 1_ISP",
+    "image": "/uploads/panorama_1770864715437.jpg",
+    "tilesPath": "tiles/1770864715503",
+    "floor": 2,
+    "hotspots": [
+      {
+        "yaw": 138.92,
+        "pitch": -11.29,
+        "target": 1770864884718,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": -56.71,
+        "pitch": -7.5,
+        "target": 1770864595235,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1770864884718,
+    "name": "Lối vào 2 ISP",
+    "image": "/uploads/panorama_1770864884654.jpg",
+    "tilesPath": "tiles/1770864884718",
+    "floor": 2,
+    "hotspots": [
+      {
+        "yaw": 110.17,
+        "pitch": -13.69,
+        "target": 1770865019913,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": -120.77,
+        "pitch": -14.52,
+        "target": 1770864715503,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1770865019913,
+    "name": "Lối vào ISP",
+    "image": "/uploads/panorama_1770865019850.jpg",
+    "tilesPath": "tiles/1770865019913",
+    "floor": 2,
+    "hotspots": [
+      {
+        "yaw": -120.22,
+        "pitch": -5.09,
+        "target": 1770865299938,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": -18.34,
+        "pitch": -4.35,
+        "target": 1770864884718,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1770865299938,
+    "name": "Cửa vào ISP",
+    "image": "/uploads/panorama_1770865299877.jpg",
+    "tilesPath": "tiles/1770865299938",
+    "floor": 2,
+    "hotspots": [
+      {
+        "yaw": 10.27,
+        "pitch": -26.34,
+        "target": 1770865420854,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": 173.22,
+        "pitch": -17.58,
+        "target": 1770865019913,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1770865420854,
+    "name": "Phòng ISP_1",
+    "image": "/uploads/panorama_1770865420798.jpg",
+    "tilesPath": "tiles/1770865420854",
+    "floor": 2,
+    "hotspots": [
+      {
+        "yaw": 19.67,
+        "pitch": -23.01,
+        "target": 1770865514608,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      },
+      {
+        "yaw": 119.37,
+        "pitch": -25.81,
+        "target": 1770865299938,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  },
+  {
+    "id": 1770865514608,
+    "name": "Phòng ISP_2",
+    "image": "/uploads/panorama_1770865514543.jpg",
+    "tilesPath": "tiles/1770865514608",
+    "floor": 2,
+    "hotspots": [
+      {
+        "yaw": 91.56,
+        "pitch": -23.88,
+        "target": 1770865420854,
+        "rotation": 0,
+        "color": "#c2c2c2"
+      }
+    ]
+  }
+]

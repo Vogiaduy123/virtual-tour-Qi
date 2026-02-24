@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="0; url=admin-rooms.html">
+  <script>window.location.replace('admin-rooms.html');</script>
+  <title>Cấu hình API - Admin</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: #f5f7fa;
+      min-height: 100vh;
+      color: #2c3e50;
+    }
+
+    .admin-header {
+      background: white;
+      border-bottom: 1px solid #e1e8ed;
+      padding: 16px 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    .nav-link {
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      background: #ecf0f6;
+      color: #2c3e50;
+    }
+
+    .nav-link:hover {
+      background: #e3e9f3;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e1e8ed;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .panel-header {
+      padding: 20px 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .panel-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .panel-body {
+      padding: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #2c3e50;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e1e8ed;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-group small {
+      display: block;
+      margin-top: 6px;
+      color: #7f8c8d;
+      font-size: 12px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-success {
+      background: #27ae60;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #229954;
+    }
+
+    .status-box {
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .status-box.success {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+
+    .status-box.error {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-header">
+    <div class="header-content">
+      <div class="header-title">⚙️ Cấu hình API</div>
+      <a href="admin-rooms.html" class="nav-link">← Quay lại</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Panel thêm API mới -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">➕ Thêm API mới</div>
+      </div>
+      <div class="panel-body">
+        <div class="form-group">
+          <label>Chọn loại API:</label>
+          <select id="apiType" onchange="updateAddApiForm()" style="width: 100%; padding: 12px; border: 1px solid #e1e8ed; border-radius: 6px; font-size: 14px;">
+            <option value="">-- Chọn loại API --</option>
+            <option value="weather">🌤️ OpenWeatherMap</option>
+            <option value="air">💨 WAQI</option>
+          </select>
+        </div>
+
+        <!-- Form thêm OpenWeatherMap -->
+        <div id="weatherAddForm" style="display: none;">
+          <h4 style="margin: 20px 0 15px; color: #2c3e50; font-size: 15px;">Cấu hình OpenWeatherMap</h4>
+          
+          <div class="form-group">
+            <label>API URL:</label>
+            <input type="text" id="addWeatherUrl" placeholder="https://api.openweathermap.org/data/2.5/weather" value="https://api.openweathermap.org/data/2.5/weather">
+            <small>URL endpoint của OpenWeatherMap</small>
+          </div>
+
+          <div class="form-group">
+            <label>API Key:</label>
+            <input type="text" id="addWeatherApiKey" placeholder="Nhập API key của bạn">
+            <small>Đăng ký tại <a href="https://openweathermap.org/api" target="_blank">OpenWeatherMap</a></small>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Vĩ độ (Latitude):</label>
+              <input type="number" id="addWeatherLat" step="0.0001" value="10.7769">
+            </div>
+            <div class="form-group">
+              <label>Kinh độ (Longitude):</label>
+              <input type="number" id="addWeatherLon" step="0.0001" value="106.7009">
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="btn btn-success" onclick="testNewWeatherApi()">🧪 Test API</button>
+            <button type="button" class="btn btn-primary" onclick="addWeatherApi()">➕ Thêm API</button>
+          </div>
+        </div>
+
+        <!-- Form thêm WAQI -->
+        <div id="airAddForm" style="display: none;">
+          <h4 style="margin: 20px 0 15px; color: #2c3e50; font-size: 15px;">Cấu hình WAQI</h4>
+          
+          <div class="form-group">
+            <label>API URL:</label>
+            <input type="text" id="addAirUrl" placeholder="https://api.waqi.info/feed/@13659/" value="https://api.waqi.info/feed/@13659/">
+            <small>URL endpoint của WAQI (có thể thay đổi station ID)</small>
+          </div>
+
+          <div class="form-group">
+            <label>API Token:</label>
+            <input type="text" id="addAirToken" placeholder="Nhập token của bạn">
+            <small>Đăng ký tại <a href="https://aqicn.org/data-platform/token/" target="_blank">WAQI Token</a></small>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="btn btn-success" onclick="testNewAirApi()">🧪 Test API</button>
+            <button type="button" class="btn btn-primary" onclick="addAirApi()">➕ Thêm API</button>
+          </div>
+        </div>
+
+        <div id="statusBox" class="status-box"></div>
+      </div>
+    </div>
+      <div class="panel-header">
+        <div class="panel-title">🌤️ API Thời tiết (OpenWeatherMap)</div>
+      </div>
+      <div class="panel-body">
+        <!-- Hiển thị thông tin hiện tại -->
+        <div id="weatherInfo" style="background: #f0f7ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 16px; margin-bottom: 20px; display: none;">
+          <h4 style="margin-bottom: 10px; color: #0369a1;">Thông tin hiện tại:</h4>
+          <div style="font-size: 13px; color: #555;">
+            <p><strong>URL:</strong> <span id="weatherUrlDisplay" style="word-break: break-all;"></span></p>
+            <p><strong>API Key:</strong> <span id="weatherApiKeyDisplay"></span></p>
+          </div>
+          <button type="button" class="btn" onclick="toggleWeatherEdit()" style="margin-top: 10px; padding: 8px 16px; background: #0369a1; color: white;">✏️ Sửa</button>
+        </div>
+
+        <!-- Form chỉnh sửa -->
+        <form id="weatherApiForm">
+          <div class="form-group">
+            <label>API URL:</label>
+            <input type="text" id="weatherUrl" placeholder="https://api.openweathermap.org/data/2.5/weather" required>
+            <small>URL endpoint của API thời tiết</small>
+          </div>
+
+          <div class="form-group">
+            <label>API Key:</label>
+            <input type="text" id="weatherApiKey" placeholder="Nhập API key của bạn" required>
+            <small>Đăng ký tại <a href="https://openweathermap.org/api" target="_blank">OpenWeatherMap</a></small>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Vĩ độ (Latitude):</label>
+              <input type="number" id="weatherLat" step="0.0001" placeholder="10.7769" required>
+            </div>
+            <div class="form-group">
+              <label>Kinh độ (Longitude):</label>
+              <input type="number" id="weatherLon" step="0.0001" placeholder="106.7009" required>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="btn btn-success" onclick="testWeatherApi()">🧪 Test API</button>
+            <button type="button" class="btn btn-primary" onclick="saveWeatherConfig()">💾 Lưu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">💨 API Chất lượng không khí (WAQI)</div>
+      </div>
+      <div class="panel-body">
+        <!-- Hiển thị thông tin hiện tại -->
+        <div id="airInfo" style="background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; padding: 16px; margin-bottom: 20px; display: none;">
+          <h4 style="margin-bottom: 10px; color: #92400e;">Thông tin hiện tại:</h4>
+          <div style="font-size: 13px; color: #555;">
+            <p><strong>URL:</strong> <span id="airUrlDisplay" style="word-break: break-all;"></span></p>
+            <p><strong>Token:</strong> <span id="airTokenDisplay"></span></p>
+          </div>
+          <button type="button" class="btn" onclick="toggleAirEdit()" style="margin-top: 10px; padding: 8px 16px; background: #d97706; color: white;">✏️ Sửa</button>
+        </div>
+
+        <!-- Form chỉnh sửa -->
+        <form id="airApiForm">
+          <div class="form-group">
+            <label>API URL:</label>
+            <input type="text" id="airUrl" placeholder="https://api.waqi.info/feed/@13659/" required>
+            <small>URL endpoint của WAQI API (có thể thay đổi station ID)</small>
+          </div>
+
+          <div class="form-group">
+            <label>API Token:</label>
+            <input type="text" id="airToken" placeholder="Nhập token của bạn" required>
+            <small>Đăng ký tại <a href="https://aqicn.org/data-platform/token/" target="_blank">WAQI Token</a></small>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="btn btn-success" onclick="testAirApi()">🧪 Test API</button>
+            <button type="button" class="btn btn-primary" onclick="saveAirConfig()">💾 Lưu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">⚡ Cài đặt tự động cập nhật</div>
+      </div>
+      <div class="panel-body">
+        <div class="form-group checkbox-group">
+          <input type="checkbox" id="autoRefresh" checked>
+          <label for="autoRefresh" style="margin: 0;">Tự động cập nhật dữ liệu sensor</label>
+        </div>
+
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e1e8ed;">
+          <label style="margin-top: 15px; display: block; font-weight: 600;">Khoảng thời gian cập nhật (giây):</label>
+          <input type="number" id="refreshInterval" value="10" min="10" style="width: 100%; padding: 12px; border: 1px solid #e1e8ed; border-radius: 6px; margin: 10px 0;">
+          <small>Mặc định: 10 giây</small>
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick="saveRefreshConfig()" style="margin-top: 15px; width: 100%;">💾 Lưu cài đặt</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let isWeatherEditing = false;
+    let isAirEditing = false;
+
+    function updateAddApiForm() {
+      const apiType = document.getElementById('apiType').value;
+      document.getElementById('weatherAddForm').style.display = apiType === 'weather' ? 'block' : 'none';
+      document.getElementById('airAddForm').style.display = apiType === 'air' ? 'block' : 'none';
+    }
+
+    function displayWeatherInfo(url, apiKey) {
+      const weatherInfo = document.getElementById('weatherInfo');
+      if (url && apiKey) {
+        document.getElementById('weatherUrlDisplay').textContent = url;
+        document.getElementById('weatherApiKeyDisplay').textContent = apiKey.substring(0, 4) + '••••••••' + apiKey.substring(apiKey.length - 4);
+        weatherInfo.style.display = 'block';
+      }
+    }
+
+    function displayAirInfo(url, token) {
+      const airInfo = document.getElementById('airInfo');
+      if (url && token) {
+        document.getElementById('airUrlDisplay').textContent = url;
+        document.getElementById('airTokenDisplay').textContent = token.substring(0, 4) + '••••••••' + token.substring(token.length - 4);
+        airInfo.style.display = 'block';
+      }
+    }
+
+    function toggleWeatherEdit() {
+      isWeatherEditing = !isWeatherEditing;
+      const form = document.getElementById('weatherApiForm');
+      const info = document.getElementById('weatherInfo');
+      
+      if (isWeatherEditing) {
+        form.style.display = 'block';
+        info.style.display = 'none';
+      } else {
+        form.style.display = 'none';
+        info.style.display = 'block';
+      }
+    }
+
+    function toggleAirEdit() {
+      isAirEditing = !isAirEditing;
+      const form = document.getElementById('airApiForm');
+      const info = document.getElementById('airInfo');
+      
+      if (isAirEditing) {
+        form.style.display = 'block';
+        info.style.display = 'none';
+      } else {
+        form.style.display = 'none';
+        info.style.display = 'block';
+      }
+    }
+
+    async function testNewWeatherApi() {
+      const url = document.getElementById('addWeatherUrl').value;
+      const apiKey = document.getElementById('addWeatherApiKey').value;
+      const lat = document.getElementById('addWeatherLat').value;
+      const lon = document.getElementById('addWeatherLon').value;
+
+      const statusBox = document.getElementById('statusBox');
+      statusBox.style.display = 'block';
+      statusBox.className = 'status-box';
+      statusBox.textContent = '⏳ Đang test API...';
+
+      try {
+        const testUrl = `${url}?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+        const res = await fetch(testUrl);
+        const data = await res.json();
+
+        if (data.main && data.main.temp !== undefined) {
+          statusBox.className = 'status-box success';
+          statusBox.innerHTML = `✅ API hoạt động!<br>Nhiệt độ: ${data.main.temp}°C | Độ ẩm: ${data.main.humidity}% | ${data.weather[0].description}`;
+        } else {
+          throw new Error('Invalid response');
+        }
+      } catch (err) {
+        statusBox.className = 'status-box error';
+        statusBox.textContent = '❌ Lỗi: ' + err.message;
+      }
+    }
+
+    async function testNewAirApi() {
+      const url = document.getElementById('addAirUrl').value;
+      const token = document.getElementById('addAirToken').value;
+
+      const statusBox = document.getElementById('statusBox');
+      statusBox.style.display = 'block';
+      statusBox.className = 'status-box';
+      statusBox.textContent = '⏳ Đang test API...';
+
+      try {
+        const testUrl = `${url}?token=${token}`;
+        const res = await fetch(testUrl);
+        const data = await res.json();
+
+        if (data.status === 'ok' && data.data) {
+          const aqi = data.data.aqi || data.data.iaqi?.pm25?.v || 'N/A';
+          statusBox.className = 'status-box success';
+          statusBox.innerHTML = `✅ API hoạt động!<br>AQI: ${aqi} | Station: ${data.data.city?.name || 'N/A'}`;
+        } else {
+          throw new Error('Invalid response');
+        }
+      } catch (err) {
+        statusBox.className = 'status-box error';
+        statusBox.textContent = '❌ Lỗi: ' + err.message;
+      }
+    }
+
+    async function addWeatherApi() {
+      const url = document.getElementById('addWeatherUrl').value;
+      const apiKey = document.getElementById('addWeatherApiKey').value;
+      const lat = parseFloat(document.getElementById('addWeatherLat').value);
+      const lon = parseFloat(document.getElementById('addWeatherLon').value);
+
+      if (!url || !apiKey) {
+        alert('Vui lòng nhập URL và API Key');
+        return;
+      }
+
+      const statusBox = document.getElementById('statusBox');
+      statusBox.style.display = 'block';
+      statusBox.className = 'status-box';
+      statusBox.textContent = '⏳ Đang lưu...';
+
+      try {
+        const res = await fetch('/api/config/api', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            weatherApi: { provider: 'openweathermap', url, apiKey, params: { lat, lon, units: 'metric' } },
+            airQualityApi: {
+              provider: 'waqi',
+              url: document.getElementById('airUrl').value,
+              token: document.getElementById('airToken').value
+            },
+            autoRefresh: document.getElementById('autoRefresh').checked,
+            refreshInterval: parseInt(document.getElementById('refreshInterval').value) * 1000
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          statusBox.className = 'status-box success';
+          statusBox.innerHTML = '✅ Đã thêm API OpenWeatherMap thành công!<br>Trang sẽ tự động tải lại dữ liệu.';
+          
+          // Reset form
+          document.getElementById('addWeatherUrl').value = 'https://api.openweathermap.org/data/2.5/weather';
+          document.getElementById('addWeatherApiKey').value = '';
+          document.getElementById('apiType').value = '';
+          updateAddApiForm();
+          
+          // Reload page after 2 seconds
+          setTimeout(() => { location.reload(); }, 2000);
+        } else {
+          throw new Error(data.error || 'Unknown error');
+        }
+      } catch (err) {
+        statusBox.className = 'status-box error';
+        statusBox.textContent = '❌ Lỗi: ' + err.message;
+      }
+    }
+
+    async function addAirApi() {
+      const url = document.getElementById('addAirUrl').value;
+      const token = document.getElementById('addAirToken').value;
+
+      if (!url || !token) {
+        alert('Vui lòng nhập URL và Token');
+        return;
+      }
+
+      const statusBox = document.getElementById('statusBox');
+      statusBox.style.display = 'block';
+      statusBox.className = 'status-box';
+      statusBox.textContent = '⏳ Đang lưu...';
+
+      try {
+        const res = await fetch('/api/config/api', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            weatherApi: {
+              provider: 'openweathermap',
+              url: document.getElementById('weatherUrl').value,
+              apiKey: document.getElementById('weatherApiKey').value,
+              params: {
+                lat: parseFloat(document.getElementById('weatherLat').value),
+                lon: parseFloat(document.getElementById('weatherLon').value),
+                units: 'metric'
+              }
+            },
+            airQualityApi: { provider: 'waqi', url, token },
+            autoRefresh: document.getElementById('autoRefresh').checked,
+            refreshInterval: parseInt(document.getElementById('refreshInterval').value) * 1000
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          statusBox.className = 'status-box success';
+          statusBox.innerHTML = '✅ Đã thêm API WAQI thành công!<br>Trang sẽ tự động tải lại dữ liệu.';
+          
+          // Reset form
+          document.getElementById('addAirUrl').value = 'https://api.waqi.info/feed/@13659/';
+          document.getElementById('addAirToken').value = '';
+          document.getElementById('apiType').value = '';
+          updateAddApiForm();
+          
+          // Reload page after 2 seconds
+          setTimeout(() => { location.reload(); }, 2000);
+        } else {
+          throw new Error(data.error || 'Unknown error');
+        }
+      } catch (err) {
+        statusBox.className = 'status-box error';
+        statusBox.textContent = '❌ Lỗi: ' + err.message;
+      }
+    }
+
+    async function testWeatherApi() {
+      const url = document.getElementById('weatherUrl').value;
+      const apiKey = document.getElementById('weatherApiKey').value;
+      const lat = document.getElementById('weatherLat').value;
+      const lon = document.getElementById('weatherLon').value;
+
+      const statusBox = document.getElementById('statusBox');
+      statusBox.style.display = 'block';
+      statusBox.className = 'status-box';
+      statusBox.textContent = '⏳ Đang test API...';
+
+      try {
+        const testUrl = `${url}?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+        const res = await fetch(testUrl);
+        const data = await res.json();
+
+        if (data.main && data.main.temp !== undefined) {
+          statusBox.className = 'status-box success';
+          statusBox.innerHTML = `✅ API hoạt động!<br>Nhiệt độ: ${data.main.temp}°C | Độ ẩm: ${data.main.humidity}% | ${data.weather[0].description}`;
+        } else {
+          throw new Error('Invalid response');
+        }
+      } catch (err) {
+        statusBox.className = 'status-box error';
+        statusBox.textContent = '❌ Lỗi: ' + err.message;
+      }
+    }
+
+    async function testAirApi() {
+      const url = document.getElementById('airUrl').value;
+      const token = document.getElementById('airToken').value;
+
+      const statusBox = document.getElementById('statusBox');
+      statusBox.style.display = 'block';
+      statusBox.className = 'status-box';
+      statusBox.textContent = '⏳ Đang test API...';
+
+      try {
+        const testUrl = `${url}?token=${token}`;
+        const res = await fetch(testUrl);
+        const data = await res.json();
+
+        if (data.status === 'ok' && data.data) {
+          const aqi = data.data.aqi || data.data.iaqi?.pm25?.v || 'N/A';
+          statusBox.className = 'status-box success';
+          statusBox.innerHTML = `✅ API hoạt động!<br>AQI: ${aqi} | Station: ${data.data.city?.name || 'N/A'}`;
+        } else {
+          throw new Error('Invalid response');
+        }
+      } catch (err) {
+        statusBox.className = 'status-box error';
+        statusBox.textContent = '❌ Lỗi: ' + err.message;
+      }
+    }
+
+    async function saveWeatherConfig() {
+      const url = document.getElementById('weatherUrl').value;
+      const apiKey = document.getElementById('weatherApiKey').value;
+      const lat = parseFloat(document.getElementById('weatherLat').value);
+      const lon = parseFloat(document.getElementById('weatherLon').value);
+
+      const statusBox = document.getElementById('statusBox');
+      statusBox.style.display = 'block';
+      statusBox.className = 'status-box';
+      statusBox.textContent = '⏳ Đang lưu...';
+
+      try {
+        const res = await fetch('/api/config/api', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            weatherApi: { provider: 'openweathermap', url, apiKey, params: { lat, lon, units: 'metric' } },
+            airQualityApi: {
+              provider: 'waqi',
+              url: document.getElementById('airUrl').value,
+              token: document.getElementById('airToken').value
+            },
+            autoRefresh: document.getElementById('autoRefresh').checked,
+            refreshInterval: parseInt(document.getElementById('refreshInterval').value) * 1000
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          statusBox.className = 'status-box success';
+          statusBox.innerHTML = '✅ Đã lưu cấu hình OpenWeatherMap thành công!';
+          displayWeatherInfo(url, apiKey);
+          toggleWeatherEdit();
+          setTimeout(() => { statusBox.style.display = 'none'; }, 1000);
+        } else {
+          throw new Error(data.error || 'Unknown error');
+        }
+      } catch (err) {
+        statusBox.className = 'status-box error';
+        statusBox.textContent = '❌ Lỗi: ' + err.message;
+      }
+    }
+
+    async function saveAirConfig() {
+      const url = document.getElementById('airUrl').value;
+      const token = document.getElementById('airToken').value;
+
+      const statusBox = document.getElementById('statusBox');
+      statusBox.style.display = 'block';
+      statusBox.className = 'status-box';
+      statusBox.textContent = '⏳ Đang lưu...';
+
+      try {
+        const res = await fetch('/api/config/api', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            weatherApi: {
+              provider: 'openweathermap',
+              url: document.getElementById('weatherUrl').value,
+              apiKey: document.getElementById('weatherApiKey').value,
+              params: {
+                lat: parseFloat(document.getElementById('weatherLat').value),
+                lon: parseFloat(document.getElementById('weatherLon').value),
+                units: 'metric'
+              }
+            },
+            airQualityApi: { provider: 'waqi', url, token },
+            autoRefresh: document.getElementById('autoRefresh').checked,
+            refreshInterval: parseInt(document.getElementById('refreshInterval').value) * 1000
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          statusBox.className = 'status-box success';
+          statusBox.innerHTML = '✅ Đã lưu cấu hình WAQI thành công!';
+          displayAirInfo(url, token);
+          toggleAirEdit();
+          setTimeout(() => { statusBox.style.display = 'none'; }, 1000);
+        } else {
+          throw new Error(data.error || 'Unknown error');
+        }
+      } catch (err) {
+        statusBox.className = 'status-box error';
+        statusBox.textContent = '❌ Lỗi: ' + err.message;
+      }
+    }
+
+    async function testAirApi() {
+      const url = document.getElementById('addAirUrl').value;
+      const token = document.getElementById('addAirToken').value;
+
+      const statusBox = document.getElementById('statusBox');
+      statusBox.style.display = 'block';
+      statusBox.className = 'status-box';
+      statusBox.textContent = '⏳ Đang test API...';
+
+      try {
+        const testUrl = `${url}?token=${token}`;
+        const res = await fetch(testUrl);
+        const data = await res.json();
+
+        if (data.status === 'ok' && data.data) {
+          const aqi = data.data.aqi || data.data.iaqi?.pm25?.v || 'N/A';
+          statusBox.className = 'status-box success';
+          statusBox.innerHTML = `✅ API hoạt động!<br>AQI: ${aqi} | Station: ${data.data.city?.name || 'N/A'}`;
+        } else {
+          throw new Error('Invalid response');
+        }
+      } catch (err) {
+        statusBox.className = 'status-box error';
+        statusBox.textContent = '❌ Lỗi: ' + err.message;
+      }
+    }
+
+    async function saveAirConfig() {
+      const url = document.getElementById('airUrl').value;
+      const token = document.getElementById('airToken').value;
+
+      if (!url || !token) {
+        alert('Vui lòng nhập URL và Token');
+        return;
+      }
+
+      const statusBox = document.getElementById('statusBox');
+      statusBox.style.display = 'block';
+      statusBox.className = 'status-box';
+      statusBox.textContent = '⏳ Đang lưu...';
+
+      try {
+        const res = await fetch('/api/config/api', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            weatherApi: {
+              provider: 'openweathermap',
+              url: document.getElementById('weatherUrl').value,
+              apiKey: document.getElementById('weatherApiKey').value,
+              params: {
+                lat: parseFloat(document.getElementById('weatherLat').value),
+                lon: parseFloat(document.getElementById('weatherLon').value),
+                units: 'metric'
+              }
+            },
+            airQualityApi: { provider: 'waqi', url, token },
+            autoRefresh: document.getElementById('autoRefresh').checked,
+            refreshInterval: parseInt(document.getElementById('refreshInterval').value) * 1000
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          statusBox.className = 'status-box success';
+          statusBox.innerHTML = '✅ Đã lưu cấu hình WAQI thành công!';
+          displayAirInfo(url, token);
+          toggleAirEdit();
+          setTimeout(() => { statusBox.style.display = 'none'; }, 1000);
+        } else {
+          throw new Error(data.error || 'Unknown error');
+        }
+      } catch (err) {
+        statusBox.className = 'status-box error';
+        statusBox.textContent = '❌ Lỗi: ' + err.message;
+      }
+    }
+
+    async function saveRefreshConfig() {
+      const autoRefresh = document.getElementById('autoRefresh').checked;
+      const refreshInterval = parseInt(document.getElementById('refreshInterval').value) * 1000;
+
+      try {
+        const res = await fetch('/api/config/api', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            weatherApi: {
+              provider: 'openweathermap',
+              url: document.getElementById('weatherUrl').value,
+              apiKey: document.getElementById('weatherApiKey').value,
+              params: {
+                lat: parseFloat(document.getElementById('weatherLat').value),
+                lon: parseFloat(document.getElementById('weatherLon').value),
+                units: 'metric'
+              }
+            },
+            airQualityApi: {
+              provider: 'waqi',
+              url: document.getElementById('airUrl').value,
+              token: document.getElementById('airToken').value
+            },
+            autoRefresh,
+            refreshInterval
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          alert('✅ Đã lưu cài đặt tự động cập nhật thành công!');
+        } else {
+          alert('❌ Lỗi: ' + (data.error || 'Unknown error'));
+        }
+      } catch (err) {
+        alert('❌ Lỗi: ' + err.message);
+      }
+    }
+
+    // Load current config
+    async function loadConfig() {
+      try {
+        const res = await fetch('/api/config/api');
+        const data = await res.json();
+        
+        if (data.success) {
+          const config = data.config;
+          
+          // Weather API
+          document.getElementById('weatherUrl').value = config.weatherApi?.url || '';
+          document.getElementById('weatherApiKey').value = config.weatherApi?.apiKey || '';
+          document.getElementById('weatherLat').value = config.weatherApi?.params?.lat || 10.7769;
+          document.getElementById('weatherLon').value = config.weatherApi?.params?.lon || 106.7009;
+          displayWeatherInfo(config.weatherApi?.url, config.weatherApi?.apiKey);
+          
+          // Air API
+          document.getElementById('airUrl').value = config.airQualityApi?.url || '';
+          document.getElementById('airToken').value = config.airQualityApi?.token || '';
+          displayAirInfo(config.airQualityApi?.url, config.airQualityApi?.token);
+          
+          // Auto refresh
+          document.getElementById('autoRefresh').checked = config.autoRefresh ?? true;
+          document.getElementById('refreshInterval').value = (config.refreshInterval || 10000) / 1000;
+        }
+      } catch (err) {
+        console.error('Load config error:', err);
+      }
+    }
+
+    // Initialize
+    loadConfig();
+  </script>
+</body>
+</html>

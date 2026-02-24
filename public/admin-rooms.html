@@ -1,0 +1,2375 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Phòng - Admin</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
+  <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: #f5f7fa;
+      min-height: 100vh;
+      color: #2c3e50;
+    }
+
+    .admin-header {
+      background: white;
+      border-bottom: 1px solid #e1e8ed;
+      padding: 16px 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: 12px;
+    }
+
+    .nav-link {
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+      background: #ecf0f6;
+      color: #2c3e50;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 40px;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover {
+      background: #e3e9f3;
+      transform: translateY(-1px);
+    }
+
+    .nav-link.active {
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      color: white;
+    }
+
+    .nav-link.special {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .menu-button {
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: #2196F3;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      height: 40px;
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    .menu-button:hover {
+      background: #0b7dda;
+      transform: translateY(-1px);
+    }
+
+    .menu-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: white;
+      border: 1px solid #e1e8ed;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      min-width: 200px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .admin-menu:hover .menu-dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      text-decoration: none;
+      color: #2c3e50;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .menu-item:last-child {
+      border-bottom: none;
+    }
+
+    .menu-item:hover {
+      background: #f8f9fa;
+      padding-left: 20px;
+    }
+
+    .menu-item.active {
+      background: #e3e9f3;
+      color: #3498db;
+      font-weight: 600;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 24px;
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      height: fit-content;
+      position: sticky;
+      top: 80px;
+    }
+
+    .sidebar-panel {
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #e1e8ed;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 12px 16px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e1e8ed;
+      font-weight: 600;
+      font-size: 12px;
+      color: #2c3e50;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sidebar-content {
+      padding: 8px;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+
+    .room-item {
+      padding: 10px;
+      margin-bottom: 6px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-left: 3px solid transparent;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .room-item:hover {
+      background: #eef2f7;
+      transform: translateX(4px);
+    }
+
+    .room-item.active {
+      background: #e3e9f3;
+      border-left-color: #3498db;
+      color: #2c3e50;
+      font-weight: 500;
+    }
+
+    .room-item-text {
+      flex: 1;
+      cursor: pointer;
+    }
+
+    .room-item-name {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .room-item-info {
+      font-size: 11px;
+      color: #7f8c8d;
+    }
+
+    .room-item-delete {
+      background: #f44336;
+      color: white;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+
+    .room-item-delete:hover {
+      background: #d32f2f;
+      transform: scale(1.05);
+    }
+
+    .empty-state {
+      text-align: center;
+      color: #95a5a6;
+      padding: 30px 20px;
+      font-size: 12px;
+    }
+
+    .empty-state-icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+      opacity: 0.6;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #e1e8ed;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-header {
+      padding: 18px 20px;
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      color: white;
+    }
+
+    .panel-title {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+
+    .panel-subtitle {
+      font-size: 12px;
+      opacity: 0.85;
+      margin-top: 4px;
+    }
+
+    .panel-body {
+      padding: 20px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 10px 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: 10px;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 4px 16px rgba(52, 152, 219, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(39, 174, 96, 0.2);
+    }
+
+    .btn-success:hover {
+      box-shadow: 0 4px 16px rgba(39, 174, 96, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn-small {
+      padding: 8px 10px;
+      font-size: 11px;
+      width: auto;
+      display: inline-block;
+      margin-right: 6px;
+      margin-bottom: 0;
+    }
+
+    .btn-edit {
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      color: white;
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      color: white;
+    }
+
+    .hotspots-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .hotspot-item {
+      background: #fffdf7;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      border-left: 3px solid #f39c12;
+      border: 1px solid #ffe8c0;
+    }
+
+    .hotspot-item h5 {
+      color: #2c3e50;
+      margin-bottom: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .hotspot-info {
+      font-size: 11px;
+      color: #555;
+      margin-bottom: 8px;
+    }
+
+    .hotspot-info span {
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .hotspot-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .panorama-viewer {
+      width: 100%;
+      height: 400px;
+      background: #1a1e23;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 15px;
+    }
+
+    /* ===== PANNELLUM HOTSPOT STYLES ===== */
+    .custom-hotspot {
+      width: 30px !important;
+      height: 30px !important;
+      background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,0,0,0.8) 100%) !important;
+      border: 3px solid white !important;
+      border-radius: 50% !important;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5) !important;
+      cursor: pointer !important;
+      transition: box-shadow 0.2s ease !important;
+    }
+
+    .custom-hotspot:hover {
+      box-shadow: 0 0 35px rgba(255,255,255,1), 0 0 15px rgba(255,255,255,0.6) !important;
+    }
+
+    .pnlm-tooltip {
+      background: rgba(0, 0, 0, 0.8) !important;
+      border-radius: 6px !important;
+      padding: 8px 12px !important;
+      font-size: 13px !important;
+      color: white !important;
+      pointer-events: auto !important;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(2px);
+    }
+
+    .modal.active {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 24px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-header {
+      margin-bottom: 20px;
+      border-bottom: 1px solid #e1e8ed;
+      padding-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      color: #2c3e50;
+      font-size: 17px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #bdc3c7;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .close-modal:hover {
+      color: #7f8c8d;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #bdc3c7;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: inherit;
+      background: white;
+      color: #2c3e50;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+
+    .color-swatch {
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+      border: 2px solid transparent;
+      display: inline-block;
+      margin-right: 6px;
+    }
+
+    .color-swatch:hover {
+      transform: scale(1.08);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .color-swatch.active {
+      transform: scale(1.12);
+      box-shadow: 0 0 0 2px white, 0 0 0 4px #3498db;
+      border-color: #3498db;
+    }
+
+    @media (max-width: 1024px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ===== HEADER ===== -->
+  <div class="admin-header">
+    <div class="header-content">
+      <div class="header-title">🏢 Virtual Tour Admin</div>
+      <div class="header-nav">
+        <a href="admin-upload.html" class="nav-link">📤 Upload</a>
+        <a href="admin-rooms.html" class="nav-link active">🏠 Quản lý Phòng</a>
+        <a href="admin-minimap.html" class="nav-link">🗺️ Minimap</a>
+        <a href="admin-tour.html" class="nav-link special">⚡ Kịch bản</a>
+        <div class="admin-menu">
+          <button class="menu-button">
+            ☰ Menu
+            <span style="font-size: 10px;">▼</span>
+          </button>
+          <div class="menu-dropdown">
+            <a href="admin.html" class="menu-item">🏠 Dashboard</a>
+            <a href="admin-upload.html" class="menu-item">📤 Upload Panorama</a>
+            <a href="admin-rooms.html" class="menu-item active">🏠 Quản lý Phòng</a>
+            <a href="admin-minimap.html" class="menu-item">🗺️ Minimap</a>
+            <a href="admin-tour.html" class="menu-item">⚡ Kịch bản Tour</a>
+            <a href="index.html" class="menu-item" style="border-top: 1px solid #e1e8ed; margin-top: 8px; padding-top: 16px;">👁️ Xem Tour</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CONTAINER ===== -->
+  <div class="container">
+    <!-- ===== SIDEBAR ===== -->
+    <div class="sidebar">
+      <div class="sidebar-panel">
+        <div class="sidebar-header">📋 Danh sách Phòng</div>
+        <div class="sidebar-content">
+          <div id="roomsList" class="rooms-list">
+            <div class="empty-state">
+              <div class="empty-state-icon">📭</div>
+              <p>Chưa có phòng</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-panel">
+        <div class="sidebar-header">🌡️ CẢM BIẾN MÔI TRƯỜNG</div>
+        <div class="sidebar-content">
+          <button class="btn" id="addSensorBtn" style="margin-bottom: 10px; background: linear-gradient(135deg, #FF6B6B 0%, #EE5A6F 100%); color: white;">➕ Thêm thiết bị IoT</button>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 8px; background: #f8f9fa; border-radius: 6px; font-size: 11px;">
+            <span id="autoRefreshStatus">🔄 Auto-refresh: OFF</span>
+            <button class="btn" onclick="toggleAutoRefresh()" style="padding: 4px 8px; font-size: 10px; margin: 0; background: #3498db; color: white;">Toggle</button>
+          </div>
+          <div id="sensorsList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div>
+      <!-- ===== HOTSPOTS PANEL ===== -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">🎯 Quản lý Hotspot</div>
+          <div class="panel-subtitle">Thêm, sửa, xóa hotspot & tư liệu</div>
+        </div>
+        <div class="panel-body">
+          <div id="selectedRoomInfo" class="empty-state">
+            <div class="empty-state-icon">👆</div>
+            <p>Chọn phòng từ danh sách</p>
+          </div>
+
+          <div id="hotspotSection" style="display: none;">
+            <div id="panoramaViewer" class="panorama-viewer"></div>
+
+            <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+              <button type="button" class="btn btn-success btn-small" id="addHotspotBtn" style="width: auto; flex: 1;">➕ Di chuyển</button>
+              <button type="button" class="btn btn-success btn-small" id="addMediaBtn" style="width: auto; flex: 1;">📁 Tư liệu</button>
+            </div>
+
+            <div class="hotspots-list" id="hotspotsList"></div>
+
+            <h4 style="font-size: 13px; color: #2c3e50; margin-top: 20px; margin-bottom: 10px; font-weight: 600;">📚 Tư liệu của Phòng:</h4>
+            <div class="hotspots-list" id="mediaHotspotsList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODALS ===== -->
+  <!-- ===== SENSOR MODAL ===== -->
+  <div class="modal" id="sensorModal">
+    <div class="modal-content" style="max-width: 700px; max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <h3 style="margin: 0;" id="sensorModalTitle">🌡️ Thêm Thiết bị IoT</h3>
+        <button class="close-modal" type="button" onclick="closeSensorModal()">&times;</button>
+      </div>
+
+      <form id="sensorForm">
+        <div class="form-group">
+          <label>Tên cảm biến:</label>
+          <input type="text" id="sensorName" placeholder="Ví dụ: Cảm biến phòng khách" required>
+        </div>
+
+        <div class="form-group">
+          <label>Loại thiết bị:</label>
+          <select id="sensorType" onchange="toggleSensorFields()" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px; font-size: 14px;">
+            <option value="environment">🌡️ Cảm biến môi trường (Nhiệt độ, Độ ẩm, PM2.5)</option>
+            <option value="camera">📹 Camera IoT</option>
+          </select>
+        </div>
+
+        <!-- API Configuration Section -->
+        <div style="background: #f8f9fa; border: 1px solid #e1e8ed; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h4 style="margin: 0; font-size: 14px; color: #2c3e50;">⚙️ Cấu hình API cho phòng này</h4>
+            <button type="button" id="toggleApiConfig" onclick="toggleApiConfigSection()" style="padding: 6px 12px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📝 Chỉnh sửa</button>
+          </div>
+
+          <div id="apiConfigSection" style="display: none;">
+            <!-- OpenWeatherMap Config -->
+            <div style="background: white; border-radius: 6px; padding: 12px; margin-bottom: 10px;">
+              <h5 style="margin: 0 0 10px; font-size: 13px; color: #3498db;">🌤️ OpenWeatherMap API</h5>
+              <div style="margin-bottom: 8px;">
+                <label style="display: block; margin-bottom: 3px; font-size: 12px; font-weight: 600;">API URL:</label>
+                <input type="text" id="roomWeatherUrl" placeholder="https://api.openweathermap.org/data/2.5/weather" style="width: 100%; padding: 8px; border: 1px solid #e1e8ed; border-radius: 4px; font-size: 13px;">
+              </div>
+              <div style="margin-bottom: 8px;">
+                <label style="display: block; margin-bottom: 3px; font-size: 12px; font-weight: 600;">API Key:</label>
+                <input type="text" id="roomWeatherApiKey" placeholder="Nhập API key" style="width: 100%; padding: 8px; border: 1px solid #e1e8ed; border-radius: 4px; font-size: 13px;">
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                  <label style="display: block; margin-bottom: 3px; font-size: 12px; font-weight: 600;">Vĩ độ:</label>
+                  <input type="number" id="roomWeatherLat" step="0.0001" value="10.7769" style="width: 100%; padding: 8px; border: 1px solid #e1e8ed; border-radius: 4px; font-size: 13px;">
+                </div>
+                <div>
+                  <label style="display: block; margin-bottom: 3px; font-size: 12px; font-weight: 600;">Kinh độ:</label>
+                  <input type="number" id="roomWeatherLon" step="0.0001" value="106.7009" style="width: 100%; padding: 8px; border: 1px solid #e1e8ed; border-radius: 4px; font-size: 13px;">
+                </div>
+              </div>
+            </div>
+
+            <!-- WAQI Config -->
+            <div style="background: white; border-radius: 6px; padding: 12px;">
+              <h5 style="margin: 0 0 10px; font-size: 13px; color: #f39c12;">💨 WAQI API</h5>
+              <div style="margin-bottom: 8px;">
+                <label style="display: block; margin-bottom: 3px; font-size: 12px; font-weight: 600;">API URL:</label>
+                <input type="text" id="roomAirUrl" placeholder="https://api.waqi.info/feed/@13659/" style="width: 100%; padding: 8px; border: 1px solid #e1e8ed; border-radius: 4px; font-size: 13px;">
+              </div>
+              <div style="margin-bottom: 8px;">
+                <label style="display: block; margin-bottom: 3px; font-size: 12px; font-weight: 600;">API Token:</label>
+                <input type="text" id="roomAirToken" placeholder="Nhập token" style="width: 100%; padding: 8px; border: 1px solid #e1e8ed; border-radius: 4px; font-size: 13px;">
+              </div>
+            </div>
+          </div>
+
+          <div id="apiConfigSummary" style="font-size: 12px; color: #7f8c8d;">
+            <p style="margin: 5px 0;">🌤️ Weather: <span id="summaryWeatherStatus">Chưa cấu hình</span></p>
+            <p style="margin: 5px 0;">💨 Air Quality: <span id="summaryAirStatus">Chưa cấu hình</span></p>
+          </div>
+        </div>
+
+        <!-- Environment Sensor Fields -->
+        <div id="environmentFields">
+          <div class="form-group">
+            <label style="display: flex; justify-content: space-between; align-items: center;">
+              <span>Dữ liệu môi trường:</span>
+              <button type="button" class="btn" onclick="fetchRealWeatherData()" style="margin: 0; padding: 8px 16px; background: #27ae60; color: white; font-size: 12px;">🌍 Lấy dữ liệu thực</button>
+            </label>
+            <div id="weatherDataInfo" style="background: #f8f9fa; border: 1px solid #e1e8ed; border-radius: 6px; padding: 10px; font-size: 12px; color: #7f8c8d; margin-bottom: 10px; min-height: 20px;"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Nhiệt độ (°C):</label>
+            <input type="number" id="sensorTemp" min="0" max="50" step="0.1" value="25">
+          </div>
+
+          <div class="form-group">
+            <label>Độ ẩm (%):</label>
+            <input type="number" id="sensorHumidity" min="0" max="100" step="1" value="60">
+          </div>
+
+          <div class="form-group">
+            <label>PM2.5 (µg/m³):</label>
+            <input type="number" id="sensorPM25" min="0" max="500" step="0.1" value="25">
+          </div>
+        </div>
+
+        <!-- Camera Fields -->
+        <div id="cameraFields" style="display: none;">
+          <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 10px;">
+              <input type="checkbox" id="useWebcam" onchange="toggleWebcam()" style="width: auto; margin: 0;">
+              <span>💻 Sử dụng Webcam Laptop (Test)</span>
+            </label>
+            <div id="webcamPreview" style="display: none; margin-top: 10px; text-align: center;">
+              <video id="webcamVideo" autoplay playsinline muted style="width: 100%; max-width: 400px; border-radius: 8px; border: 2px solid #2196F3;"></video>
+              <div style="margin-top: 8px;">
+                <button type="button" class="btn btn-small" onclick="startWebcam()" style="background: #27ae60; color: white; margin: 0 5px;">▶️ Bật Webcam</button>
+                <button type="button" class="btn btn-small" onclick="stopWebcam()" style="background: #e74c3c; color: white; margin: 0 5px;">⏹️ Tắt Webcam</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group" id="manualCameraUrlGroup">
+            <label>📡 URL Stream Camera (RTSP/HTTP):</label>
+            <input type="text" id="cameraStreamUrl" placeholder="rtsp://192.168.1.100:554/stream hoặc http://camera-ip/stream">
+            <small style="color: #7f8c8d; font-size: 12px;">Ví dụ: rtsp://admin:password@192.168.1.100:554/stream1</small>
+          </div>
+
+          <div class="form-group">
+            <label>📸 URL Ảnh Snapshot:</label>
+            <input type="text" id="cameraSnapshotUrl" placeholder="http://192.168.1.100/snapshot.jpg">
+            <small style="color: #7f8c8d; font-size: 12px;">URL để lấy ảnh tĩnh từ camera</small>
+          </div>
+
+          <div class="form-group">
+            <label>📐 Độ phân giải:</label>
+            <select id="cameraResolution" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;">
+              <option value="1920x1080">1920x1080 (Full HD)</option>
+              <option value="1280x720">1280x720 (HD)</option>
+              <option value="640x480">640x480 (VGA)</option>
+              <option value="3840x2160">3840x2160 (4K)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>🔌 Trạng thái:</label>
+            <select id="cameraStatus" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;">
+              <option value="online">🟢 Online</option>
+              <option value="offline">🔴 Offline</option>
+              <option value="maintenance">🟡 Bảo trì</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>📝 Ghi chú:</label>
+            <textarea id="cameraNotes" rows="3" placeholder="Thông tin bổ sung về camera..." style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px; resize: vertical;"></textarea>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button type="submit" class="btn" style="flex: 1; margin-bottom: 0; background: #FF6B6B; color: white;">💾 Lưu</button>
+          <button type="button" class="btn" onclick="closeSensorModal()" style="flex: 1; margin-bottom: 0; background: #ecf0f6; color: #2c3e50;">Hủy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal" id="hotspotModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Thêm Hotspot</h3>
+        <button class="close-modal" type="button" onclick="document.getElementById('hotspotModal').classList.remove('active')">&times;</button>
+      </div>
+      <form id="hotspotForm">
+        <div class="form-group">
+          <label>Phòng đích</label>
+          <select id="targetRoom">
+            <option value="">-- Chọn phòng đích --</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Góc Yaw (-180 - 180°)</label>
+          <input type="number" id="yaw" min="-180" max="180" step="0.01" required>
+        </div>
+
+        <div class="form-group">
+          <label>Góc Pitch (-90 - 90°)</label>
+          <input type="number" id="pitch" min="-90" max="90" step="0.01" required>
+        </div>
+
+        <div class="form-group">
+          <label>Xoay (0 - 360°)</label>
+          <input type="number" id="rotation" min="0" max="360" step="0.01" value="0">
+        </div>
+
+        <div class="form-group">
+          <label>Màu sắc</label>
+          <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 12px;">
+            <input type="text" id="color" placeholder="#ff0000" value="#ff0000">
+            <input type="color" id="colorPicker" value="#ff0000" style="width: 45px; height: 40px; cursor: pointer;">
+          </div>
+          <div>
+            <div class="color-swatch" data-color="#ff0000" style="background: #ff0000;" title="Đỏ"></div>
+            <div class="color-swatch" data-color="#00ff00" style="background: #00ff00;" title="Xanh lá"></div>
+            <div class="color-swatch" data-color="#0000ff" style="background: #0000ff;" title="Xanh dương"></div>
+            <div class="color-swatch" data-color="#ffff00" style="background: #ffff00;" title="Vàng"></div>
+            <div class="color-swatch" data-color="#ff00ff" style="background: #ff00ff;" title="Hồng"></div>
+            <div class="color-swatch" data-color="#00ffff" style="background: #00ffff;" title="Cyan"></div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button type="submit" class="btn btn-primary" style="flex: 1; margin-bottom: 0;">💾 Lưu</button>
+          <button type="button" class="btn" onclick="document.getElementById('hotspotModal').classList.remove('active')" style="flex: 1; margin-bottom: 0; background: #ecf0f6; color: #2c3e50;">Hủy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== MEDIA HOTSPOT MODAL ===== -->
+  <div class="modal" id="mediaHotspotModal">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3 style="margin: 0;">📁 Thêm Tư liệu</h3>
+        <button class="close-modal" type="button" onclick="closeMediaHotspotModal()">&times;</button>
+      </div>
+
+      <form id="mediaHotspotForm">
+        <div class="form-group">
+          <label>Tiêu đề:</label>
+          <input type="text" id="mediaTitle" placeholder="Ví dụ: Tranh sơn mài..." required>
+        </div>
+
+        <div class="form-group">
+          <label>Mô tả:</label>
+          <textarea id="mediaDescription" rows="2" placeholder="Thông tin chi tiết..." style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 6px;"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Loại tư liệu:</label>
+          <select id="mediaType" required onchange="updateMediaUploadHint()">
+            <option value="">-- Chọn loại --</option>
+            <option value="image">🖼️ Hình ảnh</option>
+            <option value="pdf">📄 PDF</option>
+            <option value="video">🎥 Video</option>
+            <option value="3d">🎮 Mô hình 3D</option>
+            <option value="youtube">▶️ YouTube</option>
+            <option value="facebook">👍 Facebook</option>
+            <option value="web">🌐 Trang web</option>
+            <option value="note">Ghi chú</option>
+          </select>
+        </div>
+
+        <div id="fileUploadSection" class="form-group">
+          <label>Upload file:</label>
+          <div style="background: #f8f9fa; border: 2px dashed #3498db; border-radius: 6px; padding: 20px; text-align: center; cursor: pointer;" onclick="document.getElementById('mediaFileInput').click()">
+            <div style="font-size: 28px; margin-bottom: 8px;">📁</div>
+            <div id="mediaUploadHint" style="color: #3498db; font-weight: 600; font-size: 13px;">Chọn file</div>
+            <div id="mediaFileInfo" style="color: #7f8c8d; font-size: 11px; margin-top: 6px;"></div>
+          </div>
+          <input type="file" id="mediaFileInput" style="display: none;" onchange="handleMediaFileSelect(event)">
+        </div>
+
+        <div id="linkInputSection" class="form-group" style="display: none;">
+          <label>Link URL:</label>
+          <input type="text" id="mediaUrl" placeholder="https://www.youtube.com/watch?v=... hoặc https://www.facebook.com/..." style="width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 6px;">
+        </div>
+
+        <div class="form-group">
+          <label>Góc Yaw (-180 - 180°):</label>
+          <input type="number" id="mediaYaw" min="-180" max="180" step="0.01" required>
+        </div>
+
+        <div class="form-group">
+          <label>Góc Pitch (-90 - 90°):</label>
+          <input type="number" id="mediaPitch" min="-90" max="90" step="0.01" required>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button type="submit" class="btn" style="flex: 1; margin-bottom: 0; background: #27ae60; color: white;">💾 Lưu</button>
+          <button type="button" class="btn" onclick="closeMediaHotspotModal()" style="flex: 1; margin-bottom: 0; background: #ecf0f6; color: #2c3e50;">Hủy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Pannellum library
+    if (typeof pannellum === 'undefined') {
+      console.error('Pannellum not loaded');
+    }
+
+    /* ===== STATE ===== */
+    let rooms = [];
+    let selectedRoomId = null;
+    let editingHotspotIndex = null;
+    let editingMediaHotspotIndex = null;
+    let panoramaViewer = null;
+    let selectedMediaFile = null;
+    let addHotspotMode = false;
+    let addMediaMode = false;
+    let editingSensorIndex = null;
+    let roomSensors = [];
+    let autoRefreshInterval = null;
+    let isAutoRefreshEnabled = false;
+
+    /* ===== WEBCAM MANAGEMENT ===== */
+    let webcamStream = null;
+
+    function toggleWebcam() {
+      const useWebcam = document.getElementById('useWebcam').checked;
+      const webcamPreview = document.getElementById('webcamPreview');
+      const manualUrlGroup = document.getElementById('manualCameraUrlGroup');
+      const streamUrlInput = document.getElementById('cameraStreamUrl');
+      const snapshotUrlInput = document.getElementById('cameraSnapshotUrl');
+      
+      if (useWebcam) {
+        webcamPreview.style.display = 'block';
+        manualUrlGroup.style.display = 'none';
+        streamUrlInput.value = 'webcam://0';
+        snapshotUrlInput.value = 'webcam://0/snapshot';
+        snapshotUrlInput.disabled = true;
+      } else {
+        webcamPreview.style.display = 'none';
+        manualUrlGroup.style.display = 'block';
+        if (streamUrlInput.value === 'webcam://0') {
+          streamUrlInput.value = '';
+          snapshotUrlInput.value = '';
+        }
+        snapshotUrlInput.disabled = false;
+        stopWebcam();
+      }
+    }
+    window.toggleWebcam = toggleWebcam;
+
+    async function startWebcam() {
+      try {
+        const video = document.getElementById('webcamVideo');
+        const cameraStatusSelect = document.getElementById('cameraStatus');
+        
+        // Stop existing stream if any
+        if (webcamStream) {
+          webcamStream.getTracks().forEach(track => track.stop());
+        }
+        
+        // Request webcam access
+        webcamStream = await navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          }, 
+          audio: false 
+        });
+        
+        video.srcObject = webcamStream;
+        
+        // Ensure video plays
+        video.onloadedmetadata = () => {
+          video.play().then(() => {
+            console.log('✅ Webcam started successfully');
+            if (cameraStatusSelect) cameraStatusSelect.value = 'online';
+            alert('✅ Webcam đã được bật thành công!');
+          }).catch(e => {
+            console.error('Play error:', e);
+            alert('⚠️ Webcam đã bật nhưng không thể phát video. Hãy kiểm tra quyền truy cập.');
+          });
+        };
+      } catch (err) {
+        console.error('❌ Webcam error:', err);
+        let errorMsg = '❌ Không thể truy cập webcam: ' + err.message;
+        
+        if (err.name === 'NotAllowedError') {
+          errorMsg += '\n\n🔒 Bạn đã từ chối quyền truy cập camera. Vui lòng:\n1. Click vào biểu tượng 🔒 trên thanh địa chỉ\n2. Cho phép truy cập Camera\n3. Tải lại trang';
+        } else if (err.name === 'NotFoundError') {
+          errorMsg += '\n\n📷 Không tìm thấy webcam. Vui lòng kiểm tra:\n- Webcam đã được kết nối\n- Driver webcam đã cài đặt';
+        } else if (err.name === 'NotReadableError') {
+          errorMsg += '\n\n⚠️ Webcam đang được sử dụng bởi ứng dụng khác';
+        }
+        
+        alert(errorMsg);
+      }
+    }
+    window.startWebcam = startWebcam;
+
+    function stopWebcam() {
+      const video = document.getElementById('webcamVideo');
+      const cameraStatusSelect = document.getElementById('cameraStatus');
+      
+      if (webcamStream) {
+        webcamStream.getTracks().forEach(track => track.stop());
+        webcamStream = null;
+        video.srcObject = null;
+        if (cameraStatusSelect) cameraStatusSelect.value = 'offline';
+        console.log('⏹️ Webcam stopped');
+      }
+    }
+    window.stopWebcam = stopWebcam;
+
+    /* ===== TOGGLE SENSOR/CAMERA FIELDS ===== */
+    function toggleSensorFields() {
+      const sensorType = document.getElementById('sensorType').value;
+      const environmentFields = document.getElementById('environmentFields');
+      const cameraFields = document.getElementById('cameraFields');
+      const apiConfigContainer = environmentFields.previousElementSibling;
+      
+      if (sensorType === 'camera') {
+        environmentFields.style.display = 'none';
+        cameraFields.style.display = 'block';
+        // Hide API config for camera
+        if (apiConfigContainer && apiConfigContainer.style) {
+          apiConfigContainer.style.display = 'none';
+        }
+      } else {
+        environmentFields.style.display = 'block';
+        cameraFields.style.display = 'none';
+        // Show API config for environment sensor
+        if (apiConfigContainer && apiConfigContainer.style) {
+          apiConfigContainer.style.display = 'block';
+        }
+      }
+    }
+    window.toggleSensorFields = toggleSensorFields;
+
+    /* ===== DOM ELEMENTS ===== */
+    const selectedRoomInfo = document.getElementById('selectedRoomInfo');
+    const hotspotSection = document.getElementById('hotspotSection');
+    const hotspotsList = document.getElementById('hotspotsList');
+    const hotspotForm = document.getElementById('hotspotForm');
+    const hotspotModal = document.getElementById('hotspotModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const colorPicker = document.getElementById('colorPicker');
+    const addHotspotBtn = document.getElementById('addHotspotBtn');
+    const addMediaBtn = document.getElementById('addMediaBtn');
+
+    // ===== AUTO-REFRESH FUNCTIONS (declared early for inline onclick) =====
+    function toggleAutoRefresh() {
+      if (isAutoRefreshEnabled) {
+        stopAutoRefresh();
+      } else {
+        startAutoRefresh();
+      }
+    }
+
+    function startAutoRefresh() {
+      if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+      }
+      
+      isAutoRefreshEnabled = true;
+      updateAutoRefreshStatus();
+      
+      // Will load config later
+      const interval = 10000; // default 10 seconds
+      autoRefreshInterval = setInterval(() => {
+        if (selectedRoomId && roomSensors.length > 0) {
+          refreshAllSensors();
+        }
+      }, interval);
+      
+      console.log(`🔄 Auto-refresh enabled (interval: ${interval/1000}s)`);
+    }
+
+    function stopAutoRefresh() {
+      if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+        autoRefreshInterval = null;
+      }
+      isAutoRefreshEnabled = false;
+      updateAutoRefreshStatus();
+      console.log('🛑 Auto-refresh disabled');
+    }
+
+    function updateAutoRefreshStatus() {
+      const statusEl = document.getElementById('autoRefreshStatus');
+      if (statusEl) {
+        statusEl.textContent = isAutoRefreshEnabled ? '🔄 Auto-refresh: ON' : '⏸️ Auto-refresh: OFF';
+        statusEl.style.color = isAutoRefreshEnabled ? '#27ae60' : '#7f8c8d';
+      }
+    }
+
+    async function refreshAllSensors() {
+      if (!selectedRoomId) {
+        console.warn('⚠️ Chưa chọn phòng, bỏ qua refresh.');
+        return;
+      }
+
+      console.log(`🔄 Refreshing sensors (room ${selectedRoomId})...`);
+      
+      try {
+        const res = await fetch(`/api/real-data/combined?roomId=${selectedRoomId}`);
+        const result = await res.json();
+        
+        if (result.success && result.data && roomSensors.length > 0) {
+          // Update only environment sensors in current room with new data
+          // Skip cameras as they don't have temperature/humidity/pm25
+          let updatedCount = 0;
+          for (const sensor of roomSensors) {
+            // Only update environment sensors, not cameras
+            if (sensor.type === 'camera' || !sensor.sensors) {
+              console.log(`⏭️ Skipping ${sensor.name} (type: ${sensor.type})`);
+              continue;
+            }
+            
+            sensor.sensors.temperature.value = result.data.temperature;
+            sensor.sensors.humidity.value = result.data.humidity;
+            sensor.sensors.pm25.value = result.data.pm25;
+            sensor.lastUpdate = new Date().toISOString();
+            
+            // Save to backend
+            await fetch(`/api/sensors/${sensor.id}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(sensor)
+            });
+            
+            updatedCount++;
+          }
+          
+          // Reload sensors to display updated data
+          await loadSensors();
+          console.log(`✅ Refreshed ${updatedCount} environment sensor(s) successfully`);
+        }
+      } catch (err) {
+        console.error('❌ Auto-refresh error:', err);
+      }
+    }
+
+    // ===== LOAD & RENDER ROOMS =====
+    async function loadRooms() {
+      try {
+        const res = await fetch('/api/rooms');
+        rooms = await res.json();
+        renderRooms();
+        updateTargetRoomSelect();
+      } catch (error) {
+        console.error('Error loading rooms:', error);
+      }
+    }
+
+    function renderRooms() {
+      if (rooms.length === 0) {
+        roomsList.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><p>Chưa có phòng</p></div>';
+        return;
+      }
+
+      roomsList.innerHTML = rooms.map(room => `
+        <div class="room-item ${room.id === selectedRoomId ? 'active' : ''}">
+          <div class="room-item-text" onclick="selectRoom(${room.id})">
+            <div class="room-item-name">🏠 ${room.name}</div>
+            <div class="room-item-info">Hotspot: ${room.hotspots ? room.hotspots.length : 0} | Tầng ${room.floor || 1}</div>
+          </div>
+          <button class="room-item-delete" onclick="deleteRoom(${room.id}, event)">🗑️</button>
+        </div>
+      `).join('');
+    }
+
+    function updateTargetRoomSelect() {
+      const select = document.getElementById('targetRoom');
+      select.innerHTML = '<option value="">-- Chọn phòng đích --</option>';
+      rooms.forEach(room => {
+        if (room.id !== selectedRoomId) {
+          select.innerHTML += `<option value="${room.id}">${room.name}</option>`;
+        }
+      });
+    }
+
+    // Will be redefined below after media functions are loaded
+    window.selectRoom = function(roomId) {
+      // Placeholder - see below for actual implementation
+    };
+
+    function renderHotspots() {
+      const room = rooms.find(r => r.id === selectedRoomId);
+      if (!room || !room.hotspots || room.hotspots.length === 0) {
+        hotspotsList.innerHTML = '<div class="empty-state"><p>Chưa có hotspot</p></div>';
+        return;
+      }
+
+      hotspotsList.innerHTML = room.hotspots.map((hotspot, idx) => {
+        const targetRoom = rooms.find(r => r.id === hotspot.target);
+        return `
+          <div class="hotspot-item">
+            <h5>🎯 Hotspot ${idx + 1}</h5>
+            <div class="hotspot-info">
+              <span><strong>Phòng:</strong> ${targetRoom ? targetRoom.name : '?'}</span>
+              <span><strong>Yaw:</strong> ${hotspot.yaw.toFixed(2)}° | <strong>Pitch:</strong> ${hotspot.pitch.toFixed(2)}°</span>
+            </div>
+            <div class="hotspot-actions">
+              <button class="btn btn-edit btn-small" onclick="editHotspot(${idx})" style="margin-bottom: 0;">✏️ Sửa</button>
+              <button class="btn btn-danger btn-small" onclick="deleteHotspot(${idx})" style="margin-bottom: 0;">🗑️ Xóa</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ===== HOTSPOT OPERATIONS =====
+    hotspotForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const targetId = Number(document.getElementById('targetRoom').value);
+      if (!targetId) {
+        alert('Vui lòng chọn phòng đích');
+        return;
+      }
+
+      const data = {
+        target: targetId,
+        yaw: Number(document.getElementById('yaw').value),
+        pitch: Number(document.getElementById('pitch').value),
+        rotation: Number(document.getElementById('rotation').value),
+        color: document.getElementById('color').value
+      };
+
+      try {
+        let url = `/api/admin/rooms/${selectedRoomId}/hotspots`;
+        let method = 'PUT';
+
+        if (editingHotspotIndex !== null) {
+          url += `/${editingHotspotIndex}`;
+          method = 'PATCH';
+        }
+
+        const res = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+          await loadRooms();
+          renderHotspots();
+          loadPanoramaPreview();
+          hotspotModal.classList.remove('active');
+          alert(editingHotspotIndex !== null ? 'Cập nhật thành công!' : 'Thêm thành công!');
+        } else {
+          alert('Lỗi lưu hotspot');
+        }
+      } catch (error) {
+        console.error('Error saving hotspot:', error);
+        alert('Lỗi: ' + error.message);
+      }
+    });
+
+    window.editHotspot = function(idx) {
+      const room = rooms.find(r => r.id === selectedRoomId);
+      const hotspot = room.hotspots[idx];
+
+      editingHotspotIndex = idx;
+      modalTitle.textContent = 'Chỉnh sửa Hotspot';
+      document.getElementById('targetRoom').value = hotspot.target;
+      document.getElementById('yaw').value = hotspot.yaw;
+      document.getElementById('pitch').value = hotspot.pitch;
+      document.getElementById('rotation').value = hotspot.rotation || 0;
+      document.getElementById('color').value = hotspot.color;
+      colorPicker.value = hotspot.color;
+
+      hotspotModal.classList.add('active');
+    };
+
+    window.deleteHotspot = async function(idx) {
+      if (!confirm('Xóa hotspot này?')) return;
+
+      try {
+        const res = await fetch(`/api/admin/rooms/${selectedRoomId}/hotspots/${idx}`, {
+          method: 'DELETE'
+        });
+
+        if (res.ok) {
+          await loadRooms();
+          renderHotspots();
+          loadPanoramaPreview();
+          alert('Đã xóa!');
+        } else {
+          alert('Lỗi xóa hotspot');
+        }
+      } catch (error) {
+        console.error('Error deleting hotspot:', error);
+      }
+    };
+
+    // ===== DELETE ROOM =====
+    window.deleteRoom = async function(roomId, event) {
+      event.stopPropagation();
+      
+      const room = rooms.find(r => r.id === roomId);
+      if (!room) return;
+      
+      const confirmed = confirm(`Xóa phòng "${room.name}"?\n\nThao tác này sẽ xóa phòng, hotspot, tiles và ảnh.`);
+      if (!confirmed) return;
+      
+      try {
+        const res = await fetch(`/api/admin/rooms/${roomId}`, { method: 'DELETE' });
+        const data = await res.json();
+        
+        if (data.success) {
+          await loadRooms();
+          
+          if (selectedRoomId === roomId) {
+            selectedRoomId = null;
+            hotspotSection.style.display = 'none';
+            selectedRoomInfo.style.display = 'block';
+            
+            if (panoramaViewer) {
+              panoramaViewer.destroy();
+              panoramaViewer = null;
+            }
+          }
+          
+          alert('Đã xóa phòng!');
+        } else {
+          alert('Lỗi: ' + data.error);
+        }
+      } catch (err) {
+        console.error('Delete error:', err);
+        alert('Lỗi: ' + err.message);
+      }
+    };
+
+    // ===== PANORAMA VIEWER =====
+    function loadPanoramaPreview() {
+      const room = rooms.find(r => r.id === selectedRoomId);
+      if (!room) return;
+
+      const viewerContainer = document.getElementById('panoramaViewer');
+      
+      if (panoramaViewer) {
+        panoramaViewer.destroy();
+        panoramaViewer = null;
+      }
+
+      const imageUrl = room.image.startsWith('http') ? room.image : window.location.origin + room.image;
+
+      panoramaViewer = pannellum.viewer('panoramaViewer', {
+        type: 'equirectangular',
+        panorama: imageUrl,
+        autoLoad: true,
+        showControls: true,
+        mouseZoom: true,
+        compass: false,
+        hfov: 100,
+        minHfov: 50,
+        maxHfov: 120,
+        pitch: 0,
+        yaw: 0
+      });
+
+      panoramaViewer.on('load', function() {
+        console.log('✅ Panorama loaded');
+        
+        // Add navigation hotspots
+        if (room.hotspots && room.hotspots.length > 0) {
+          room.hotspots.forEach((hotspot, idx) => {
+            const targetRoom = rooms.find(r => r.id === hotspot.target);
+            const tooltipText = targetRoom ? targetRoom.name : `Hotspot ${idx + 1}`;
+            
+            panoramaViewer.addHotSpot({
+              id: `hotspot-${idx}`,
+              pitch: hotspot.pitch,
+              yaw: hotspot.yaw,
+              type: 'info',
+              text: tooltipText,
+              cssClass: 'custom-hotspot',
+              createTooltipFunc: function(div) {
+                div.innerHTML = `<span style="background: ${hotspot.color || '#ff0000'}; color: white; padding: 8px 12px; border-radius: 6px; font-size: 12px; white-space: nowrap;">📍 ${tooltipText}</span>`;
+              },
+              clickHandlerFunc: function() {
+                console.log('Clicked hotspot', idx);
+                editHotspot(idx);
+              }
+            });
+            
+            console.log(`Added hotspot ${idx}: Yaw=${hotspot.yaw}°, Pitch=${hotspot.pitch}°`);
+          });
+          console.log(`✅ Added ${room.hotspots.length} hotspots`);
+        }
+
+        // Add media hotspots
+        if (room.mediaHotspots && room.mediaHotspots.length > 0) {
+          room.mediaHotspots.forEach((media, idx) => {
+            const icons = { image: '🖼️', pdf: '📄', video: '🎥', '3d': '🎮' };
+            const icon = icons[media.mediaType] || '📁';
+            const label = `${icon} ${media.title}`;
+            
+            panoramaViewer.addHotSpot({
+              id: `media-${idx}`,
+              pitch: media.pitch,
+              yaw: media.yaw,
+              type: 'info',
+              text: label,
+              cssClass: 'custom-hotspot',
+              createTooltipFunc: function(div) {
+                div.innerHTML = `<span style="background: #2196f3; color: white; padding: 8px 12px; border-radius: 6px; font-size: 12px; white-space: nowrap;">${label}</span>`;
+              },
+              clickHandlerFunc: function() {
+                window.open(media.mediaUrl, '_blank');
+              }
+            });
+            
+            console.log(`Added media hotspot ${idx}: ${label}`);
+          });
+          console.log(`✅ Added ${room.mediaHotspots.length} media hotspots`);
+        }
+      });
+
+      panoramaViewer.on('mousedown', function(event) {
+        if (event.button === 0) {
+          setTimeout(() => {
+            const coords = panoramaViewer.mouseEventToCoords(event);
+            if (coords && coords[0] !== undefined && coords[1] !== undefined) {
+              const pitch = coords[0];
+              const yaw = coords[1];
+
+              // Add media hotspot via click
+              if (addMediaMode) {
+                document.getElementById('mediaYaw').value = yaw.toFixed(2);
+                document.getElementById('mediaPitch').value = pitch.toFixed(2);
+                document.getElementById('mediaHotspotModal').classList.add('active');
+                setAddMediaMode(false);
+                return;
+              }
+
+              // Add navigation hotspot via click
+              if (addHotspotMode) {
+                editingHotspotIndex = null;
+                modalTitle.textContent = 'Thêm Hotspot (từ ảnh)';
+                document.getElementById('targetRoom').value = '';
+                document.getElementById('yaw').value = yaw.toFixed(2);
+                document.getElementById('pitch').value = pitch.toFixed(2);
+                document.getElementById('rotation').value = 0;
+                document.getElementById('color').value = '#ff0000';
+                colorPicker.value = '#ff0000';
+                hotspotModal.classList.add('active');
+                setAddHotspotMode(false);
+              }
+            }
+          }, 50);
+        }
+      });
+    }
+
+    // ===== ADD MODE FUNCTIONS =====
+    function setAddHotspotMode(on) {
+      addHotspotMode = on;
+      if (addHotspotMode) addMediaMode = false;
+      updateAddHotspotButton();
+      updateAddMediaButton();
+    }
+
+    function updateAddHotspotButton() {
+      if (addHotspotMode) {
+        addHotspotBtn.textContent = '🎯 Click ảnh';
+        addHotspotBtn.style.background = '#27ae60';
+      } else {
+        addHotspotBtn.textContent = '➕ Di chuyển';
+        addHotspotBtn.style.background = '';
+      }
+
+    }
+
+    if (addHotspotBtn) {
+      addHotspotBtn.addEventListener('click', () => {
+        setAddHotspotMode(!addHotspotMode);
+      });
+    }
+
+    // Color picker
+    if (colorPicker) {
+      colorPicker.addEventListener('change', (e) => {
+        document.getElementById('color').value = e.target.value;
+      });
+    }
+
+    const colorSwatches = document.querySelectorAll('.color-swatch');
+    colorSwatches.forEach(swatch => {
+      swatch.addEventListener('click', () => {
+        const color = swatch.getAttribute('data-color');
+        if (color) {
+          document.getElementById('color').value = color;
+          colorPicker.value = color;
+        }
+      });
+    });
+
+    /* ===== MEDIA HOTSPOT FUNCTIONS ===== */
+    function closeMediaHotspotModal() {
+      document.getElementById('mediaHotspotModal').classList.remove('active');
+      document.getElementById('mediaHotspotForm').reset();
+      selectedMediaFile = null;
+      editingMediaHotspotIndex = null;
+      document.getElementById('mediaFileInfo').textContent = '';
+      delete document.getElementById('mediaHotspotForm').dataset.existingMediaUrl;
+      
+      // Reset modal header to default
+      const modal = document.getElementById('mediaHotspotModal');
+      const modalHeader = modal.querySelector('.modal-header h3');
+      modalHeader.textContent = '📁 Thêm Tư liệu';
+    }
+
+    function updateMediaUploadHint() {
+      const type = document.getElementById('mediaType').value;
+      const hint = document.getElementById('mediaUploadHint');
+      const fileInput = document.getElementById('mediaFileInput');
+      const fileSection = document.getElementById('fileUploadSection');
+      const linkSection = document.getElementById('linkInputSection');
+      const mediaUrlInput = document.getElementById('mediaUrl');
+      
+      // Hide both sections first
+      fileSection.style.display = 'none';
+      linkSection.style.display = 'none';
+      
+      const hints = {
+        'image': { text: '🖼️ Chọn ảnh', accept: 'image/*' },
+        'pdf': { text: '📄 Chọn PDF', accept: '.pdf' },
+        'video': { text: '🎥 Chọn video', accept: 'video/*' },
+        '3d': { text: '🎮 Chọn 3D', accept: '.glb,.gltf' }
+      };
+      
+      if (type === 'youtube' || type === 'facebook' || type === 'web') {
+        // Show link input section
+        linkSection.style.display = 'block';
+        if (type === 'youtube') {
+          mediaUrlInput.placeholder = 'https://www.youtube.com/watch?v=... hoặc https://youtu.be/...';
+        } else if (type === 'facebook') {
+          mediaUrlInput.placeholder = 'https://www.facebook.com/watch/?v=... hoặc link bài đăng Facebook';
+        } else if (type === 'web') {
+          mediaUrlInput.placeholder = 'https://example.com - Nhập URL trang web';
+        }
+      } else if (type === 'note') {
+        // For notes, don't show file or link section - description is enough
+        // Note: nothing to show, just let user fill in description
+      } else {
+        // Show file upload section
+        fileSection.style.display = 'block';
+        if (hints[type]) {
+          hint.textContent = hints[type].text;
+          fileInput.accept = hints[type].accept;
+        }
+      }
+    }
+
+    function handleMediaFileSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      selectedMediaFile = file;
+      document.getElementById('mediaFileInfo').textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+    }
+
+    const mediaForm = document.getElementById('mediaHotspotForm');
+    if (mediaForm) {
+      mediaForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const mediaType = document.getElementById('mediaType').value;
+        
+        if (!selectedRoomId) {
+          alert('Vui lòng chọn phòng');
+          return;
+        }
+        
+        let mediaUrl = null;
+        
+        try {
+          // Handle YouTube/Facebook/Web links
+          if (mediaType === 'youtube' || mediaType === 'facebook' || mediaType === 'web') {
+            mediaUrl = document.getElementById('mediaUrl').value.trim();
+            if (!mediaUrl) {
+              alert('Vui lòng nhập URL');
+              return;
+            }
+          } else if (mediaType === 'note') {
+            // For notes, use the description as mediaUrl (we'll use it as note content)
+            // Description is optional - can be empty
+            const description = document.getElementById('mediaDescription').value.trim();
+            mediaUrl = description || ''; // Allow empty notes
+          } else {
+            // Handle file upload
+            if (editingMediaHotspotIndex !== null && !selectedMediaFile) {
+              mediaUrl = mediaForm.dataset.existingMediaUrl;
+            } else if (!selectedMediaFile) {
+              alert('Vui lòng chọn file');
+              return;
+            }
+            
+            // Upload new media file if provided
+            if (selectedMediaFile) {
+              const formData = new FormData();
+              formData.append('media', selectedMediaFile);
+              
+              const uploadRes = await fetch('/api/admin/media/upload', {
+                method: 'POST',
+                body: formData
+              });
+              
+              const uploadData = await uploadRes.json();
+              
+              if (!uploadData.success) {
+                alert('Lỗi upload: ' + uploadData.error);
+                return;
+              }
+              
+              mediaUrl = uploadData.media.url;
+            }
+          }
+          
+          // Prepare media hotspot data
+          const mediaHotspot = {
+            yaw: parseFloat(document.getElementById('mediaYaw').value),
+            pitch: parseFloat(document.getElementById('mediaPitch').value),
+            title: document.getElementById('mediaTitle').value,
+            description: document.getElementById('mediaDescription').value,
+            mediaUrl: mediaUrl,
+            mediaType: mediaType
+          };
+          
+          // Add or update
+          let url = `/api/admin/rooms/${selectedRoomId}/media-hotspots`;
+          let method = 'POST';
+          
+          if (editingMediaHotspotIndex !== null) {
+            url += `/${editingMediaHotspotIndex}`;
+            method = 'PATCH';
+          }
+          
+          const res = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(mediaHotspot)
+          });
+          
+          const data = await res.json();
+          
+          if (data.success) {
+            document.getElementById('mediaHotspotModal').classList.remove('active');
+            mediaForm.reset();
+            selectedMediaFile = null;
+            editingMediaHotspotIndex = null;
+            document.getElementById('mediaFileInfo').textContent = '';
+            document.getElementById('mediaUrl').value = '';
+            delete mediaForm.dataset.existingMediaUrl;
+            
+            // Reset modal header to default
+            const modal = document.getElementById('mediaHotspotModal');
+            const modalHeader = modal.querySelector('.modal-header h3');
+            modalHeader.textContent = '📁 Thêm Tư liệu';
+            
+            // Refresh room data so panorama has latest media hotspots
+            await loadRooms();
+            loadMediaHotspots();
+            loadPanoramaPreview();
+            alert('✅ ' + (method === 'PATCH' ? 'Cập nhật thành công!' : 'Đã thêm tư liệu!'));
+          } else {
+            alert('Lỗi: ' + data.error);
+          }
+        } catch (err) {
+          console.error(err);
+          alert('Lỗi: ' + err.message);
+        }
+      });
+    }
+
+    async function loadMediaHotspots() {
+      if (!selectedRoomId) return;
+      
+      try {
+        const res = await fetch(`/api/admin/rooms/${selectedRoomId}/media-hotspots`);
+        const data = await res.json();
+        
+        if (data.success) {
+          renderMediaHotspots(data.mediaHotspots || []);
+        }
+      } catch (err) {
+        console.error('Load media error:', err);
+      }
+    }
+
+    function renderMediaHotspots(mediaHotspots) {
+      const list = document.getElementById('mediaHotspotsList');
+      
+      if (!mediaHotspots || mediaHotspots.length === 0) {
+        list.innerHTML = '<div class="empty-state"><p>Chưa có tư liệu</p></div>';
+        return;
+      }
+      
+      const icons = { image: '🖼️', pdf: '📄', video: '🎥', '3d': '🎮', youtube: '▶️', facebook: '👍', web: '🌐', note: '!' };
+      
+      list.innerHTML = mediaHotspots.map((media, idx) => `
+        <div class="hotspot-item" style="background: #e8f5e9; border-left-color: #27ae60;">
+          <h5>${icons[media.mediaType] || '📁'} ${media.title}</h5>
+          <div class="hotspot-info">
+            <span>${media.description || ''}</span>
+            <span><strong>Yaw:</strong> ${media.yaw?.toFixed(2) || '?'}° | <strong>Pitch:</strong> ${media.pitch?.toFixed(2) || '?'}°</span>
+          </div>
+          <div class="hotspot-actions">
+            <button class="btn btn-small" onclick="window.open('${media.mediaUrl}', '_blank')" style="margin-bottom: 0; background: #2196f3; color: white;">👁️ Xem</button>
+            <button class="btn btn-edit btn-small" onclick="editMediaHotspot(${idx})" style="margin-bottom: 0;">✏️ Sửa</button>
+            <button class="btn btn-small" onclick="deleteMediaHotspot(${idx})" style="margin-bottom: 0; background: #f44336; color: white;">🗑️ Xóa</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.deleteMediaHotspot = async function(index) {
+      if (!confirm('Xóa tư liệu này?')) return;
+      
+      try {
+        const res = await fetch(`/api/admin/rooms/${selectedRoomId}/media-hotspots/${index}`, {
+          method: 'DELETE'
+        });
+        
+        const data = await res.json();
+        
+        if (data.success) {
+          await loadRooms();
+          loadMediaHotspots();
+          loadPanoramaPreview();
+          alert('✅ Đã xóa!');
+        }
+      } catch (err) {
+        alert('Lỗi: ' + err.message);
+      }
+    };
+
+    window.editMediaHotspot = function(idx) {
+      const room = rooms.find(r => r.id === selectedRoomId);
+      if (!room || !room.mediaHotspots || !room.mediaHotspots[idx]) return;
+      
+      const media = room.mediaHotspots[idx];
+      
+      editingMediaHotspotIndex = idx;
+      document.getElementById('mediaTitle').value = media.title;
+      document.getElementById('mediaDescription').value = media.description || '';
+      document.getElementById('mediaType').value = media.mediaType;
+      document.getElementById('mediaYaw').value = media.yaw;
+      document.getElementById('mediaPitch').value = media.pitch;
+      
+      // Store the current media URL for reference if not uploading new file
+      document.getElementById('mediaHotspotForm').dataset.existingMediaUrl = media.mediaUrl;
+      
+      // Update UI based on media type
+      if (media.mediaType === 'youtube' || media.mediaType === 'facebook' || media.mediaType === 'web') {
+        document.getElementById('mediaUrl').value = media.mediaUrl;
+        document.getElementById('mediaFileInfo').textContent = '';
+      } else if (media.mediaType === 'note') {
+        // For notes, media.mediaUrl contains the note content
+        document.getElementById('mediaUrl').value = '';
+        document.getElementById('mediaFileInfo').textContent = '';
+      } else {
+        document.getElementById('mediaFileInfo').textContent = `📎 Tệp hiện tại: ${media.mediaUrl.split('/').pop()}`;
+        document.getElementById('mediaUrl').value = '';
+      }
+      
+      updateMediaUploadHint();
+      
+      const modal = document.getElementById('mediaHotspotModal');
+      const modalHeader = modal.querySelector('.modal-header h3');
+      modalHeader.textContent = '📝 Chỉnh sửa Tư liệu';
+      
+      modal.classList.add('active');
+    };
+
+    function setAddMediaMode(on) {
+      addMediaMode = on;
+      if (addMediaMode) addHotspotMode = false;
+      updateAddMediaButton();
+      updateAddHotspotButton();
+    }
+
+    function updateAddMediaButton() {
+      if (!addMediaBtn) return;
+      if (addMediaMode) {
+        addMediaBtn.textContent = '🎯 Click ảnh';
+        addMediaBtn.style.background = '#2196f3';
+      } else {
+        addMediaBtn.textContent = '📁 Tư liệu';
+        addMediaBtn.style.background = '';
+      }
+    }
+
+    if (addMediaBtn) {
+      addMediaBtn.addEventListener('click', () => {
+        setAddMediaMode(!addMediaMode);
+      });
+    }
+
+    // Update selectRoom to load media hotspots and sensors
+    window.selectRoom = function(roomId) {
+      selectedRoomId = roomId;
+      renderRooms();
+      updateTargetRoomSelect();
+      renderHotspots();
+      loadPanoramaPreview();
+      loadMediaHotspots();
+      loadSensors();
+      hotspotSection.style.display = 'block';
+      selectedRoomInfo.style.display = 'none';
+    };
+
+    // (Handled inside panorama mousedown)
+
+    // ===== SENSOR MANAGEMENT =====
+    const addSensorBtn = document.getElementById('addSensorBtn');
+    const sensorModal = document.getElementById('sensorModal');
+    const sensorForm = document.getElementById('sensorForm');
+    const sensorModalTitle = document.getElementById('sensorModalTitle');
+    let currentRoomApiConfig = null;
+
+    // Toggle API Config Section
+    function setApiInputsDisabled(disabled) {
+      const ids = [
+        'roomWeatherUrl',
+        'roomWeatherApiKey',
+        'roomWeatherLat',
+        'roomWeatherLon',
+        'roomAirUrl',
+        'roomAirToken'
+      ];
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.disabled = disabled;
+      });
+    }
+
+    async function toggleApiConfigSection() {
+      const section = document.getElementById('apiConfigSection');
+      const summary = document.getElementById('apiConfigSummary');
+      const btn = document.getElementById('toggleApiConfig');
+      
+      if (section.style.display === 'none') {
+        section.style.display = 'block';
+        summary.style.display = 'none';
+        btn.textContent = '✅ Xong';
+        setApiInputsDisabled(false);
+      } else {
+        // Save config when closing edit
+        if (selectedRoomId) {
+          await saveRoomApiConfig(selectedRoomId);
+        }
+        section.style.display = 'none';
+        summary.style.display = 'block';
+        btn.textContent = '📝 Chỉnh sửa';
+        setApiInputsDisabled(true);
+        updateApiConfigSummary();
+      }
+    }
+
+    // Update API Config Summary
+    function updateApiConfigSummary() {
+      const weatherKey = document.getElementById('roomWeatherApiKey').value;
+      const airToken = document.getElementById('roomAirToken').value;
+      
+      document.getElementById('summaryWeatherStatus').textContent = weatherKey ? '✅ Đã cấu hình' : '❌ Chưa cấu hình';
+      document.getElementById('summaryAirStatus').textContent = airToken ? '✅ Đã cấu hình' : '❌ Chưa cấu hình';
+    }
+
+    // Load Room API Config
+    async function loadRoomApiConfig(roomId) {
+      try {
+        const res = await fetch(`/api/rooms/${roomId}/api-config`);
+        const data = await res.json();
+        
+        if (data.success && data.config) {
+          currentRoomApiConfig = data.config;
+          
+          // Fill form with existing config
+          document.getElementById('roomWeatherUrl').value = data.config.weatherApi?.url || 'https://api.openweathermap.org/data/2.5/weather';
+          document.getElementById('roomWeatherApiKey').value = data.config.weatherApi?.apiKey || '';
+          document.getElementById('roomWeatherLat').value = data.config.weatherApi?.params?.lat || 10.7769;
+          document.getElementById('roomWeatherLon').value = data.config.weatherApi?.params?.lon || 106.7009;
+          
+          document.getElementById('roomAirUrl').value = data.config.airQualityApi?.url || 'https://api.waqi.info/feed/@13659/';
+          document.getElementById('roomAirToken').value = data.config.airQualityApi?.token || '';
+          
+          updateApiConfigSummary();
+        } else {
+          // No config yet, use defaults
+          document.getElementById('roomWeatherUrl').value = 'https://api.openweathermap.org/data/2.5/weather';
+          document.getElementById('roomWeatherApiKey').value = '';
+          document.getElementById('roomWeatherLat').value = 10.7769;
+          document.getElementById('roomWeatherLon').value = 106.7009;
+          document.getElementById('roomAirUrl').value = 'https://api.waqi.info/feed/@13659/';
+          document.getElementById('roomAirToken').value = '';
+          updateApiConfigSummary();
+        }
+      } catch (err) {
+        console.error('Load room API config error:', err);
+      }
+    }
+
+    // Save Room API Config
+    async function saveRoomApiConfig(roomId) {
+      const config = {
+        weatherApi: {
+          provider: 'openweathermap',
+          url: document.getElementById('roomWeatherUrl').value,
+          apiKey: document.getElementById('roomWeatherApiKey').value,
+          params: {
+            lat: parseFloat(document.getElementById('roomWeatherLat').value),
+            lon: parseFloat(document.getElementById('roomWeatherLon').value),
+            units: 'metric'
+          }
+        },
+        airQualityApi: {
+          provider: 'waqi',
+          url: document.getElementById('roomAirUrl').value,
+          token: document.getElementById('roomAirToken').value
+        }
+      };
+
+      try {
+        const res = await fetch(`/api/rooms/${roomId}/api-config`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(config)
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          currentRoomApiConfig = config;
+          return true;
+        }
+        return false;
+      } catch (err) {
+        console.error('Save room API config error:', err);
+        return false;
+      }
+    }
+
+    async function loadSensors() {
+      if (!selectedRoomId) return;
+      
+      try {
+        const res = await fetch(`/api/sensors?roomId=${selectedRoomId}`);
+        const data = await res.json();
+        
+        if (data.success) {
+          roomSensors = data.sensors;
+          renderSensors();
+        }
+      } catch (err) {
+        console.error('Load sensors error:', err);
+      }
+    }
+
+    function renderSensors() {
+      const list = document.getElementById('sensorsList');
+      
+      if (!roomSensors || roomSensors.length === 0) {
+        list.innerHTML = '<div class="empty-state"><p>Chưa có cảm biến</p></div>';
+        return;
+      }
+      
+      list.innerHTML = roomSensors.map((sensor, idx) => {
+        if (sensor.type === 'camera') {
+          // Render camera
+          const statusIcons = {
+            online: '🟢',
+            offline: '🔴',
+            maintenance: '🟡'
+          };
+          const statusLabels = {
+            online: 'Online',
+            offline: 'Offline',
+            maintenance: 'Bảo trì'
+          };
+          const statusIcon = statusIcons[sensor.camera?.status] || '⚪';
+          const statusLabel = statusLabels[sensor.camera?.status] || 'N/A';
+          
+          const isWebcam = sensor.camera?.streamUrl === 'webcam://0';
+          const cameraIcon = isWebcam ? '💻' : '📹';
+          const cameraType = isWebcam ? 'Webcam Laptop' : 'Camera IP';
+          
+          return `
+            <div class="hotspot-item" style="background: #e3f2fd; border-left-color: #2196F3;">
+              <h5>${cameraIcon} ${sensor.name}</h5>
+              <div class="hotspot-info">
+                <span><strong>Loại:</strong> ${cameraType}</span>
+                <span><strong>Trạng thái:</strong> ${statusIcon} ${statusLabel}</span>
+                <span><strong>Độ phân giải:</strong> ${sensor.camera?.resolution || 'N/A'}</span>
+                ${isWebcam ? '' : `<span><strong>Stream:</strong> ${sensor.camera?.streamUrl ? '✅ Có' : '❌ Không'}</span>`}
+              </div>
+              <div class="hotspot-actions">
+                <button class="btn btn-edit btn-small" onclick="editSensor(${idx})" style="margin-bottom: 0;">✏️ Sửa</button>
+                <button class="btn btn-danger btn-small" onclick="deleteSensor(${idx})" style="margin-bottom: 0;">🗑️ Xóa</button>
+              </div>
+            </div>
+          `;
+        } else {
+          // Render environment sensor
+          return `
+            <div class="hotspot-item" style="background: #fff3e0; border-left-color: #FF6B6B;">
+              <h5>🌡️ ${sensor.name}</h5>
+              <div class="hotspot-info">
+                <span><strong>Nhiệt độ:</strong> ${sensor.sensors?.temperature?.value || 0}°C</span>
+                <span><strong>Độ ẩm:</strong> ${sensor.sensors?.humidity?.value || 0}%</span>
+                <span><strong>PM2.5:</strong> ${sensor.sensors?.pm25?.value || 0} µg/m³</span>
+                <span><strong>Yaw:</strong> ${sensor.position?.yaw?.toFixed(2) || 0}° | <strong>Pitch:</strong> ${sensor.position?.pitch?.toFixed(2) || 0}°</span>
+              </div>
+              <div class="hotspot-actions">
+                <button class="btn btn-edit btn-small" onclick="editSensor(${idx})" style="margin-bottom: 0;">✏️ Sửa</button>
+                <button class="btn btn-danger btn-small" onclick="deleteSensor(${idx})" style="margin-bottom: 0;">🗑️ Xóa</button>
+              </div>
+            </div>
+          `;
+        }
+      }).join('');
+    }
+
+    if (addSensorBtn) {
+      addSensorBtn.addEventListener('click', async () => {
+        editingSensorIndex = null;
+        sensorModalTitle.textContent = '🌡️ Thêm Thiết bị IoT';
+        
+        // Reset form first
+        sensorForm.reset();
+        document.getElementById('weatherDataInfo').textContent = '';
+        
+        // Set type to environment by default (after reset)
+        setTimeout(() => {
+          document.getElementById('sensorType').value = 'environment';
+          document.getElementById('useWebcam').checked = false;
+          toggleSensorFields(); // Show environment fields by default
+          console.log('✅ Modal opened, type set to:', document.getElementById('sensorType').value);
+        }, 10);
+        
+        // Load room API config
+        if (selectedRoomId) {
+          await loadRoomApiConfig(selectedRoomId);
+        }
+        
+        // Reset API config section state
+        document.getElementById('apiConfigSection').style.display = 'none';
+        document.getElementById('apiConfigSummary').style.display = 'block';
+        document.getElementById('toggleApiConfig').textContent = '📝 Chỉnh sửa';
+        setApiInputsDisabled(true);
+        
+        sensorModal.classList.add('active');
+      });
+    }
+
+    function closeSensorModal() {
+      sensorModal.classList.remove('active');
+      editingSensorIndex = null;
+      sensorForm.reset();
+      document.getElementById('weatherDataInfo').textContent = '';
+      document.getElementById('sensorType').value = 'environment';
+      document.getElementById('useWebcam').checked = false;
+      stopWebcam(); // Stop webcam if running
+      toggleSensorFields(); // Reset to show environment fields
+    }
+
+    window.fetchRealWeatherData = async function() {
+      const infoEl = document.getElementById('weatherDataInfo');
+      const tempInput = document.getElementById('sensorTemp');
+      const humidityInput = document.getElementById('sensorHumidity');
+      const pm25Input = document.getElementById('sensorPM25');
+      
+      infoEl.innerHTML = '<span style="color: #3498db;">⏳ Đang lấy dữ liệu từ API thời tiết...</span>';
+      
+      try {
+        if (selectedRoomId) {
+          await saveRoomApiConfig(selectedRoomId);
+        }
+        const configPayload = {
+          weatherApi: {
+            provider: 'openweathermap',
+            url: document.getElementById('roomWeatherUrl').value,
+            apiKey: document.getElementById('roomWeatherApiKey').value,
+            params: {
+              lat: parseFloat(document.getElementById('roomWeatherLat').value),
+              lon: parseFloat(document.getElementById('roomWeatherLon').value),
+              units: 'metric'
+            }
+          },
+          airQualityApi: {
+            provider: 'waqi',
+            url: document.getElementById('roomAirUrl').value,
+            token: document.getElementById('roomAirToken').value
+          }
+        };
+        // Use config from admin-rooms form directly
+        const res = await fetch('/api/real-data/combined/custom', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(configPayload)
+        });
+        const result = await res.json();
+        
+        if (result.success && result.data) {
+          tempInput.value = result.data.temperature.toFixed(1);
+          humidityInput.value = Math.round(result.data.humidity);
+          pm25Input.value = result.data.pm25.toFixed(1);
+          
+          const timestamp = new Date().toLocaleTimeString('vi-VN');
+          const aqiInfo = result.data.aqi ? `<span style="padding: 3px 8px; border-radius: 4px; background: ${result.data.aqi.color}; color: white; font-size: 11px; font-weight: 600;">${result.data.aqi.level}</span>` : '';
+          
+          infoEl.innerHTML = `
+            <div style="color: #27ae60; font-weight: 600; margin-bottom: 5px;">✅ Đã cập nhật dữ liệu thực tế (API riêng của phòng)</div>
+            <div style="font-size: 11px; color: #555;">
+              📍 ${result.data.location} | ⏰ ${timestamp}<br>
+              🌤️ ${result.data.weather || 'N/A'} | AQI: ${aqiInfo}
+            </div>
+          `;
+        } else {
+          throw new Error('Không thể lấy dữ liệu');
+        }
+      } catch (err) {
+        console.error('Fetch weather error:', err);
+        infoEl.innerHTML = '<span style="color: #e74c3c;">❌ Lỗi: ' + err.message + '</span>';
+      }
+    };
+
+    sensorForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const sensorType = document.getElementById('sensorType').value;
+      console.log('📝 Sensor Type:', sensorType);
+      
+      let sensorData = {
+        name: document.getElementById('sensorName').value,
+        roomId: selectedRoomId,
+        type: sensorType,
+        position: {
+          yaw: 0,
+          pitch: 0
+        }
+      };
+
+      // Build data based on sensor type
+      if (sensorType === 'environment') {
+        // Save room API config first
+        await saveRoomApiConfig(selectedRoomId);
+        
+        sensorData.sensors = {
+          temperature: {
+            value: Number(document.getElementById('sensorTemp').value),
+            unit: '°C',
+            min: 0,
+            max: 50
+          },
+          humidity: {
+            value: Number(document.getElementById('sensorHumidity').value),
+            unit: '%',
+            min: 0,
+            max: 100
+          },
+          pm25: {
+            value: Number(document.getElementById('sensorPM25').value),
+            unit: 'µg/m³',
+            min: 0,
+            max: 500
+          }
+        };
+      } else if (sensorType === 'camera') {
+        sensorData.camera = {
+          streamUrl: document.getElementById('cameraStreamUrl').value,
+          snapshotUrl: document.getElementById('cameraSnapshotUrl').value,
+          resolution: document.getElementById('cameraResolution').value,
+          status: document.getElementById('cameraStatus').value,
+          notes: document.getElementById('cameraNotes').value
+        };
+      }
+
+      console.log('📤 Sending sensor data:', JSON.stringify(sensorData, null, 2));
+
+      try {
+        let url = '/api/sensors';
+        let method = 'POST';
+
+        if (editingSensorIndex !== null) {
+          const sensor = roomSensors[editingSensorIndex];
+          url = `/api/sensors/${sensor.id}`;
+          method = 'PUT';
+        }
+
+        console.log(`🌐 ${method} ${url}`);
+
+        const res = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(sensorData)
+        });
+
+        const data = await res.json();
+        console.log('📥 Server response:', data);
+
+        if (data.success) {
+          closeSensorModal();
+          await loadSensors();
+          const deviceType = sensorType === 'camera' ? 'camera' : 'cảm biến';
+          alert('✅ ' + (method === 'PUT' ? `Cập nhật ${deviceType} thành công!` : `Đã thêm ${deviceType}!`));
+        } else {
+          alert('Lỗi: ' + data.error);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Lỗi: ' + err.message);
+      }
+    });
+
+    window.editSensor = async function(idx) {
+      const sensor = roomSensors[idx];
+      if (!sensor) return;
+
+      editingSensorIndex = idx;
+      sensorModalTitle.textContent = '✏️ Chỉnh sửa ' + (sensor.type === 'camera' ? 'Camera' : 'Cảm biến');
+      
+      document.getElementById('sensorName').value = sensor.name;
+      document.getElementById('sensorType').value = sensor.type || 'environment';
+      
+      // Toggle fields based on sensor type
+      toggleSensorFields();
+      
+      if (sensor.type === 'camera') {
+        // Fill camera fields
+        const isWebcam = sensor.camera?.streamUrl === 'webcam://0';
+        document.getElementById('useWebcam').checked = isWebcam;
+        document.getElementById('cameraStreamUrl').value = sensor.camera?.streamUrl || '';
+        document.getElementById('cameraSnapshotUrl').value = sensor.camera?.snapshotUrl || '';
+        document.getElementById('cameraResolution').value = sensor.camera?.resolution || '1920x1080';
+        document.getElementById('cameraStatus').value = sensor.camera?.status || 'online';
+        document.getElementById('cameraNotes').value = sensor.camera?.notes || '';
+        
+        // Toggle webcam UI if it's a webcam
+        if (isWebcam) {
+          toggleWebcam();
+        }
+      } else {
+        // Fill environment sensor fields
+        document.getElementById('sensorTemp').value = sensor.sensors?.temperature?.value || 0;
+        document.getElementById('sensorHumidity').value = sensor.sensors?.humidity?.value || 0;
+        document.getElementById('sensorPM25').value = sensor.sensors?.pm25?.value || 0;
+        document.getElementById('weatherDataInfo').textContent = '';
+
+        // Load room API config
+        if (selectedRoomId) {
+          await loadRoomApiConfig(selectedRoomId);
+        }
+        
+        // Reset API config section state
+        document.getElementById('apiConfigSection').style.display = 'none';
+        document.getElementById('apiConfigSummary').style.display = 'block';
+        document.getElementById('toggleApiConfig').textContent = '📝 Chỉnh sửa';
+        setApiInputsDisabled(true);
+      }
+
+      sensorModal.classList.add('active');
+    };
+
+    window.deleteSensor = async function(idx) {
+      const sensor = roomSensors[idx];
+      if (!sensor) return;
+
+      if (!confirm(`Xóa cảm biến "${sensor.name}"?`)) return;
+
+      try {
+        const res = await fetch(`/api/sensors/${sensor.id}`, {
+          method: 'DELETE'
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          await loadSensors();
+          alert('✅ Đã xóa cảm biến!');
+        } else {
+          alert('Lỗi: ' + data.error);
+        }
+      } catch (err) {
+        console.error('Delete sensor error:', err);
+        alert('Lỗi: ' + err.message);
+      }
+    };
+
+    // Initialize
+    loadRooms();
+    loadApiConfig();
+
+    // Load API config and start auto-refresh if enabled
+    let apiConfig = null;
+
+    async function loadApiConfig() {
+      try {
+        const res = await fetch('/api/config/api');
+        const data = await res.json();
+        if (data.success) {
+          apiConfig = data.config;
+          
+          // Update interval if different from default
+          if (apiConfig.refreshInterval && apiConfig.refreshInterval !== 10000) {
+            if (autoRefreshInterval) {
+              clearInterval(autoRefreshInterval);
+              autoRefreshInterval = setInterval(() => {
+                if (selectedRoomId && roomSensors.length > 0) {
+                  refreshAllSensors();
+                }
+              }, apiConfig.refreshInterval);
+            }
+          }
+          
+          // Auto-start if configured
+          if (apiConfig.autoRefresh && !isAutoRefreshEnabled) {
+            startAutoRefresh();
+          }
+        }
+      } catch (err) {
+        console.error('Load API config error:', err);
+      }
+    }
+  </script>
+</body>
+</html>

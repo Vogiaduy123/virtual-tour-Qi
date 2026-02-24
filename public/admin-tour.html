@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Quản lý Kịch bản Auto Tour</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body.admin {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+      color: #2c3e50;
+    }
+
+    /* Admin Header Bar - Ở trên cùng */
+    .admin-header {
+      background: white;
+      border-bottom: 1px solid #e1e8ed;
+      padding: 16px 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .admin-header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .admin-header-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    .admin-header-nav {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .tour-editor {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .editor-header {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .editor-header h1 {
+      margin: 0;
+      color: #333;
+      font-size: 24px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .scenario-info {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+      padding: 22px;
+      border-radius: 12px;
+      border: 1px solid #e2eaf3;
+      box-shadow: 0 6px 18px rgba(44, 62, 80, 0.08);
+      margin-bottom: 20px;
+    }
+
+    .scenario-info input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #cfd8e3;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-top: 6px;
+      background: #fff;
+      color: #2c3e50;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .scenario-info input:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.12);
+    }
+
+    .scenario-grid {
+      grid-template-columns: 1fr 280px;
+      gap: 14px;
+      align-items: end;
+    }
+
+    .scenario-info-title {
+      margin-bottom: 14px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .scenario-field label {
+      display: block;
+      font-size: 15px;
+      color: #334155;
+    }
+
+    .scenario-field small {
+      display: block;
+      margin-top: 6px;
+      color: #7a8899;
+      font-size: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .scenario-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .tour-stops {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .tour-stops h2 {
+      margin-top: 0;
+      color: #333;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stop-item {
+      background: #f9f9f9;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .stop-item:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
+    }
+
+    .stop-item.dragging {
+      opacity: 0.5;
+      transform: scale(0.95);
+    }
+
+    .stop-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .stop-number {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .stop-actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    .stop-actions button {
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      border: 1px solid #ddd;
+      background: white;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .stop-actions button:hover {
+      background: #f0f0f0;
+    }
+
+    .stop-actions .delete-btn {
+      color: #f44336;
+      border-color: #f44336;
+    }
+
+    .stop-actions .delete-btn:hover {
+      background: #f44336;
+      color: white;
+    }
+
+    .stop-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .stop-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stop-field label {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    .stop-field select,
+    .stop-field input,
+    .stop-field textarea {
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .stop-field textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .add-stop-btn {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 15px;
+    }
+
+    .add-stop-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .save-btn, .preview-btn, .back-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 40px;
+      white-space: nowrap;
+    }
+
+    .save-btn {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .save-btn:hover {
+      background: #45a049;
+      transform: translateY(-1px);
+    }
+
+    .preview-btn {
+      background: #2196F3;
+      color: white;
+    }
+
+    .preview-btn:hover {
+      background: #0b7dda;
+      transform: translateY(-1px);
+    }
+
+    .back-btn {
+      background: #757575;
+      color: white;
+    }
+
+    .back-btn:hover {
+      background: #616161;
+      transform: translateY(-1px);
+    }
+
+    .drag-handle {
+      cursor: move;
+      color: #999;
+      font-size: 18px;
+      margin-right: 10px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+
+    .success-message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #4CAF50;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      animation: slideIn 0.3s ease;
+      z-index: 10000;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .stop-type-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stop-type-badge.room {
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+
+    .stop-type-badge.hotspot {
+      background: #fff3e0;
+      color: #f57c00;
+    }
+
+    /* Menu styles */
+    .nav-link {
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+      background: #ecf0f6;
+      color: #2c3e50;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    .nav-link:hover {
+      background: #e3e9f3;
+      transform: translateY(-1px);
+    }
+
+    .nav-link.active {
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      color: white;
+    }
+
+    .nav-link.special {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .admin-menu {
+      position: relative;
+      display: inline-block;
+    }
+
+    .menu-button {
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: #2196F3;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      height: 40px;
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    .menu-button:hover {
+      background: #0b7dda;
+      transform: translateY(-1px);
+    }
+
+    .menu-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: white;
+      border: 1px solid #e1e8ed;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      min-width: 200px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .admin-menu:hover .menu-dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      text-decoration: none;
+      color: #2c3e50;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .menu-item:last-child {
+      border-bottom: none;
+    }
+
+    .menu-item:hover {
+      background: #f8f9fa;
+      padding-left: 20px;
+    }
+
+    .menu-item.active {
+      background: #e3e9f3;
+      color: #3498db;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="admin">
+  <!-- Admin Header Bar -->
+  <div class="admin-header">
+    <div class="admin-header-content">
+      <div class="admin-header-title">🏢 Virtual Tour Admin</div>
+      <div class="admin-header-nav">
+        <a href="admin-upload.html" class="nav-link">📤 Upload</a>
+        <a href="admin-rooms.html" class="nav-link">🏠 Phòng</a>
+        <a href="admin-minimap.html" class="nav-link">🗺️ Minimap</a>
+        <a href="admin-tour.html" class="nav-link special active">⚡ Kịch bản</a>
+        <div class="admin-menu">
+          <button class="menu-button">
+            ☰ Menu
+            <span style="font-size: 10px;">▼</span>
+          </button>
+          <div class="menu-dropdown">
+            <a href="admin.html" class="menu-item">🏠 Dashboard</a>
+            <a href="admin-upload.html" class="menu-item">📤 Upload Panorama</a>
+            <a href="admin-rooms.html" class="menu-item">🏠 Quản lý Phòng</a>
+            <a href="admin-minimap.html" class="menu-item">🗺️ Minimap</a>
+            <a href="admin-tour.html" class="menu-item active">⚡ Kịch bản Tour</a>
+            <a href="index.html" class="menu-item" style="border-top: 1px solid #e1e8ed; margin-top: 8px; padding-top: 16px;">👁️ Xem Tour</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tour Editor Content -->
+  <div class="tour-editor">
+    <div class="editor-header">
+      <h1>⚡ Quản lý Kịch bản Auto Tour</h1>
+      <div class="header-actions">
+        <button class="preview-btn" onclick="previewTour()">👁️ Xem trước</button>
+        <button class="save-btn" onclick="saveTourScenario()">💾 Lưu kịch bản</button>
+      </div>
+    </div>
+
+    <div class="scenario-info">
+      <div class="scenario-info-title">⚙️ Cấu hình chung tour</div>
+      <div class="scenario-grid">
+        <div class="scenario-field">
+          <label for="scenarioName"><strong>Tên kịch bản</strong></label>
+          <input type="text" id="scenarioName" placeholder="Ví dụ: Tour giới thiệu tổng quan, Tour chi tiết..." value="Tour mặc định">
+        </div>
+        <div class="scenario-field">
+          <label for="cameraPanDuration"><strong>Thời gian xoay camera (ms)</strong></label>
+          <input type="number" id="cameraPanDuration" min="1000" step="500" value="8000">
+          <small>Giá trị càng lớn thì xoay càng chậm</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="tour-stops">
+      <h2>
+        <span>📍 Danh sách điểm dừng (<span id="stopCount">0</span>)</span>
+        <button class="add-stop-btn" style="width: auto; padding: 8px 20px; margin: 0;" onclick="addNewStop()">+ Thêm điểm</button>
+      </h2>
+      
+      <div id="stopsContainer">
+        <div class="empty-state">
+          <div class="empty-state-icon">🎯</div>
+          <p>Chưa có điểm dừng nào</p>
+          <p style="font-size: 14px;">Nhấn "Thêm điểm" để bắt đầu tạo kịch bản tour</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let tourScenario = {
+      name: 'Tour mặc định',
+      cameraPanDuration: 8000,
+      stops: []
+    };
+
+    let rooms = [];
+
+    // Load rooms and scenario
+    async function init() {
+      await loadRooms();
+      await loadTourScenario();
+      renderStops();
+    }
+
+    async function loadRooms() {
+      try {
+        const res = await fetch('/api/rooms');
+        rooms = await res.json();
+      } catch (err) {
+        console.error('Error loading rooms:', err);
+      }
+    }
+
+    async function loadTourScenario() {
+      try {
+        const res = await fetch('/api/admin/tour-scenario');
+        const data = await res.json();
+        if (data.success && data.scenario) {
+          tourScenario = {
+            name: data.scenario.name || 'Tour mặc định',
+            cameraPanDuration: Number(data.scenario.cameraPanDuration) || 8000,
+            stops: Array.isArray(data.scenario.stops) ? data.scenario.stops : []
+          };
+          document.getElementById('scenarioName').value = tourScenario.name || 'Tour mặc định';
+          document.getElementById('cameraPanDuration').value = tourScenario.cameraPanDuration || 8000;
+        }
+      } catch (err) {
+        console.log('No scenario found, starting fresh');
+      }
+    }
+
+    function addNewStop() {
+      const stop = {
+        id: Date.now(),
+        type: 'room',
+        roomId: rooms[0]?.id || null,
+        title: '',
+        description: '',
+        duration: 10000,
+        cameraEffect: 'pan360'
+      };
+      
+      tourScenario.stops.push(stop);
+      renderStops();
+    }
+
+    function deleteStop(stopId) {
+      if (confirm('Xóa điểm dừng này?')) {
+        tourScenario.stops = tourScenario.stops.filter(s => s.id !== stopId);
+        renderStops();
+      }
+    }
+
+    function moveStopUp(index) {
+      if (index > 0) {
+        const temp = tourScenario.stops[index];
+        tourScenario.stops[index] = tourScenario.stops[index - 1];
+        tourScenario.stops[index - 1] = temp;
+        renderStops();
+      }
+    }
+
+    function moveStopDown(index) {
+      if (index < tourScenario.stops.length - 1) {
+        const temp = tourScenario.stops[index];
+        tourScenario.stops[index] = tourScenario.stops[index + 1];
+        tourScenario.stops[index + 1] = temp;
+        renderStops();
+      }
+    }
+
+    function updateStop(stopId, field, value) {
+      const stop = tourScenario.stops.find(s => s.id === stopId);
+      if (stop) {
+        stop[field] = value;
+        
+        // If type changes, reset type-specific fields
+        if (field === 'type') {
+          if (value === 'room') {
+            delete stop.hotspotIndex;
+            delete stop.targetRoomId;
+          } else if (value === 'hotspot') {
+            delete stop.cameraEffect;
+          }
+          renderStops();
+        }
+      }
+    }
+
+    function renderStops() {
+      const container = document.getElementById('stopsContainer');
+      const countEl = document.getElementById('stopCount');
+      
+      countEl.textContent = tourScenario.stops.length;
+
+      if (tourScenario.stops.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🎯</div>
+            <p>Chưa có điểm dừng nào</p>
+            <p style="font-size: 14px;">Nhấn "Thêm điểm" để bắt đầu tạo kịch bản tour</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = tourScenario.stops.map((stop, index) => {
+        const room = rooms.find(r => r.id === stop.roomId);
+        
+        return `
+          <div class="stop-item" data-id="${stop.id}">
+            <div class="stop-header">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="drag-handle" title="Kéo để sắp xếp">☰</span>
+                <span class="stop-number">${index + 1}</span>
+                <span class="stop-type-badge ${stop.type}">${stop.type === 'room' ? 'Phòng' : 'Hotspot'}</span>
+              </div>
+              <div class="stop-actions">
+                <button onclick="moveStopUp(${index})" ${index === 0 ? 'disabled' : ''}>↑</button>
+                <button onclick="moveStopDown(${index})" ${index === tourScenario.stops.length - 1 ? 'disabled' : ''}>↓</button>
+                <button class="delete-btn" onclick="deleteStop(${stop.id})">🗑️ Xóa</button>
+              </div>
+            </div>
+            
+            <div class="stop-content">
+              <div class="stop-field">
+                <label>Loại điểm dừng</label>
+                <select onchange="updateStop(${stop.id}, 'type', this.value)">
+                  <option value="room" ${stop.type === 'room' ? 'selected' : ''}>Phòng</option>
+                  <option value="hotspot" ${stop.type === 'hotspot' ? 'selected' : ''}>Hotspot</option>
+                </select>
+              </div>
+
+              <div class="stop-field">
+                <label>Chọn phòng</label>
+                <select onchange="updateStop(${stop.id}, 'roomId', parseInt(this.value))">
+                  ${rooms.map(r => `<option value="${r.id}" ${r.id === stop.roomId ? 'selected' : ''}>${r.name}</option>`).join('')}
+                </select>
+              </div>
+
+              ${stop.type === 'hotspot' ? `
+                <div class="stop-field">
+                  <label>Hotspot Index</label>
+                  <input type="number" value="${stop.hotspotIndex || 0}" min="0" 
+                         onchange="updateStop(${stop.id}, 'hotspotIndex', parseInt(this.value))">
+                </div>
+              ` : ''}
+
+              <div class="stop-field">
+                <label>Thời gian dừng (ms)</label>
+                <input type="number" value="${stop.duration || 5000}" min="1000" step="500"
+                       onchange="updateStop(${stop.id}, 'duration', parseInt(this.value))">
+              </div>
+
+              <div class="stop-field" style="grid-column: 1 / -1;">
+                <label>Tiêu đề</label>
+                <input type="text" value="${stop.title || ''}" 
+                       onchange="updateStop(${stop.id}, 'title', this.value)"
+                       placeholder="Tiêu đề hiển thị khi tham quan...">
+              </div>
+
+              <div class="stop-field" style="grid-column: 1 / -1;">
+                <label>Mô tả</label>
+                <textarea onchange="updateStop(${stop.id}, 'description', this.value)"
+                          placeholder="Mô tả chi tiết về điểm này...">${stop.description || ''}</textarea>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function saveTourScenario() {
+      tourScenario.name = document.getElementById('scenarioName').value;
+      const panDurationValue = Number(document.getElementById('cameraPanDuration').value);
+      tourScenario.cameraPanDuration = Math.max(1000, Number.isFinite(panDurationValue) ? panDurationValue : 8000);
+      
+      try {
+        const res = await fetch('/api/admin/tour-scenario', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(tourScenario)
+        });
+        
+        const data = await res.json();
+        
+        if (data.success) {
+          showSuccessMessage('✅ Đã lưu kịch bản thành công!');
+        } else {
+          alert('Lỗi: ' + data.error);
+        }
+      } catch (err) {
+        alert('Không thể lưu kịch bản: ' + err.message);
+      }
+    }
+
+    function showSuccessMessage(message) {
+      const div = document.createElement('div');
+      div.className = 'success-message';
+      div.textContent = message;
+      document.body.appendChild(div);
+      
+      setTimeout(() => {
+        div.remove();
+      }, 3000);
+    }
+
+    function previewTour() {
+      window.open('/', '_blank');
+    }
+
+    init();
+  </script>
+</body>
+</html>

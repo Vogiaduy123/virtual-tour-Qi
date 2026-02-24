@@ -1,0 +1,161 @@
+[
+  {
+    "id": 1703001,
+    "name": "Cảm biến",
+    "location": "TP.HCM - Quận 1",
+    "roomId": 1768873556231,
+    "type": "environment",
+    "position": {
+      "yaw": -30,
+      "pitch": 0
+    },
+    "sensors": {
+      "temperature": {
+        "value": 32,
+        "unit": "°C",
+        "min": 18,
+        "max": 35
+      },
+      "humidity": {
+        "value": 43,
+        "unit": "%",
+        "min": 20,
+        "max": 90
+      },
+      "smoke": {
+        "value": 12,
+        "unit": "ppm",
+        "status": "normal"
+      },
+      "co2": {
+        "value": 450,
+        "unit": "ppm",
+        "min": 400,
+        "max": 1000
+      },
+      "pm25": {
+        "value": 33,
+        "unit": "µg/m³",
+        "min": 0,
+        "max": 150
+      }
+    },
+    "lastUpdate": "2024-01-28T10:30:00Z",
+    "color": "#4CAF50"
+  },
+  {
+    "id": 1770000112876,
+    "name": "1",
+    "roomId": 1769668397635,
+    "type": "environment",
+    "position": {
+      "yaw": 0,
+      "pitch": 0
+    },
+    "sensors": {
+      "temperature": {
+        "value": 27.8,
+        "unit": "°C",
+        "min": 0,
+        "max": 50
+      },
+      "humidity": {
+        "value": 75,
+        "unit": "%",
+        "min": 0,
+        "max": 100
+      },
+      "pm25": {
+        "value": 26,
+        "unit": "µg/m³",
+        "min": 0,
+        "max": 500
+      }
+    },
+    "lastUpdate": "2026-02-24T02:16:13.271Z",
+    "color": "#4CAF50"
+  },
+  {
+    "id": 1770005016860,
+    "name": "2",
+    "roomId": 1769668421984,
+    "type": "environment",
+    "position": {
+      "yaw": 0,
+      "pitch": 0
+    },
+    "sensors": {
+      "temperature": {
+        "value": 25,
+        "unit": "°C",
+        "min": 0,
+        "max": 50
+      },
+      "humidity": {
+        "value": 76,
+        "unit": "%",
+        "min": 0,
+        "max": 100
+      },
+      "pm25": {
+        "value": 69,
+        "unit": "µg/m³",
+        "min": 0,
+        "max": 500
+      }
+    },
+    "lastUpdate": "2026-02-23T05:02:22.431Z",
+    "color": "#4CAF50"
+  },
+  {
+    "id": 1770175445439,
+    "name": "cam1",
+    "roomId": 1769668746757,
+    "type": "camera",
+    "position": {
+      "yaw": 0,
+      "pitch": 0
+    },
+    "lastUpdate": "2026-02-23T02:48:46.428Z",
+    "color": "#2196F3",
+    "camera": {
+      "streamUrl": "webcam://0",
+      "snapshotUrl": "webcam://0/snapshot",
+      "resolution": "1920x1080",
+      "status": "offline",
+      "notes": ""
+    }
+  },
+  {
+    "id": 1770869920390,
+    "name": "1",
+    "roomId": 1769668746757,
+    "type": "environment",
+    "position": {
+      "yaw": 0,
+      "pitch": 0
+    },
+    "lastUpdate": "2026-02-23T02:50:17.001Z",
+    "color": "#4CAF50",
+    "sensors": {
+      "temperature": {
+        "value": 30.885147116756624,
+        "unit": "°C",
+        "min": 0,
+        "max": 50
+      },
+      "humidity": {
+        "value": 70.81048090528832,
+        "unit": "%",
+        "min": 0,
+        "max": 100
+      },
+      "pm25": {
+        "value": 40.4,
+        "unit": "µg/m³",
+        "min": 0,
+        "max": 500
+      }
+    }
+  }
+]
