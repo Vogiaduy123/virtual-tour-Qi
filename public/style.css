@@ -19,7 +19,6 @@ body.admin h2 {
   margin-top: 0;
   color: #333;
 }
-
 body.admin form {
   background: white;
   padding: 20px;
@@ -38,7 +37,6 @@ body.admin label {
 body.admin input,
 body.admin select {
   width: 100%;
-  padding: 8px;
   margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -913,6 +911,7 @@ body.admin #pano > * {
   z-index: 35;
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.1);
+  display: none !important;
 }
 
 .sensor-widget-content {
@@ -941,26 +940,26 @@ body.admin #pano > * {
 
 /* SENSOR HOTSPOT */
 .sensor-hotspot {
-  width: 50px;
-  height: 50px;
+  width: 44px;
+  height: 44px;
   background: #4CAF50;
   border-radius: 50%;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  border: 2px solid rgba(255,255,255,0.3);
-  transition: all 0.2s ease;
-  animation: sensorPulse 2s ease-in-out infinite;
+  box-shadow: none;
+  border: 2px solid rgba(255,255,255,0.38);
+  transition: box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
 .sensor-hotspot:hover {
-  transform: scale(1.1);
   background: #45a049;
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.5);
+  box-shadow: none;
+  border-color: rgba(255,255,255,0.6);
 }
 
 .sensor-hotspot.temperature {
@@ -969,6 +968,68 @@ body.admin #pano > * {
 
 .sensor-hotspot.temperature:hover {
   background: #ff5252;
+}
+
+.sensor-hotspot.camera {
+  background: #2196F3;
+}
+
+.sensor-hotspot.camera:hover {
+  background: #1976D2;
+  box-shadow: none;
+}
+
+.sensor-hotspot.camera.camera-offline {
+  background: #616161;
+}
+
+.sensor-hotspot.camera.camera-offline:hover {
+  background: #4f4f4f;
+  box-shadow: none;
+}
+
+.sensor-hotspot.camera.camera-maintenance {
+  background: #f39c12;
+}
+
+.sensor-hotspot.camera.camera-maintenance:hover {
+  background: #d68910;
+  box-shadow: none;
+}
+
+.sensor-hotspot-icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.sensor-hotspot-badge {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid rgba(0,0,0,0.45);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.3);
+  pointer-events: none;
+}
+
+.sensor-hotspot-badge.online {
+  background: #2ecc71;
+}
+
+.sensor-hotspot-badge.maintenance {
+  background: #f1c40f;
+}
+
+.sensor-hotspot-badge.offline {
+  background: #e74c3c;
 }
 
 .sensor-hotspot.humidity {
@@ -997,33 +1058,54 @@ body.admin #pano > * {
 
 .sensor-hotspot.critical {
   background: #FF1744;
-  animation: sensorPulseCritical 1s ease-in-out infinite;
 }
 
 .sensor-hotspot.critical:hover {
   background: #D32F2F;
 }
 
-@keyframes sensorPulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 0.85;
-  }
+.sensor-hotspot-tooltip {
+  display: none;
+  position: absolute;
+  left: 52px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 240px;
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 10px;
+  padding: 12px;
+  color: #fff;
+  font-size: 12px;
+  z-index: 20;
+  pointer-events: none;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
 }
 
-@keyframes sensorPulseCritical {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 2px 8px rgba(255, 23, 68, 0.3);
-  }
-  50% {
-    transform: scale(1.1);
-    box-shadow: 0 4px 16px rgba(255, 23, 68, 0.6);
-  }
+.sensor-hotspot:hover .sensor-hotspot-tooltip {
+  display: block;
+}
+
+.sensor-tooltip-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #9ac7ff;
+  margin-bottom: 6px;
+}
+
+.sensor-tooltip-line {
+  color: #e5e5e5;
+  margin-bottom: 4px;
+}
+
+.sensor-tooltip-image {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.15);
+  margin-top: 6px;
+  background: #111;
 }
 
 /* COMPASS OVERLAY */
@@ -1454,6 +1536,7 @@ body.admin #pano > * {
   z-index: 35;
   color: #fff;
   transition: all 0.3s ease;
+  display: none !important;
 }
 
 .camera-panel.hidden {

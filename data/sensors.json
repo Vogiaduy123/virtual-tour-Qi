@@ -44,38 +44,6 @@
     "color": "#4CAF50"
   },
   {
-    "id": 1770000112876,
-    "name": "1",
-    "roomId": 1769668397635,
-    "type": "environment",
-    "position": {
-      "yaw": 0,
-      "pitch": 0
-    },
-    "sensors": {
-      "temperature": {
-        "value": 27.8,
-        "unit": "°C",
-        "min": 0,
-        "max": 50
-      },
-      "humidity": {
-        "value": 75,
-        "unit": "%",
-        "min": 0,
-        "max": 100
-      },
-      "pm25": {
-        "value": 26,
-        "unit": "µg/m³",
-        "min": 0,
-        "max": 500
-      }
-    },
-    "lastUpdate": "2026-02-24T02:16:13.271Z",
-    "color": "#4CAF50"
-  },
-  {
     "id": 1770005016860,
     "name": "2",
     "roomId": 1769668421984,
@@ -135,23 +103,74 @@
       "yaw": 0,
       "pitch": 0
     },
-    "lastUpdate": "2026-02-23T02:50:17.001Z",
+    "lastUpdate": "2026-02-25T02:24:25.571Z",
     "color": "#4CAF50",
     "sensors": {
       "temperature": {
-        "value": 30.885147116756624,
+        "value": 26.50294695173022,
         "unit": "°C",
         "min": 0,
         "max": 50
       },
       "humidity": {
-        "value": 70.81048090528832,
+        "value": 71.16369587415414,
         "unit": "%",
         "min": 0,
         "max": 100
       },
       "pm25": {
-        "value": 40.4,
+        "value": 31.8,
+        "unit": "µg/m³",
+        "min": 0,
+        "max": 500
+      }
+    }
+  },
+  {
+    "id": 1771989245429,
+    "name": "1",
+    "roomId": 1769668397635,
+    "type": "camera",
+    "position": {
+      "yaw": 47.57,
+      "pitch": 18.56
+    },
+    "lastUpdate": "2026-02-25T03:14:05.429Z",
+    "color": "#2196F3",
+    "camera": {
+      "streamUrl": "webcam://0",
+      "snapshotUrl": "webcam://0/snapshot",
+      "resolution": "1920x1080",
+      "status": "online",
+      "notes": ""
+    }
+  },
+  {
+    "id": 1771989275210,
+    "name": "1",
+    "roomId": 1769668397635,
+    "type": "environment",
+    "position": {
+      "yaw": 31.06,
+      "pitch": 40.61
+    },
+    "lastUpdate": "2026-02-25T03:49:19.473Z",
+    "color": "#4CAF50",
+    "sensors": {
+      "temperature": {
+        "value": 31.2,
+        "unit": "°C",
+        "min": 0,
+        "max": 50
+      },
+      "humidity": {
+        "value": 68,
+        "unit": "%",
+        "min": 0,
+        "max": 100
+      },
+      "pm25": {
+        "value": 17,
         "unit": "µg/m³",
         "min": 0,
         "max": 500

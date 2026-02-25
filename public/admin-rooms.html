@@ -690,6 +690,16 @@
           </select>
         </div>
 
+        <div class="form-group" style="background: #f8f9fa; border: 1px solid #e1e8ed; border-radius: 8px; padding: 12px;">
+          <label style="display: block; margin-bottom: 8px;">📍 Vị trí trên ảnh 360:</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+            <input type="number" id="sensorYaw" min="-180" max="180" step="0.01" value="0" placeholder="Yaw">
+            <input type="number" id="sensorPitch" min="-90" max="90" step="0.01" value="0" placeholder="Pitch">
+          </div>
+          <button type="button" class="btn btn-small" id="pickSensorPositionBtn" onclick="startSensorPositionPick()" style="background: #27ae60; color: white; margin: 0;">🎯 Chọn trên ảnh 360</button>
+          <div id="sensorPositionHint" style="margin-top: 8px; font-size: 12px; color: #7f8c8d;">Có thể nhập tay hoặc bấm nút để click trực tiếp trên ảnh.</div>
+        </div>
+
         <!-- API Configuration Section -->
         <div style="background: #f8f9fa; border: 1px solid #e1e8ed; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -963,6 +973,8 @@
     let selectedMediaFile = null;
     let addHotspotMode = false;
     let addMediaMode = false;
+    let addSensorPositionMode = false;
+    let adminSensorHotspotIds = [];
     let editingSensorIndex = null;
     let roomSensors = [];
     let autoRefreshInterval = null;
@@ -1382,6 +1394,52 @@
     };
 
     // ===== PANORAMA VIEWER =====
+    function renderAdminSensorHotspots() {
+      if (!panoramaViewer) return;
+
+      // Remove old sensor hotspots
+      adminSensorHotspotIds.forEach(id => {
+        try { panoramaViewer.removeHotSpot(id); } catch {}
+      });
+      adminSensorHotspotIds = [];
+
+      if (!roomSensors || roomSensors.length === 0) return;
+
+      roomSensors.forEach((sensor, idx) => {
+        const yaw = Number(sensor.position?.yaw || 0);
+        const pitch = Number(sensor.position?.pitch || 0);
+        const isCamera = sensor.type === 'camera';
+        const isWebcam = sensor.camera?.streamUrl === 'webcam://0';
+
+        const hotspotId = `sensor-${sensor.id || idx}`;
+        adminSensorHotspotIds.push(hotspotId);
+
+        const statusText = isCamera ? (sensor.camera?.status || 'unknown') : 'online';
+        const statusIcon = statusText === 'online' ? '🟢' : statusText === 'maintenance' ? '🟡' : '🔴';
+        const icon = isCamera ? (isWebcam ? '💻' : '📹') : '🌡️';
+        const label = `${icon} ${sensor.name || (isCamera ? 'Camera' : 'Cảm biến')} ${statusIcon}`;
+        const bg = isCamera ? '#2196f3' : '#FF6B6B';
+
+        panoramaViewer.addHotSpot({
+          id: hotspotId,
+          pitch,
+          yaw,
+          type: 'info',
+          text: label,
+          cssClass: 'custom-hotspot',
+          createTooltipFunc: function(div) {
+            div.innerHTML = `<span style="background: ${bg}; color: white; padding: 8px 12px; border-radius: 6px; font-size: 12px; white-space: nowrap;">${label}</span>`;
+          },
+          clickHandlerFunc: function() {
+            const index = roomSensors.findIndex(s => s.id === sensor.id);
+            if (index !== -1) {
+              editSensor(index);
+            }
+          }
+        });
+      });
+    }
+
     function loadPanoramaPreview() {
       const room = rooms.find(r => r.id === selectedRoomId);
       if (!room) return;
@@ -1465,6 +1523,9 @@
           });
           console.log(`✅ Added ${room.mediaHotspots.length} media hotspots`);
         }
+
+        // Add sensor/camera hotspots on admin panorama
+        renderAdminSensorHotspots();
       });
 
       panoramaViewer.on('mousedown', function(event) {
@@ -1481,6 +1542,15 @@
                 document.getElementById('mediaPitch').value = pitch.toFixed(2);
                 document.getElementById('mediaHotspotModal').classList.add('active');
                 setAddMediaMode(false);
+                return;
+              }
+
+              // Pick sensor/camera position via click
+              if (addSensorPositionMode) {
+                document.getElementById('sensorYaw').value = yaw.toFixed(2);
+                document.getElementById('sensorPitch').value = pitch.toFixed(2);
+                sensorModal.classList.add('active');
+                setAddSensorPositionMode(false);
                 return;
               }
 
@@ -1835,6 +1905,45 @@
       updateAddHotspotButton();
     }
 
+    function setAddSensorPositionMode(on) {
+      addSensorPositionMode = on;
+      if (addSensorPositionMode) {
+        addHotspotMode = false;
+        addMediaMode = false;
+      }
+
+      updateAddMediaButton();
+      updateAddHotspotButton();
+
+      const pickBtn = document.getElementById('pickSensorPositionBtn');
+      const hint = document.getElementById('sensorPositionHint');
+      if (pickBtn) {
+        pickBtn.textContent = addSensorPositionMode ? '🎯 Đang chờ click ảnh...' : '🎯 Chọn trên ảnh 360';
+        pickBtn.style.background = addSensorPositionMode ? '#e67e22' : '#27ae60';
+      }
+      if (hint) {
+        hint.textContent = addSensorPositionMode
+          ? 'Đang chờ chọn vị trí: hãy click 1 điểm trên ảnh 360.'
+          : 'Có thể nhập tay hoặc bấm nút để click trực tiếp trên ảnh.';
+      }
+    }
+
+    window.startSensorPositionPick = function() {
+      if (!panoramaViewer || !selectedRoomId) {
+        alert('⚠️ Vui lòng chọn phòng và chờ ảnh 360 tải xong trước khi chọn vị trí.');
+        return;
+      }
+
+      if (!sensorModal.classList.contains('active')) {
+        alert('⚠️ Vui lòng mở form thêm/sửa thiết bị trước.');
+        return;
+      }
+
+      sensorModal.classList.remove('active');
+      setAddSensorPositionMode(true);
+      alert('🎯 Hãy click 1 điểm trên ảnh 360 để lấy vị trí cảm biến.');
+    };
+
     function updateAddMediaButton() {
       if (!addMediaBtn) return;
       if (addMediaMode) {
@@ -2005,6 +2114,7 @@
         if (data.success) {
           roomSensors = data.sensors;
           renderSensors();
+          renderAdminSensorHotspots();
         }
       } catch (err) {
         console.error('Load sensors error:', err);
@@ -2088,7 +2198,10 @@
         setTimeout(() => {
           document.getElementById('sensorType').value = 'environment';
           document.getElementById('useWebcam').checked = false;
+          document.getElementById('sensorYaw').value = 0;
+          document.getElementById('sensorPitch').value = 0;
           toggleSensorFields(); // Show environment fields by default
+          setAddSensorPositionMode(false);
           console.log('✅ Modal opened, type set to:', document.getElementById('sensorType').value);
         }, 10);
         
@@ -2110,10 +2223,13 @@
     function closeSensorModal() {
       sensorModal.classList.remove('active');
       editingSensorIndex = null;
+      setAddSensorPositionMode(false);
       sensorForm.reset();
       document.getElementById('weatherDataInfo').textContent = '';
       document.getElementById('sensorType').value = 'environment';
       document.getElementById('useWebcam').checked = false;
+      document.getElementById('sensorYaw').value = 0;
+      document.getElementById('sensorPitch').value = 0;
       stopWebcam(); // Stop webcam if running
       toggleSensorFields(); // Reset to show environment fields
     }
@@ -2190,8 +2306,8 @@
         roomId: selectedRoomId,
         type: sensorType,
         position: {
-          yaw: 0,
-          pitch: 0
+          yaw: Number(document.getElementById('sensorYaw').value || 0),
+          pitch: Number(document.getElementById('sensorPitch').value || 0)
         }
       };
 
@@ -2276,6 +2392,9 @@
       
       document.getElementById('sensorName').value = sensor.name;
       document.getElementById('sensorType').value = sensor.type || 'environment';
+      document.getElementById('sensorYaw').value = sensor.position?.yaw || 0;
+      document.getElementById('sensorPitch').value = sensor.position?.pitch || 0;
+      setAddSensorPositionMode(false);
       
       // Toggle fields based on sensor type
       toggleSensorFields();

@@ -1560,8 +1560,86 @@ function addSensorHotspots(roomId) {
       }
     });
   } catch {}
-  
-  // Hotspots disabled - using widget instead
+
+  const roomSensors = sensorsData.filter(s => s.roomId === roomId);
+  if (!roomSensors.length) return;
+
+  roomSensors.forEach(sensor => {
+    const yaw = Number(sensor.position?.yaw || 0);
+    const pitch = Number(sensor.position?.pitch || 0);
+
+    const el = document.createElement("div");
+    const isCamera = sensor.type === "camera";
+    const isWebcam = sensor.camera?.streamUrl === "webcam://0";
+    const cameraStatus = sensor.camera?.status || "unknown";
+
+    let hotspotClass = "sensor-hotspot temperature";
+    if (isCamera) {
+      hotspotClass = "sensor-hotspot camera";
+      if (cameraStatus === "offline") hotspotClass += " camera-offline";
+      if (cameraStatus === "maintenance") hotspotClass += " camera-maintenance";
+    }
+
+    el.className = hotspotClass;
+    el.title = sensor.name || (isCamera ? "Camera" : "Cảm biến");
+
+    const iconEl = document.createElement("span");
+    iconEl.className = "sensor-hotspot-icon";
+    iconEl.textContent = isCamera ? (isWebcam ? "💻" : "📹") : "🌡️";
+    el.appendChild(iconEl);
+
+    const badgeEl = document.createElement("span");
+    badgeEl.className = "sensor-hotspot-badge";
+    if (isCamera) {
+      if (cameraStatus === "online") badgeEl.classList.add("online");
+      else if (cameraStatus === "maintenance") badgeEl.classList.add("maintenance");
+      else badgeEl.classList.add("offline");
+    } else {
+      const pm25 = Number(sensor.sensors?.pm25?.value ?? 0);
+      if (pm25 > 150.4) badgeEl.classList.add("offline");
+      else if (pm25 > 55.4) badgeEl.classList.add("maintenance");
+      else badgeEl.classList.add("online");
+    }
+    el.appendChild(badgeEl);
+
+    const tooltip = document.createElement("div");
+    tooltip.className = "sensor-hotspot-tooltip";
+
+    if (isCamera) {
+      const statusText = cameraStatus;
+      const statusIcon = statusText === "online" ? "🟢" : statusText === "maintenance" ? "🟡" : "🔴";
+      const snapshotUrl = sensor.camera?.snapshotUrl || "";
+      const canShowSnapshot = snapshotUrl && snapshotUrl !== "webcam://0/snapshot";
+
+      tooltip.innerHTML = `
+        <div class="sensor-tooltip-title">${isWebcam ? "💻" : "📹"} ${sensor.name || "Camera"}</div>
+        <div class="sensor-tooltip-line">${statusIcon} ${statusText}</div>
+        <div class="sensor-tooltip-line">📐 ${sensor.camera?.resolution || "N/A"}</div>
+        ${canShowSnapshot ? `<img class="sensor-tooltip-image" src="${snapshotUrl}?t=${Date.now()}" alt="${sensor.name || "camera"}">` : `<div class="sensor-tooltip-line">${isWebcam ? "Webcam laptop" : "Không có ảnh preview"}</div>`}
+      `;
+      el.onclick = (event) => {
+        event.stopPropagation();
+        showCameraPreview(sensor);
+      };
+    } else {
+      const temp = sensor.sensors?.temperature?.value ?? "--";
+      const humidity = sensor.sensors?.humidity?.value ?? "--";
+      const pm25 = sensor.sensors?.pm25?.value ?? "--";
+      tooltip.innerHTML = `
+        <div class="sensor-tooltip-title">🌡️ ${sensor.name || "Cảm biến"}</div>
+        <div class="sensor-tooltip-line">Nhiệt độ: ${temp}°C</div>
+        <div class="sensor-tooltip-line">Độ ẩm: ${humidity}%</div>
+        <div class="sensor-tooltip-line">PM2.5: ${pm25}</div>
+      `;
+    }
+
+    el.appendChild(tooltip);
+
+    container.createHotspot(el, {
+      yaw: degToRad(yaw),
+      pitch: degToRad(-pitch)
+    });
+  });
 }
 
 /* ===== MINIMAP FUNCTIONS ===== */
