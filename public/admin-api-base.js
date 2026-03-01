@@ -35,4 +35,15 @@
 
     return nativeFetch(input, init);
   };
+
+  const NativeEventSource = window.EventSource;
+  if (typeof NativeEventSource === "function") {
+    function RewrittenEventSource(url, config) {
+      const nextUrl = typeof url === "string" ? rewriteUrl(url) : url;
+      return new NativeEventSource(nextUrl, config);
+    }
+
+    RewrittenEventSource.prototype = NativeEventSource.prototype;
+    window.EventSource = RewrittenEventSource;
+  }
 })();

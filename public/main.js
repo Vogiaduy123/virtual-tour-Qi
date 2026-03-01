@@ -26,6 +26,17 @@ function radToDeg(rad) {
   return (rad * 180) / Math.PI;
 }
 
+async function parseJsonResponse(res) {
+  const raw = await res.text();
+  try {
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    const snippet = String(raw || "").slice(0, 180).replace(/\s+/g, " ").trim();
+    const prefix = snippet ? `: ${snippet}` : "";
+    throw new Error(`Phản hồi API không hợp lệ (HTTP ${res.status})${prefix}`);
+  }
+}
+
 // Minimap elements
 const minimapWrapper = document.getElementById("minimapWrapper");
 const minimapToggle = document.getElementById("minimapToggle");
@@ -157,7 +168,7 @@ async function initApp() {
   try {
     // Load rooms first
     const roomsRes = await fetch("/api/rooms");
-    const rooms = await roomsRes.json();
+    const rooms = await parseJsonResponse(roomsRes);
     
     if (!rooms || rooms.length === 0) {
       alert("Chưa có phòng nào");
@@ -1323,7 +1334,7 @@ async function saveMailHotspot() {
       });
     }
 
-    const data = await res.json();
+    const data = await parseJsonResponse(res);
     if (!res.ok || !data.success) {
       throw new Error(data.error || "Lưu điểm mail thất bại");
     }
@@ -1348,7 +1359,7 @@ async function deleteMailHotspot() {
     const res = await fetch(`/api/rooms/${currentRoomId}/mail-hotspots/${activeMailHotspotIndex}`, {
       method: "DELETE"
     });
-    const data = await res.json();
+    const data = await parseJsonResponse(res);
 
     if (!res.ok || !data.success) {
       throw new Error(data.error || "Xóa điểm mail thất bại");
@@ -1410,7 +1421,7 @@ async function sendMailFromComposer() {
       })
     });
 
-    const data = await res.json();
+    const data = await parseJsonResponse(res);
     if (!res.ok || !data.success) {
       throw new Error(data.error || "Gửi mail thất bại");
     }
