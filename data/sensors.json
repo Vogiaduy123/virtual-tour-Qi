@@ -127,25 +127,6 @@
     }
   },
   {
-    "id": 1771989245429,
-    "name": "1",
-    "roomId": 1769668397635,
-    "type": "camera",
-    "position": {
-      "yaw": 47.57,
-      "pitch": 18.56
-    },
-    "lastUpdate": "2026-02-25T03:14:05.429Z",
-    "color": "#2196F3",
-    "camera": {
-      "streamUrl": "webcam://0",
-      "snapshotUrl": "webcam://0/snapshot",
-      "resolution": "1920x1080",
-      "status": "online",
-      "notes": ""
-    }
-  },
-  {
     "id": 1771989275210,
     "name": "1",
     "roomId": 1769668397635,
@@ -154,27 +135,46 @@
       "yaw": 31.06,
       "pitch": 40.61
     },
-    "lastUpdate": "2026-02-25T03:49:19.473Z",
+    "lastUpdate": "2026-03-01T05:49:21.027Z",
     "color": "#4CAF50",
     "sensors": {
       "temperature": {
-        "value": 31.2,
+        "value": 31,
         "unit": "°C",
         "min": 0,
         "max": 50
       },
       "humidity": {
-        "value": 68,
+        "value": 58,
         "unit": "%",
         "min": 0,
         "max": 100
       },
       "pm25": {
-        "value": 17,
+        "value": 12,
         "unit": "µg/m³",
         "min": 0,
         "max": 500
       }
+    }
+  },
+  {
+    "id": 1772007520536,
+    "name": "cam1",
+    "roomId": 1769668397635,
+    "type": "camera",
+    "position": {
+      "yaw": -38.46,
+      "pitch": 3.03
+    },
+    "lastUpdate": "2026-02-25T08:24:51.962Z",
+    "color": "#2196F3",
+    "camera": {
+      "streamUrl": "rtsp://admin:admin@172.28.79.101:554/cam/realmonitor?channel=1&subtype=0",
+      "snapshotUrl": "",
+      "resolution": "1280x720",
+      "status": "online",
+      "notes": ""
     }
   }
 ]

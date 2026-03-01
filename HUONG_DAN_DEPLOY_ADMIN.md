@@ -1,7 +1,7 @@
 # Deploy phần Admin riêng (từ Git)
 
 ## 1) Chuẩn bị backend API
-- Deploy backend Node.js trước (Render/Railway) để có domain, ví dụ: `https://virtual-tour-api.onrender.com`
+- Deploy backend Node.js trước (Render/Railway) để có domain, ví dụ: `https://virtual-tour.onrender.com`
 - Đảm bảo backend chạy được các endpoint:
   - `/api/*`
   - `/uploads/*`
@@ -12,7 +12,7 @@
 - Sửa thành:
 
 ```js
-window.ADMIN_API_BASE_URL = "https://virtual-tour-api.onrender.com";
+window.ADMIN_API_BASE_URL = "https://virtual-tour.onrender.com";
 ```
 
 - Chỉ cần sửa 1 dòng này khi đổi backend.

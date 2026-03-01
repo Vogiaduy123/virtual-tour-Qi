@@ -92,9 +92,6 @@ C. Upload fail
 - Kiểm tra định dạng file (JPG/PNG/WEBP)
 - Kiểm tra kết nối đến server
 
-D. Đổi tên minimap không lưu
-- Đảm bảo server đã restart sau khi cập nhật code
-- Thử refresh trang admin-minimap
 
 8) LỆNH NHANH (WINDOWS POWERSHELL)
 ----------------------------------

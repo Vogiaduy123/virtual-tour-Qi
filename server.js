@@ -1,8 +1,11 @@
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
+const nodemailer = require("nodemailer");
 
 // Import admin routes
 const adminRoutes = require("./public/admin-api");
@@ -102,6 +105,97 @@ function broadcastRooms() {
       sseClients.delete(res);
     }
   }
+}
+
+function getSmtpConfig() {
+  const host = process.env.SMTP_HOST;
+  const port = Number(process.env.SMTP_PORT || 587);
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+  const secure = String(process.env.SMTP_SECURE || "false").toLowerCase() === "true";
+  const from = process.env.MAIL_FROM || user;
+
+  return { host, port, user, pass, secure, from };
+}
+
+function createMailTransporter(config) {
+  return nodemailer.createTransport({
+    host: config.host,
+    port: config.port,
+    secure: config.secure,
+    auth: {
+      user: config.user,
+      pass: config.pass
+    }
+  });
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function buildVirtualTourMailContent({ pageUrl, summary, notes }) {
+  const safeSummary = summary && String(summary).trim() ? String(summary).trim() : "(Không có)";
+  const safePageUrl = pageUrl && String(pageUrl).trim() ? String(pageUrl).trim() : "";
+  const safeNotes = Array.isArray(notes) ? notes : [];
+
+  const formatCoord = (value) => {
+    const number = Number(value);
+    return Number.isFinite(number) ? number.toFixed(6) : "N/A";
+  };
+
+  const notesHtml = safeNotes.length
+    ? safeNotes
+        .map((note, index) => {
+          const roomName = escapeHtml(note?.roomName || "Không xác định");
+          const content = escapeHtml(note?.content || "");
+          const yaw = escapeHtml(formatCoord(note?.yaw));
+          const pitch = escapeHtml(formatCoord(note?.pitch));
+          const time = escapeHtml(note?.time || new Date().toISOString());
+
+          return `
+            <li style="margin-bottom: 10px;">
+              <div><strong>Phòng:</strong> ${roomName}</div>
+              <div><strong>Nội dung:</strong> ${content || "(Trống)"}</div>
+              <div><strong>Tọa độ:</strong> yaw=${yaw}, pitch=${pitch}</div>
+              <div><strong>Thời gian:</strong> ${time}</div>
+            </li>
+          `;
+        })
+        .join("")
+    : '<li>Không có ghi chú.</li>';
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; color: #222; line-height: 1.5;">
+      <h2 style="margin-bottom: 18px;">GHI CHÚ TỪ VIRTUAL TOUR</h2>
+      ${safePageUrl ? `<p><strong>Trang:</strong> <a href="${escapeHtml(safePageUrl)}">${escapeHtml(safePageUrl)}</a></p>` : ""}
+      <p><strong>Nội dung tổng quát:</strong><br>${escapeHtml(safeSummary)}</p>
+      <div style="margin-top: 12px;"><strong>Danh sách ghi chú:</strong></div>
+      <ol style="padding-left: 18px; margin-top: 8px;">${notesHtml}</ol>
+    </div>
+  `;
+
+  const notesText = safeNotes.length
+    ? safeNotes
+        .map((note, index) => {
+          const roomName = note?.roomName || "Không xác định";
+          const content = note?.content || "(Trống)";
+          const yaw = formatCoord(note?.yaw);
+          const pitch = formatCoord(note?.pitch);
+          const time = note?.time || new Date().toISOString();
+          return `${index + 1}. Phòng: ${roomName}\n   Nội dung: ${content}\n   -Tọa độ: yaw=${yaw}, pitch=${pitch}\n   -Thời gian: ${time}`;
+        })
+        .join("\n\n")
+    : "1. Không có ghi chú.";
+
+  const text = `GHI CHÚ TỪ VIRTUAL TOUR\n\n${safePageUrl ? `Trang: ${safePageUrl}\n\n` : ""}Nội dung tổng quát:\n${safeSummary}\n\nDanh sách ghi chú:\n${notesText}`;
+
+  return { html, text };
 }
 if (!fs.existsSync(API_CONFIG_FILE)) {
   const defaultConfig = {
@@ -303,6 +397,176 @@ app.patch("/api/rooms/:id/hotspots/:index", (req, res) => {
   // Notify connected users
   broadcastRooms();
   res.json({ success: true, room });
+});
+
+// GET MAIL HOTSPOTS
+app.get("/api/rooms/:id/mail-hotspots", (req, res) => {
+  const roomId = Number(req.params.id);
+  const rooms = JSON.parse(fs.readFileSync(DATA_FILE));
+  const room = rooms.find(r => r.id === roomId);
+
+  if (!room) {
+    return res.status(404).json({ success: false, error: "Room not found" });
+  }
+
+  res.json({ success: true, mailHotspots: room.mailHotspots || [] });
+});
+
+// ADD MAIL HOTSPOT
+app.post("/api/rooms/:id/mail-hotspots", (req, res) => {
+  const roomId = Number(req.params.id);
+  const { yaw, pitch, screenX, screenY, title, recipient, subject, body } = req.body;
+
+  const hasSphericalCoords = ![yaw, pitch].some(v => v === undefined || v === null || v === "");
+  const hasScreenCoords = ![screenX, screenY].some(v => v === undefined || v === null || v === "");
+
+  if (!hasSphericalCoords && !hasScreenCoords) {
+    return res.status(400).json({ success: false, error: "Missing coordinates (yaw/pitch or screenX/screenY)" });
+  }
+
+  const rooms = JSON.parse(fs.readFileSync(DATA_FILE));
+  const room = rooms.find(r => r.id === roomId);
+
+  if (!room) {
+    return res.status(404).json({ success: false, error: "Room not found" });
+  }
+
+  if (!room.mailHotspots) {
+    room.mailHotspots = [];
+  }
+
+  const mailHotspot = {
+    title: title || "Gửi mail",
+    recipient: recipient || "",
+    subject: subject || "",
+    body: body || "",
+    updatedAt: new Date().toISOString()
+  };
+
+  if (hasSphericalCoords) {
+    mailHotspot.yaw = Number(yaw);
+    mailHotspot.pitch = Number(pitch);
+  }
+
+  if (hasScreenCoords) {
+    mailHotspot.screenX = Math.max(0, Math.min(1, Number(screenX)));
+    mailHotspot.screenY = Math.max(0, Math.min(1, Number(screenY)));
+  }
+
+  room.mailHotspots.push(mailHotspot);
+
+  fs.writeFileSync(DATA_FILE, JSON.stringify(rooms, null, 2));
+  broadcastRooms();
+  res.json({ success: true, room });
+});
+
+// UPDATE MAIL HOTSPOT
+app.patch("/api/rooms/:id/mail-hotspots/:index", (req, res) => {
+  const roomId = Number(req.params.id);
+  const index = Number(req.params.index);
+  const { yaw, pitch, screenX, screenY, title, recipient, subject, body } = req.body;
+
+  const rooms = JSON.parse(fs.readFileSync(DATA_FILE));
+  const room = rooms.find(r => r.id === roomId);
+
+  if (!room) {
+    return res.status(404).json({ success: false, error: "Room not found" });
+  }
+
+  if (!room.mailHotspots || index < 0 || index >= room.mailHotspots.length) {
+    return res.status(400).json({ success: false, error: "Invalid mail hotspot index" });
+  }
+
+  if (yaw !== undefined) room.mailHotspots[index].yaw = Number(yaw);
+  if (pitch !== undefined) room.mailHotspots[index].pitch = Number(pitch);
+  if (screenX !== undefined) room.mailHotspots[index].screenX = Math.max(0, Math.min(1, Number(screenX)));
+  if (screenY !== undefined) room.mailHotspots[index].screenY = Math.max(0, Math.min(1, Number(screenY)));
+  if (title !== undefined) room.mailHotspots[index].title = title;
+  if (recipient !== undefined) room.mailHotspots[index].recipient = recipient;
+  if (subject !== undefined) room.mailHotspots[index].subject = subject;
+  if (body !== undefined) room.mailHotspots[index].body = body;
+  room.mailHotspots[index].updatedAt = new Date().toISOString();
+
+  fs.writeFileSync(DATA_FILE, JSON.stringify(rooms, null, 2));
+  broadcastRooms();
+  res.json({ success: true, room });
+});
+
+// DELETE MAIL HOTSPOT
+app.delete("/api/rooms/:id/mail-hotspots/:index", (req, res) => {
+  const roomId = Number(req.params.id);
+  const index = Number(req.params.index);
+
+  const rooms = JSON.parse(fs.readFileSync(DATA_FILE));
+  const room = rooms.find(r => r.id === roomId);
+
+  if (!room) {
+    return res.status(404).json({ success: false, error: "Room not found" });
+  }
+
+  if (!room.mailHotspots || index < 0 || index >= room.mailHotspots.length) {
+    return res.status(400).json({ success: false, error: "Invalid mail hotspot index" });
+  }
+
+  room.mailHotspots.splice(index, 1);
+  fs.writeFileSync(DATA_FILE, JSON.stringify(rooms, null, 2));
+  broadcastRooms();
+  res.json({ success: true, room });
+});
+
+// SEND MAIL
+app.post("/api/mail/send", async (req, res) => {
+  try {
+    const { to, subject, body, pageUrl, summary, notes, format } = req.body;
+
+    if (!to) {
+      return res.status(400).json({ success: false, error: "Missing recipient (to)" });
+    }
+
+    const smtp = getSmtpConfig();
+    if (!smtp.host || !smtp.port || !smtp.user || !smtp.pass) {
+      return res.status(500).json({
+        success: false,
+        error: "SMTP is not configured. Please set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS"
+      });
+    }
+
+    const transporter = createMailTransporter(smtp);
+    await transporter.verify();
+
+    const normalizedTo = Array.isArray(to)
+      ? to.filter(Boolean).join(",")
+      : String(to)
+          .split(",")
+          .map(email => email.trim())
+          .filter(Boolean)
+          .join(",");
+
+    const useTemplate = format === "virtual-tour-note" || Array.isArray(notes);
+    const content = useTemplate
+      ? buildVirtualTourMailContent({
+          pageUrl,
+          summary: summary ?? body,
+          notes
+        })
+      : {
+          text: String(body || ""),
+          html: `<pre style=\"font-family: Arial, sans-serif; white-space: pre-wrap;\">${escapeHtml(body || "")}</pre>`
+        };
+
+    const info = await transporter.sendMail({
+      from: smtp.from,
+      to: normalizedTo,
+      subject: String(subject || "GHI CHÚ TỪ VIRTUAL TOUR"),
+      text: content.text,
+      html: content.html
+    });
+
+    res.json({ success: true, messageId: info.messageId });
+  } catch (err) {
+    console.error("MAIL SEND ERROR:", err);
+    res.status(500).json({ success: false, error: err.message || "Send mail failed" });
+  }
 });
 
 

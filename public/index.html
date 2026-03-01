@@ -130,6 +130,44 @@
     </div>
   </div>
 
+  <!-- MAIL TOOLBOX -->
+  <div id="mailToolbox" class="mail-toolbox">
+    <div id="mailDragIcon" class="mail-drag-icon" draggable="true">✉️</div>
+  </div>
+
+  <!-- MAIL COMPOSER PANEL -->
+  <div id="mailComposerPanel" class="mail-composer hidden">
+    <div class="mail-composer-header">
+      <h3 id="mailComposerTitle">✉️ Gửi mail</h3>
+      <button id="mailComposerClose" class="mail-composer-close" title="Đóng">×</button>
+    </div>
+
+    <label for="mailPointTitle">Tên điểm mail</label>
+    <input id="mailPointTitle" type="text" placeholder="Ví dụ: Hỗ trợ khách tham quan">
+
+    <label for="mailRecipientSelect">Chọn người nhận đã lưu</label>
+    <select id="mailRecipientSelect">
+      <option value="">-- Chọn hoặc nhập mới --</option>
+    </select>
+
+    <label for="mailRecipientInput">Email người nhận</label>
+    <input id="mailRecipientInput" type="email" placeholder="example@email.com">
+
+    <label for="mailSubjectInput">Tiêu đề</label>
+    <input id="mailSubjectInput" type="text" placeholder="Tiêu đề mail">
+
+    <label for="mailBodyInput">Nội dung mail</label>
+    <textarea id="mailBodyInput" rows="5" placeholder="Nhập nội dung mail..."></textarea>
+
+    <div id="mailComposerStatus" class="mail-composer-status"></div>
+
+    <div class="mail-composer-actions">
+      <button id="mailSaveBtn" class="mail-btn">💾 Lưu</button>
+      <button id="mailSendBtn" class="mail-btn">📤 Gửi</button>
+      <button id="mailDeleteBtn" class="mail-btn danger">🗑 Xóa</button>
+    </div>
+  </div>
+
   <!-- TOUR -->
   <div id="pano"></div>
 

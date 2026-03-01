@@ -70,6 +70,7 @@ body.user #pano {
   width: 100vw;
   height: 100vh;
   background: black;
+  position: relative;
 }
 
 body.admin #pano {
@@ -892,6 +893,181 @@ body.admin #pano > * {
 
 .media-overlay__link:hover {
   text-decoration: underline;
+}
+
+/* MAIL TOOLBOX + HOTSPOTS */
+.mail-toolbox {
+  position: fixed;
+  left: 24px;
+  bottom: 24px;
+  z-index: 60;
+  width: 58px;
+  min-height: 58px;
+  background: rgba(0, 0, 0, 0.46);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 12px;
+  backdrop-filter: blur(14px);
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  transition: width 0.22s ease, background 0.22s ease;
+}
+
+.mail-toolbox:hover {
+  width: 220px;
+  background: rgba(0, 0, 0, 0.56);
+}
+
+.mail-drag-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  border-radius: 8px;
+  cursor: grab;
+  user-select: none;
+  background: rgba(52, 152, 219, 0.25);
+  border: 1px solid rgba(154, 199, 255, 0.5);
+}
+
+.mail-drag-icon:active {
+  cursor: grabbing;
+}
+
+#pano.mail-drop-target {
+  outline: 2px dashed rgba(154, 199, 255, 0.9);
+  outline-offset: -8px;
+}
+
+.mail-hotspot {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #2f7ed6 0%, #1f5da1 100%);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  color: #fff;
+  cursor: pointer;
+  font-size: 18px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mail-hotspot:hover {
+  transform: scale(1.08);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+.mail-fixed-hotspot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 120;
+}
+
+.mail-fixed-hotspot:hover {
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+.mail-composer {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: min(360px, 92vw);
+  max-height: 82vh;
+  overflow-y: auto;
+  z-index: 75;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(10, 10, 10, 0.88);
+  backdrop-filter: blur(10px);
+  padding: 14px;
+  color: #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mail-composer.hidden {
+  display: none;
+}
+
+.mail-composer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.mail-composer-header h3 {
+  font-size: 16px;
+  margin: 0;
+}
+
+.mail-composer-close {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.mail-composer label {
+  font-size: 12px;
+  color: #b8d9ff;
+}
+
+.mail-composer input,
+.mail-composer select,
+.mail-composer textarea {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  padding: 9px 10px;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.mail-composer textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.mail-composer-status {
+  min-height: 18px;
+  font-size: 12px;
+  color: #9ac7ff;
+}
+
+.mail-composer-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.mail-btn {
+  flex: 1;
+  border: 0;
+  border-radius: 8px;
+  padding: 9px 10px;
+  cursor: pointer;
+  background: rgba(52, 152, 219, 0.28);
+  color: #fff;
+  font-weight: 600;
+}
+
+.mail-btn.danger {
+  background: rgba(244, 67, 54, 0.3);
 }
 
 /* SENSOR WIDGET */
