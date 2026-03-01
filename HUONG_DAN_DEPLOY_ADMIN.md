@@ -7,6 +7,17 @@
   - `/uploads/*`
   - `/backend/tiles/*`
 
+### Cấu hình biến môi trường (bắt buộc)
+- File `.env` đang được ignore bởi git nên **không được push lên repo**.
+- Dùng file mẫu `.env.example` để tạo `.env` khi chạy local.
+- Trên môi trường deploy (Render/Railway), vào phần **Environment Variables** và khai báo:
+  - `SMTP_HOST`
+  - `SMTP_PORT`
+  - `SMTP_USER`
+  - `SMTP_PASS`
+  - `SMTP_SECURE`
+  - `MAIL_FROM`
+
 ## 2) Cấu hình domain backend cho admin
 - Mở file `public/admin-runtime-config.js`
 - Sửa thành:
