@@ -130,6 +130,113 @@ function createMailTransporter(config) {
   });
 }
 
+function getMailApiConfig() {
+  const provider = String(process.env.MAIL_PROVIDER || "").trim().toLowerCase();
+  const from = process.env.MAIL_FROM;
+
+  return {
+    provider,
+    from,
+    resendApiKey: process.env.RESEND_API_KEY,
+    brevoApiKey: process.env.BREVO_API_KEY,
+    sendgridApiKey: process.env.SENDGRID_API_KEY
+  };
+}
+
+function parseEmailAddress(email) {
+  const value = String(email || "").trim();
+  const match = value.match(/^(.*)<(.+)>$/);
+  if (match) {
+    return { name: match[1].trim().replace(/^"|"$/g, ""), email: match[2].trim() };
+  }
+  return { email: value };
+}
+
+async function sendMailViaHttpApi({ provider, apiKey, from, toList, subject, text, html }) {
+  const normalizedProvider = String(provider || "").toLowerCase();
+
+  if (normalizedProvider === "resend") {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        from,
+        to: toList,
+        subject,
+        text,
+        html
+      })
+    });
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(data?.message || data?.error || `Resend error ${response.status}`);
+    }
+
+    return { messageId: data?.id || null, provider: "resend" };
+  }
+
+  if (normalizedProvider === "brevo") {
+    const sender = parseEmailAddress(from);
+    const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "api-key": apiKey
+      },
+      body: JSON.stringify({
+        sender,
+        to: toList.map(email => ({ email })),
+        subject,
+        textContent: text,
+        htmlContent: html
+      })
+    });
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(data?.message || data?.code || `Brevo error ${response.status}`);
+    }
+
+    return { messageId: data?.messageId || null, provider: "brevo" };
+  }
+
+  if (normalizedProvider === "sendgrid") {
+    const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        from: parseEmailAddress(from),
+        personalizations: [{ to: toList.map(email => ({ email })) }],
+        subject,
+        content: [
+          { type: "text/plain", value: text || "" },
+          { type: "text/html", value: html || "" }
+        ]
+      })
+    });
+
+    if (!response.ok) {
+      const textBody = await response.text().catch(() => "");
+      const snippet = String(textBody || "").slice(0, 300);
+      throw new Error(snippet || `SendGrid error ${response.status}`);
+    }
+
+    return {
+      messageId: response.headers.get("x-message-id") || null,
+      provider: "sendgrid"
+    };
+  }
+
+  throw new Error("Unsupported MAIL_PROVIDER. Use: resend, brevo, sendgrid, or smtp");
+}
+
 function escapeHtml(value) {
   return String(value || "")
     .replace(/&/g, "&amp;")
@@ -523,17 +630,6 @@ app.post("/api/mail/send", async (req, res) => {
       return res.status(400).json({ success: false, error: "Missing recipient (to)" });
     }
 
-    const smtp = getSmtpConfig();
-    if (!smtp.host || !smtp.port || !smtp.user || !smtp.pass) {
-      return res.status(500).json({
-        success: false,
-        error: "SMTP is not configured. Please set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS"
-      });
-    }
-
-    const transporter = createMailTransporter(smtp);
-    await transporter.verify();
-
     const normalizedTo = Array.isArray(to)
       ? to.filter(Boolean).join(",")
       : String(to)
@@ -541,6 +637,15 @@ app.post("/api/mail/send", async (req, res) => {
           .map(email => email.trim())
           .filter(Boolean)
           .join(",");
+
+    const toList = normalizedTo
+      .split(",")
+      .map(email => email.trim())
+      .filter(Boolean);
+
+    if (!toList.length) {
+      return res.status(400).json({ success: false, error: "Invalid recipient list" });
+    }
 
     const useTemplate = format === "virtual-tour-note" || Array.isArray(notes);
     const content = useTemplate
@@ -554,15 +659,58 @@ app.post("/api/mail/send", async (req, res) => {
           html: `<pre style=\"font-family: Arial, sans-serif; white-space: pre-wrap;\">${escapeHtml(body || "")}</pre>`
         };
 
+    const mailSubject = String(subject || "GHI CHÚ TỪ VIRTUAL TOUR");
+    const apiMail = getMailApiConfig();
+    const preferredProvider = apiMail.provider || "smtp";
+
+    if (preferredProvider !== "smtp") {
+      const providerKeyMap = {
+        resend: apiMail.resendApiKey,
+        brevo: apiMail.brevoApiKey,
+        sendgrid: apiMail.sendgridApiKey
+      };
+      const apiKey = providerKeyMap[preferredProvider];
+
+      if (!apiKey || !apiMail.from) {
+        return res.status(500).json({
+          success: false,
+          error: "Mail API is not configured. Please set MAIL_PROVIDER, MAIL_FROM and corresponding API key"
+        });
+      }
+
+      const result = await sendMailViaHttpApi({
+        provider: preferredProvider,
+        apiKey,
+        from: apiMail.from,
+        toList,
+        subject: mailSubject,
+        text: content.text,
+        html: content.html
+      });
+
+      return res.json({ success: true, messageId: result.messageId, provider: result.provider });
+    }
+
+    const smtp = getSmtpConfig();
+    if (!smtp.host || !smtp.port || !smtp.user || !smtp.pass) {
+      return res.status(500).json({
+        success: false,
+        error: "SMTP is not configured. Please set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS or switch to MAIL_PROVIDER"
+      });
+    }
+
+    const transporter = createMailTransporter(smtp);
+    await transporter.verify();
+
     const info = await transporter.sendMail({
       from: smtp.from,
       to: normalizedTo,
-      subject: String(subject || "GHI CHÚ TỪ VIRTUAL TOUR"),
+      subject: mailSubject,
       text: content.text,
       html: content.html
     });
 
-    res.json({ success: true, messageId: info.messageId });
+    res.json({ success: true, messageId: info.messageId, provider: "smtp" });
   } catch (err) {
     console.error("MAIL SEND ERROR:", err);
     res.status(500).json({ success: false, error: err.message || "Send mail failed" });

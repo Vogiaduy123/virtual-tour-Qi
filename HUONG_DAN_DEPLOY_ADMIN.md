@@ -11,6 +11,15 @@
 - File `.env` đang được ignore bởi git nên **không được push lên repo**.
 - Dùng file mẫu `.env.example` để tạo `.env` khi chạy local.
 - Trên môi trường deploy (Render/Railway), vào phần **Environment Variables** và khai báo:
+  - `MAIL_PROVIDER` = `resend` (khuyến nghị) hoặc `brevo` / `sendgrid`
+  - `MAIL_FROM`
+  - API key tương ứng một trong các lựa chọn:
+    - `RESEND_API_KEY`
+    - `BREVO_API_KEY`
+    - `SENDGRID_API_KEY`
+
+### Tùy chọn cũ (SMTP)
+- Chỉ dùng khi thật cần thiết. Nếu dùng SMTP thì khai báo:
   - `SMTP_HOST`
   - `SMTP_PORT`
   - `SMTP_USER`
