@@ -54,25 +54,25 @@
     },
     "sensors": {
       "temperature": {
-        "value": 30,
+        "value": 23,
         "unit": "°C",
         "min": 0,
         "max": 50
       },
       "humidity": {
-        "value": 62,
+        "value": 66,
         "unit": "%",
         "min": 0,
         "max": 100
       },
       "pm25": {
-        "value": 92,
+        "value": 146,
         "unit": "µg/m³",
         "min": 0,
         "max": 500
       }
     },
-    "lastUpdate": "2026-03-02T06:20:24.369Z",
+    "lastUpdate": "2026-03-06T04:04:10.227Z",
     "color": "#4CAF50"
   },
   {

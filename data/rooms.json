@@ -20,8 +20,8 @@
         "yaw": 162.65,
         "pitch": -1.26,
         "title": "Bãi giữ xe",
-        "description": "",
-        "mediaUrl": "",
+        "description": "Giữ xe nhân viên\n",
+        "mediaUrl": "Giữ xe nhân viên",
         "mediaType": "note"
       },
       {
@@ -33,19 +33,7 @@
         "mediaType": "image"
       }
     ],
-    "mailHotspots": [
-      {
-        "title": "Vệ sinh",
-        "recipient": "vogiaduy11@gmail.com",
-        "subject": "chỉnh sửa",
-        "body": "làm vệ sinh",
-        "updatedAt": "2026-03-02T03:53:34.514Z",
-        "yaw": -37.48049326886374,
-        "pitch": -8.872997581276572,
-        "screenX": 0.1511780104712042,
-        "screenY": 0.46311475409836067
-      }
-    ]
+    "mailHotspots": []
   },
   {
     "id": 1769668421984,
