@@ -28,6 +28,7 @@ if (!fs.existsSync(ROOM_API_CONFIGS_DIR)) {
 /* ===== SSE CLIENTS ===== */
 const sseClients = new Set();
 
+// Đọc danh sách phòng từ file dữ liệu.
 function getRooms() {
   try {
     return JSON.parse(fs.readFileSync(DATA_FILE));
@@ -36,6 +37,7 @@ function getRooms() {
   }
 }
 
+// Đọc cấu hình minimap hiện tại.
 function getMinimap() {
   try {
     return JSON.parse(fs.readFileSync(MINIMAP_FILE));
@@ -44,6 +46,7 @@ function getMinimap() {
   }
 }
 
+// Đọc danh sách sensor từ file dữ liệu.
 function getSensors() {
   try {
     return JSON.parse(fs.readFileSync(SENSORS_FILE));
@@ -52,6 +55,7 @@ function getSensors() {
   }
 }
 
+// Trả về cấu hình API mặc định dùng khi chưa có file cấu hình.
 function getDefaultApiConfig() {
   return {
     weatherApi: {
@@ -70,6 +74,7 @@ function getDefaultApiConfig() {
   };
 }
 
+// Lấy cấu hình API từ file, fallback về mặc định nếu lỗi.
 function getApiConfig() {
   try {
     return JSON.parse(fs.readFileSync(API_CONFIG_FILE));
@@ -78,35 +83,39 @@ function getApiConfig() {
   }
 }
 
+// Lưu cấu hình API tổng vào file.
 function saveApiConfig(config) {
   fs.writeFileSync(API_CONFIG_FILE, JSON.stringify(config, null, 2));
 }
 
+// Phát dữ liệu sensor mới cho các client SSE đang kết nối.
 function broadcastSensors() {
   const payload = JSON.stringify(getSensors());
   const message = `event: sensors\ndata: ${payload}\n\n`;
   for (const res of sseClients) {
     try {
       res.write(message);
-    } catch (e) {
+    } catch {
       sseClients.delete(res);
     }
   }
 }
 
+// Phát dữ liệu phòng mới cho các client SSE đang kết nối.
 function broadcastRooms() {
   const payload = JSON.stringify(getRooms());
   const message = `event: rooms\ndata: ${payload}\n\n`;
   for (const res of sseClients) {
     try {
       res.write(message);
-    } catch (e) {
+    } catch {
       // Remove broken clients
       sseClients.delete(res);
     }
   }
 }
 
+// Đọc cấu hình SMTP từ biến môi trường.
 function getSmtpConfig() {
   const host = process.env.SMTP_HOST;
   const port = Number(process.env.SMTP_PORT || 587);
@@ -118,6 +127,7 @@ function getSmtpConfig() {
   return { host, port, user, pass, secure, from };
 }
 
+// Tạo transporter Nodemailer theo cấu hình SMTP.
 function createMailTransporter(config) {
   return nodemailer.createTransport({
     host: config.host,
@@ -130,6 +140,7 @@ function createMailTransporter(config) {
   });
 }
 
+// Đọc cấu hình gửi mail qua HTTP API (Resend/Brevo/SendGrid).
 function getMailApiConfig() {
   const provider = String(process.env.MAIL_PROVIDER || "").trim().toLowerCase();
   const from = process.env.MAIL_FROM;
@@ -143,6 +154,7 @@ function getMailApiConfig() {
   };
 }
 
+// Tách chuỗi email dạng "Name <email>" về object chuẩn.
 function parseEmailAddress(email) {
   const value = String(email || "").trim();
   const match = value.match(/^(.*)<(.+)>$/);
@@ -152,6 +164,7 @@ function parseEmailAddress(email) {
   return { email: value };
 }
 
+// Gửi mail qua nhà cung cấp HTTP API theo MAIL_PROVIDER.
 async function sendMailViaHttpApi({ provider, apiKey, from, toList, subject, text, html }) {
   const normalizedProvider = String(provider || "").toLowerCase();
 
@@ -237,6 +250,7 @@ async function sendMailViaHttpApi({ provider, apiKey, from, toList, subject, tex
   throw new Error("Unsupported MAIL_PROVIDER. Use: resend, brevo, sendgrid, or smtp");
 }
 
+// Escape HTML để tránh lỗi hiển thị và chèn mã độc trong email.
 function escapeHtml(value) {
   return String(value || "")
     .replace(/&/g, "&amp;")
@@ -246,6 +260,7 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
+// Dựng nội dung email (HTML + plain text) cho ghi chú virtual tour.
 function buildVirtualTourMailContent({ pageUrl, summary, notes }) {
   const safeSummary = summary && String(summary).trim() ? String(summary).trim() : "(Không có)";
   const safePageUrl = pageUrl && String(pageUrl).trim() ? String(pageUrl).trim() : "";
@@ -258,7 +273,7 @@ function buildVirtualTourMailContent({ pageUrl, summary, notes }) {
 
   const notesHtml = safeNotes.length
     ? safeNotes
-        .map((note, index) => {
+      .map((note) => {
           const roomName = escapeHtml(note?.roomName || "Không xác định");
           const content = escapeHtml(note?.content || "");
           const yaw = escapeHtml(formatCoord(note?.yaw));
@@ -753,6 +768,7 @@ app.get("/api/minimap", (req, res) => {
 /* ===== TOUR SCENARIO PUBLIC API ===== */
 const TOUR_SCENARIO_FILE = path.join(__dirname, "data", "tour-scenario.json");
 
+// Đọc kịch bản tour tự động từ file.
 function getTourScenario() {
   try {
     return JSON.parse(fs.readFileSync(TOUR_SCENARIO_FILE));
@@ -948,6 +964,7 @@ app.post("/api/rooms/:roomId/api-config", (req, res) => {
 });
 
 /* ===== REAL-TIME DATA API ===== */
+// Gộp dữ liệu thời tiết và chất lượng không khí thành 1 payload.
 async function getCombinedData(config) {
   const weatherApi = config.weatherApi;
   const airApi = config.airQualityApi;
@@ -1116,6 +1133,7 @@ app.get("/api/real-data/pm25", async (req, res) => {
 });
 
 // Helper: Calculate AQI status
+// Quy đổi PM2.5 sang mức AQI để hiển thị trạng thái.
 function calculateAQI(pm25) {
   if (pm25 <= 12) return { level: "Tốt", color: "#4CAF50" };
   if (pm25 <= 35.4) return { level: "Chấp nhận được", color: "#FFC107" };

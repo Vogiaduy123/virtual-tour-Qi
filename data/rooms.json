@@ -7,11 +7,12 @@
     "floor": 1,
     "hotspots": [
       {
-        "yaw": -113.68,
-        "pitch": -5.98,
+        "yaw": -123.53,
+        "pitch": -2.66,
         "target": 1769668421984,
-        "rotation": 300,
-        "color": "#c2c2c2"
+        "rotation": 0,
+        "color": "#ff0000",
+        "iconUrl": "/uploads/media/media_1772590486302_M__i_t__n.png"
       }
     ],
     "mediaHotspots": [
@@ -32,7 +33,19 @@
         "mediaType": "image"
       }
     ],
-    "mailHotspots": []
+    "mailHotspots": [
+      {
+        "title": "Vệ sinh",
+        "recipient": "vogiaduy11@gmail.com",
+        "subject": "chỉnh sửa",
+        "body": "làm vệ sinh",
+        "updatedAt": "2026-03-02T03:53:34.514Z",
+        "yaw": -37.48049326886374,
+        "pitch": -8.872997581276572,
+        "screenX": 0.1511780104712042,
+        "screenY": 0.46311475409836067
+      }
+    ]
   },
   {
     "id": 1769668421984,

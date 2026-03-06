@@ -225,7 +225,7 @@ router.get("/rooms/:roomId/hotspots", (req, res) => {
 // ADD hotspot
 router.put("/rooms/:roomId/hotspots", (req, res) => {
   const roomId = Number(req.params.roomId);
-  const { yaw, pitch, target, rotation, color } = req.body;
+  const { yaw, pitch, target, rotation, color, iconUrl } = req.body;
 
   if ([yaw, pitch, target].some(v => v === undefined || v === null || v === "")) {
     return res.status(400).json({ success: false, error: "Missing yaw/pitch/target" });
@@ -250,6 +250,7 @@ router.put("/rooms/:roomId/hotspots", (req, res) => {
 
   if (rotation !== undefined) hotspot.rotation = Number(rotation);
   if (color !== undefined) hotspot.color = color;
+  if (iconUrl !== undefined && String(iconUrl).trim() !== "") hotspot.iconUrl = String(iconUrl).trim();
 
   room.hotspots.push(hotspot);
   saveRooms(rooms);
@@ -262,7 +263,7 @@ router.put("/rooms/:roomId/hotspots", (req, res) => {
 router.patch("/rooms/:roomId/hotspots/:index", (req, res) => {
   const roomId = Number(req.params.roomId);
   const index = Number(req.params.index);
-  const { yaw, pitch, target, rotation, color } = req.body;
+  const { yaw, pitch, target, rotation, color, iconUrl } = req.body;
 
   const rooms = getRooms();
   const room = rooms.find(r => r.id === roomId);
@@ -280,6 +281,14 @@ router.patch("/rooms/:roomId/hotspots/:index", (req, res) => {
   if (target !== undefined) room.hotspots[index].target = target;
   if (rotation !== undefined) room.hotspots[index].rotation = rotation;
   if (color !== undefined) room.hotspots[index].color = color;
+  if (iconUrl !== undefined) {
+    const normalizedIconUrl = String(iconUrl || "").trim();
+    if (normalizedIconUrl) {
+      room.hotspots[index].iconUrl = normalizedIconUrl;
+    } else {
+      delete room.hotspots[index].iconUrl;
+    }
+  }
 
   saveRooms(rooms);
 

@@ -794,15 +794,22 @@
           </div>
 
           <div class="form-group" id="manualCameraUrlGroup">
-            <label>📡 URL Stream Camera (RTSP/HTTP):</label>
-            <input type="text" id="cameraStreamUrl" placeholder="rtsp://192.168.1.100:554/stream hoặc http://camera-ip/stream">
-            <small style="color: #7f8c8d; font-size: 12px;">Ví dụ: rtsp://admin:password@192.168.1.100:554/stream1</small>
+            <label>📡 URL Stream Camera (WebRTC/WHEP):</label>
+            <input type="text" id="cameraStreamUrl" placeholder="https://camera-gateway.local/live/cam01/whep hoặc webrtc://camera-gateway.local/live/cam01">
+            <small style="color: #7f8c8d; font-size: 12px;">Hỗ trợ: URL chứa /whep hoặc dạng webrtc://host/path</small>
           </div>
 
           <div class="form-group">
             <label>📸 URL Ảnh Snapshot:</label>
             <input type="text" id="cameraSnapshotUrl" placeholder="http://192.168.1.100/snapshot.jpg">
             <small style="color: #7f8c8d; font-size: 12px;">URL để lấy ảnh tĩnh từ camera</small>
+            <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
+              <button type="button" class="btn btn-small" onclick="previewCameraStream()" style="background: #3498db; color: white; margin: 0;">🎥 Xem stream</button>
+              <button type="button" class="btn btn-small" onclick="checkCameraStreamUrl()" style="background: #8e44ad; color: white; margin: 0;">📡 Kiểm tra URL</button>
+            </div>
+            <div id="cameraConnectionStatus" style="margin-top: 8px; font-size: 12px; color: #7f8c8d; min-height: 18px;"></div>
+            <div id="snapshotPreviewWrapper" style="display: none; margin-top: 10px; border: 1px solid #e1e8ed; border-radius: 8px; padding: 8px; background: #f8f9fa; min-height: 120px;">
+            </div>
           </div>
 
           <div class="form-group">
@@ -881,6 +888,18 @@
             <div class="color-swatch" data-color="#ff00ff" style="background: #ff00ff;" title="Hồng"></div>
             <div class="color-swatch" data-color="#00ffff" style="background: #00ffff;" title="Cyan"></div>
           </div>
+        </div>
+
+        <div class="form-group">
+          <label>Icon hotspot (tùy chọn)</label>
+          <div style="display: flex; gap: 8px; margin-bottom: 8px; align-items: center;">
+            <input type="text" id="hotspotIconUrl" placeholder="https://... hoặc /uploads/media/...">
+            <label class="btn" style="margin: 0; white-space: nowrap; background: #ecf0f6; color: #2c3e50; cursor: pointer;">
+              📁 Chọn ảnh
+              <input type="file" id="hotspotIconFile" accept="image/*" style="display: none;">
+            </label>
+          </div>
+          <div id="hotspotIconFileInfo" style="font-size: 12px; color: #7f8c8d;"></div>
         </div>
 
         <div style="display: flex; gap: 10px;">
@@ -971,6 +990,7 @@
     let editingMediaHotspotIndex = null;
     let panoramaViewer = null;
     let selectedMediaFile = null;
+    let selectedHotspotIconFile = null;
     let addHotspotMode = false;
     let addMediaMode = false;
     let addSensorPositionMode = false;
@@ -979,6 +999,7 @@
     let roomSensors = [];
     let autoRefreshInterval = null;
     let isAutoRefreshEnabled = false;
+    let currentPreviewPeerConnection = null;
 
     /* ===== WEBCAM MANAGEMENT ===== */
     let webcamStream = null;
@@ -989,6 +1010,7 @@
       const manualUrlGroup = document.getElementById('manualCameraUrlGroup');
       const streamUrlInput = document.getElementById('cameraStreamUrl');
       const snapshotUrlInput = document.getElementById('cameraSnapshotUrl');
+      const statusEl = document.getElementById('cameraConnectionStatus');
       
       if (useWebcam) {
         webcamPreview.style.display = 'block';
@@ -996,6 +1018,11 @@
         streamUrlInput.value = 'webcam://0';
         snapshotUrlInput.value = 'webcam://0/snapshot';
         snapshotUrlInput.disabled = true;
+        resetCameraDiagnostics();
+        if (statusEl) {
+          statusEl.style.color = '#3498db';
+          statusEl.textContent = 'ℹ️ Chế độ webcam nội bộ: bỏ qua kiểm tra URL WebRTC';
+        }
       } else {
         webcamPreview.style.display = 'none';
         manualUrlGroup.style.display = 'block';
@@ -1004,6 +1031,7 @@
           snapshotUrlInput.value = '';
         }
         snapshotUrlInput.disabled = false;
+        resetCameraDiagnostics();
         stopWebcam();
       }
     }
@@ -1072,6 +1100,214 @@
     }
     window.stopWebcam = stopWebcam;
 
+    function setCameraConnectionStatus(message, color = '#7f8c8d') {
+      const statusEl = document.getElementById('cameraConnectionStatus');
+      if (!statusEl) return;
+      statusEl.style.color = color;
+      statusEl.textContent = message;
+    }
+
+    function resetCameraDiagnostics() {
+      const wrapper = document.getElementById('snapshotPreviewWrapper');
+      const video = document.getElementById('cameraStreamPreviewVideo');
+      if (video) {
+        try {
+          video.pause();
+          video.removeAttribute('src');
+          video.load();
+        } catch (_) {}
+      }
+      if (currentPreviewPeerConnection) {
+        try { currentPreviewPeerConnection.close(); } catch (_) {}
+        currentPreviewPeerConnection = null;
+      }
+      if (wrapper) wrapper.style.display = 'none';
+      if (wrapper) wrapper.innerHTML = '';
+    }
+
+    function withCacheBuster(url) {
+      const separator = url.includes('?') ? '&' : '?';
+      return `${url}${separator}t=${Date.now()}`;
+    }
+
+    function normalizeWebRtcUrl(streamUrl) {
+      const raw = String(streamUrl || '').trim();
+      if (!raw || raw.startsWith('webcam://')) return null;
+
+      const preferredHttpScheme = window.location.protocol === 'https:' ? 'https://' : 'http://';
+
+      if (raw.startsWith('webrtc://')) {
+        const withoutScheme = raw.slice('webrtc://'.length).replace(/^\/+/, '');
+        return `${preferredHttpScheme}${withoutScheme.replace(/\/+$/, '')}/whep`;
+      }
+
+      if (raw.startsWith('whep://')) {
+        const withoutScheme = raw.slice('whep://'.length).replace(/^\/+/, '');
+        return `${preferredHttpScheme}${withoutScheme}`;
+      }
+
+      if (/^https?:\/\//i.test(raw) && /\/whep(\?|$)/i.test(raw)) {
+        return raw;
+      }
+
+      return null;
+    }
+
+    function waitForIceGatheringComplete(peerConnection, timeoutMs = 5000) {
+      return new Promise((resolve) => {
+        if (peerConnection.iceGatheringState === 'complete') {
+          resolve(true);
+          return;
+        }
+
+        let settled = false;
+        const done = () => {
+          if (settled) return;
+          settled = true;
+          peerConnection.removeEventListener('icegatheringstatechange', onStateChange);
+          clearTimeout(timer);
+          resolve(true);
+        };
+
+        const onStateChange = () => {
+          if (peerConnection.iceGatheringState === 'complete') {
+            done();
+          }
+        };
+
+        const timer = setTimeout(done, timeoutMs);
+        peerConnection.addEventListener('icegatheringstatechange', onStateChange);
+      });
+    }
+
+    async function attachWebRtcPreview(whepUrl, videoEl) {
+      const peerConnection = new RTCPeerConnection({
+        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+      });
+      currentPreviewPeerConnection = peerConnection;
+
+      peerConnection.addTransceiver('video', { direction: 'recvonly' });
+      peerConnection.addTransceiver('audio', { direction: 'recvonly' });
+
+      peerConnection.ontrack = (event) => {
+        const [stream] = event.streams || [];
+        if (stream) {
+          videoEl.srcObject = stream;
+        }
+      };
+
+      const offer = await peerConnection.createOffer();
+      await peerConnection.setLocalDescription(offer);
+      await waitForIceGatheringComplete(peerConnection);
+
+      const res = await fetch(whepUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/sdp' },
+        body: peerConnection.localDescription?.sdp || offer.sdp
+      });
+
+      if (!res.ok) {
+        const errText = await res.text().catch(() => '');
+        throw new Error(errText || `WHEP server lỗi HTTP ${res.status}`);
+      }
+
+      const answerSdp = await res.text();
+      await peerConnection.setRemoteDescription({ type: 'answer', sdp: answerSdp });
+    }
+
+    function previewCameraStream() {
+      const streamUrl = (document.getElementById('cameraStreamUrl')?.value || '').trim();
+      const wrapper = document.getElementById('snapshotPreviewWrapper');
+
+      if (!streamUrl) {
+        resetCameraDiagnostics();
+        setCameraConnectionStatus('⚠️ Vui lòng nhập URL stream trước khi xem', '#e67e22');
+        return;
+      }
+
+      if (streamUrl.startsWith('webcam://')) {
+        resetCameraDiagnostics();
+        setCameraConnectionStatus('ℹ️ Webcam dùng preview riêng ở phía trên', '#3498db');
+        return;
+      }
+
+      const whepUrl = normalizeWebRtcUrl(streamUrl);
+      if (!whepUrl) {
+        resetCameraDiagnostics();
+        setCameraConnectionStatus('❌ URL không hợp lệ. Dùng URL /whep hoặc webrtc://host/path', '#e74c3c');
+        return;
+      }
+
+      if (!wrapper) return;
+
+      wrapper.innerHTML = `
+        <video id="cameraStreamPreviewVideo" autoplay muted controls playsinline style="width: 100%; max-height: 220px; object-fit: contain; border-radius: 6px; background: white;"></video>
+        <img id="cameraStreamPreviewImageFallback" alt="Stream preview" style="display: none; width: 100%; max-height: 220px; object-fit: contain; border-radius: 6px; background: white;">
+      `;
+      wrapper.style.display = 'block';
+      setCameraConnectionStatus('⏳ Đang kết nối WebRTC...', '#3498db');
+
+      const video = document.getElementById('cameraStreamPreviewVideo');
+      const imageFallback = document.getElementById('cameraStreamPreviewImageFallback');
+      if (!video || !imageFallback) return;
+
+      video.oncanplay = () => {
+        setCameraConnectionStatus('✅ Stream đang phát', '#27ae60');
+      };
+
+      video.onerror = () => {
+        video.style.display = 'none';
+        imageFallback.style.display = 'block';
+        imageFallback.src = withCacheBuster(streamUrl);
+        setCameraConnectionStatus('ℹ️ Không phát được WebRTC, đang thử hiển thị ảnh snapshot/MJPEG...', '#f39c12');
+      };
+
+      imageFallback.onload = () => {
+        setCameraConnectionStatus('✅ Stream hiển thị theo chế độ ảnh MJPEG', '#27ae60');
+      };
+
+      imageFallback.onerror = () => {
+        wrapper.style.display = 'none';
+        setCameraConnectionStatus('❌ Không xem trực tiếp được luồng này trên trình duyệt admin', '#e74c3c');
+      };
+
+      attachWebRtcPreview(whepUrl, video)
+        .then(() => {
+          video.play().catch(() => {});
+        })
+        .catch((err) => {
+          wrapper.style.display = 'none';
+          setCameraConnectionStatus(`❌ Không xem được stream WebRTC: ${err.message}`, '#e74c3c');
+        });
+    }
+    window.previewCameraStream = previewCameraStream;
+
+    async function checkCameraStreamUrl() {
+      const streamUrl = (document.getElementById('cameraStreamUrl')?.value || '').trim();
+      const cameraStatusSelect = document.getElementById('cameraStatus');
+
+      if (!streamUrl) {
+        setCameraConnectionStatus('⚠️ Vui lòng nhập URL stream trước khi kiểm tra', '#e67e22');
+        return;
+      }
+
+      if (streamUrl.startsWith('webcam://')) {
+        setCameraConnectionStatus('ℹ️ Webcam nội bộ đang hoạt động trên trình duyệt, không cần kiểm tra URL WebRTC', '#3498db');
+        return;
+      }
+
+      const whepUrl = normalizeWebRtcUrl(streamUrl);
+      if (!whepUrl) {
+        if (cameraStatusSelect) cameraStatusSelect.value = 'offline';
+        setCameraConnectionStatus('❌ URL không hợp lệ. Dùng URL /whep hoặc webrtc://host/path', '#e74c3c');
+        return;
+      }
+
+      if (cameraStatusSelect) cameraStatusSelect.value = 'online';
+      setCameraConnectionStatus(`✅ URL WebRTC hợp lệ: ${whepUrl}`, '#27ae60');
+    }
+    window.checkCameraStreamUrl = checkCameraStreamUrl;
+
     /* ===== TOGGLE SENSOR/CAMERA FIELDS ===== */
     function toggleSensorFields() {
       const sensorType = document.getElementById('sensorType').value;
@@ -1105,6 +1341,9 @@
     const hotspotModal = document.getElementById('hotspotModal');
     const modalTitle = document.getElementById('modalTitle');
     const colorPicker = document.getElementById('colorPicker');
+    const hotspotIconUrlInput = document.getElementById('hotspotIconUrl');
+    const hotspotIconFileInput = document.getElementById('hotspotIconFile');
+    const hotspotIconFileInfo = document.getElementById('hotspotIconFileInfo');
     const addHotspotBtn = document.getElementById('addHotspotBtn');
     const addMediaBtn = document.getElementById('addMediaBtn');
 
@@ -1260,6 +1499,7 @@
             <div class="hotspot-info">
               <span><strong>Phòng:</strong> ${targetRoom ? targetRoom.name : '?'}</span>
               <span><strong>Yaw:</strong> ${hotspot.yaw.toFixed(2)}° | <strong>Pitch:</strong> ${hotspot.pitch.toFixed(2)}°</span>
+              <span><strong>Icon:</strong> ${hotspot.iconUrl ? 'Có icon tùy chỉnh' : 'Mặc định'}</span>
             </div>
             <div class="hotspot-actions">
               <button class="btn btn-edit btn-small" onclick="editHotspot(${idx})" style="margin-bottom: 0;">✏️ Sửa</button>
@@ -1271,6 +1511,29 @@
     }
 
     // ===== HOTSPOT OPERATIONS =====
+    async function uploadHotspotIconFile(file) {
+      const formData = new FormData();
+      formData.append('media', file);
+
+      const uploadRes = await fetch('/api/admin/media/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const contentType = uploadRes.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        const errorText = await uploadRes.text();
+        throw new Error(`Upload icon thất bại (${uploadRes.status}): ${errorText.slice(0, 150)}`);
+      }
+
+      const uploadData = await uploadRes.json();
+      if (!uploadRes.ok || !uploadData.success || !uploadData.media?.url) {
+        throw new Error(uploadData.error || `Upload icon thất bại (${uploadRes.status})`);
+      }
+
+      return uploadData.media.url;
+    }
+
     hotspotForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -1280,12 +1543,27 @@
         return;
       }
 
+      let iconUrl = hotspotIconUrlInput ? hotspotIconUrlInput.value.trim() : '';
+      try {
+        if (selectedHotspotIconFile) {
+          if (hotspotIconFileInfo) hotspotIconFileInfo.textContent = 'Đang upload icon...';
+          iconUrl = await uploadHotspotIconFile(selectedHotspotIconFile);
+          if (hotspotIconUrlInput) hotspotIconUrlInput.value = iconUrl;
+          if (hotspotIconFileInfo) hotspotIconFileInfo.textContent = `Đã upload: ${selectedHotspotIconFile.name}`;
+        }
+      } catch (uploadError) {
+        alert(uploadError.message);
+        if (hotspotIconFileInfo) hotspotIconFileInfo.textContent = '';
+        return;
+      }
+
       const data = {
         target: targetId,
         yaw: Number(document.getElementById('yaw').value),
         pitch: Number(document.getElementById('pitch').value),
         rotation: Number(document.getElementById('rotation').value),
-        color: document.getElementById('color').value
+        color: document.getElementById('color').value,
+        iconUrl
       };
 
       try {
@@ -1308,6 +1586,9 @@
           renderHotspots();
           loadPanoramaPreview();
           hotspotModal.classList.remove('active');
+          selectedHotspotIconFile = null;
+          if (hotspotIconFileInput) hotspotIconFileInput.value = '';
+          if (hotspotIconFileInfo) hotspotIconFileInfo.textContent = '';
           alert(editingHotspotIndex !== null ? 'Cập nhật thành công!' : 'Thêm thành công!');
         } else {
           alert('Lỗi lưu hotspot');
@@ -1328,8 +1609,12 @@
       document.getElementById('yaw').value = hotspot.yaw;
       document.getElementById('pitch').value = hotspot.pitch;
       document.getElementById('rotation').value = hotspot.rotation || 0;
-      document.getElementById('color').value = hotspot.color;
-      colorPicker.value = hotspot.color;
+      document.getElementById('color').value = hotspot.color || '#ff0000';
+      colorPicker.value = hotspot.color || '#ff0000';
+      if (hotspotIconUrlInput) hotspotIconUrlInput.value = hotspot.iconUrl || '';
+      selectedHotspotIconFile = null;
+      if (hotspotIconFileInput) hotspotIconFileInput.value = '';
+      if (hotspotIconFileInfo) hotspotIconFileInfo.textContent = hotspot.iconUrl ? 'Đang dùng icon đã lưu' : '';
 
       hotspotModal.classList.add('active');
     };
@@ -1484,7 +1769,10 @@
               text: tooltipText,
               cssClass: 'custom-hotspot',
               createTooltipFunc: function(div) {
-                div.innerHTML = `<span style="background: ${hotspot.color || '#ff0000'}; color: white; padding: 8px 12px; border-radius: 6px; font-size: 12px; white-space: nowrap;">📍 ${tooltipText}</span>`;
+                const iconHtml = hotspot.iconUrl
+                  ? `<img src="${hotspot.iconUrl}" style="width:16px;height:16px;object-fit:contain;vertical-align:middle;margin-right:6px;">`
+                  : '📍 ';
+                div.innerHTML = `<span style="background: ${hotspot.color || '#ff0000'}; color: white; padding: 8px 12px; border-radius: 6px; font-size: 12px; white-space: nowrap;">${iconHtml}${tooltipText}</span>`;
               },
               clickHandlerFunc: function() {
                 console.log('Clicked hotspot', idx);
@@ -1564,6 +1852,10 @@
                 document.getElementById('rotation').value = 0;
                 document.getElementById('color').value = '#ff0000';
                 colorPicker.value = '#ff0000';
+                if (hotspotIconUrlInput) hotspotIconUrlInput.value = '';
+                selectedHotspotIconFile = null;
+                if (hotspotIconFileInput) hotspotIconFileInput.value = '';
+                if (hotspotIconFileInfo) hotspotIconFileInfo.textContent = '';
                 hotspotModal.classList.add('active');
                 setAddHotspotMode(false);
               }
@@ -1595,6 +1887,18 @@
     if (addHotspotBtn) {
       addHotspotBtn.addEventListener('click', () => {
         setAddHotspotMode(!addHotspotMode);
+      });
+    }
+
+    if (hotspotIconFileInput) {
+      hotspotIconFileInput.addEventListener('change', (event) => {
+        const file = event.target.files?.[0] || null;
+        selectedHotspotIconFile = file;
+        if (hotspotIconFileInfo) {
+          hotspotIconFileInfo.textContent = file
+            ? `${file.name} (${(file.size / 1024).toFixed(1)} KB) - sẽ upload khi lưu`
+            : '';
+        }
       });
     }
 
@@ -1983,6 +2287,19 @@
     const sensorModalTitle = document.getElementById('sensorModalTitle');
     let currentRoomApiConfig = null;
 
+    const cameraStreamUrlInput = document.getElementById('cameraStreamUrl');
+    if (cameraStreamUrlInput) {
+      cameraStreamUrlInput.addEventListener('change', () => {
+        const value = (cameraStreamUrlInput.value || '').trim();
+        if (!value) {
+          resetCameraDiagnostics();
+          setCameraConnectionStatus('', '#7f8c8d');
+          return;
+        }
+        previewCameraStream();
+      });
+    }
+
     // Toggle API Config Section
     function setApiInputsDisabled(disabled) {
       const ids = [
@@ -2148,6 +2465,8 @@
           const isWebcam = sensor.camera?.streamUrl === 'webcam://0';
           const cameraIcon = isWebcam ? '💻' : '📹';
           const cameraType = isWebcam ? 'Webcam Laptop' : 'Camera IP';
+          const streamUrl = (sensor.camera?.streamUrl || '').trim();
+          const streamFallback = `<div style="margin-top: 10px; color: #7f8c8d; font-size: 12px;">${isWebcam ? 'ℹ️ Webcam xem trực tiếp trong modal cấu hình' : streamUrl ? 'ℹ️ Camera này dùng WebRTC (WHEP), bấm "Xem trực tiếp" để kiểm tra' : 'ℹ️ Chưa cấu hình stream WebRTC cho camera này'}</div>`;
           
           return `
             <div class="hotspot-item" style="background: #e3f2fd; border-left-color: #2196F3;">
@@ -2158,7 +2477,9 @@
                 <span><strong>Độ phân giải:</strong> ${sensor.camera?.resolution || 'N/A'}</span>
                 ${isWebcam ? '' : `<span><strong>Stream:</strong> ${sensor.camera?.streamUrl ? '✅ Có' : '❌ Không'}</span>`}
               </div>
+              ${streamFallback}
               <div class="hotspot-actions">
+                <button class="btn btn-small" onclick="openCameraLiveStream(${idx})" style="margin-bottom: 0; background: #3498db; color: white;">🎥 Xem trực tiếp</button>
                 <button class="btn btn-edit btn-small" onclick="editSensor(${idx})" style="margin-bottom: 0;">✏️ Sửa</button>
                 <button class="btn btn-danger btn-small" onclick="deleteSensor(${idx})" style="margin-bottom: 0;">🗑️ Xóa</button>
               </div>
@@ -2183,7 +2504,17 @@
           `;
         }
       }).join('');
+
     }
+
+    window.openCameraLiveStream = function(idx) {
+      editSensor(idx);
+      setTimeout(() => {
+        if (document.getElementById('sensorType')?.value === 'camera') {
+          previewCameraStream();
+        }
+      }, 200);
+    };
 
     if (addSensorBtn) {
       addSensorBtn.addEventListener('click', async () => {
@@ -2200,6 +2531,8 @@
           document.getElementById('useWebcam').checked = false;
           document.getElementById('sensorYaw').value = 0;
           document.getElementById('sensorPitch').value = 0;
+          resetCameraDiagnostics();
+          setCameraConnectionStatus('', '#7f8c8d');
           toggleSensorFields(); // Show environment fields by default
           setAddSensorPositionMode(false);
           console.log('✅ Modal opened, type set to:', document.getElementById('sensorType').value);
@@ -2231,6 +2564,8 @@
       document.getElementById('sensorYaw').value = 0;
       document.getElementById('sensorPitch').value = 0;
       stopWebcam(); // Stop webcam if running
+      resetCameraDiagnostics();
+      setCameraConnectionStatus('', '#7f8c8d');
       toggleSensorFields(); // Reset to show environment fields
     }
 
@@ -2412,6 +2747,8 @@
         // Toggle webcam UI if it's a webcam
         if (isWebcam) {
           toggleWebcam();
+        } else {
+          previewCameraStream();
         }
       } else {
         // Fill environment sensor fields

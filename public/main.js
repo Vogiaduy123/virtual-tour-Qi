@@ -329,6 +329,7 @@ function switchRoom(roomId) {
   addHotspots(roomId);
   updateMinimapHighlight();
   hideMediaOverlay();
+  closeCameraModal();
   closeMailComposer();
   
   // Update sensor widget and camera panel for new room
@@ -366,11 +367,15 @@ function addHotspots(roomId) {
     // Xoay mũi tên theo rotation (nếu có) hoặc yaw
     const rotationDeg = (hs.rotation !== undefined ? hs.rotation : hs.yaw) - 45;
     el.style.setProperty('--rotation', `${rotationDeg}deg`);
-    
-    // Áp dụng màu sắc nếu có
-    const arrowColor = hs.color || "#000000";
-    el.style.setProperty('--arrow-color', arrowColor);
 
+    if (hs.iconUrl && typeof hs.iconUrl === "string") {
+      const normalizedIconUrl = hs.iconUrl.trim();
+      if (normalizedIconUrl) {
+        const safeIconUrl = normalizedIconUrl.replace(/"/g, "\\\"");
+        el.style.setProperty('--hotspot-icon', `url("${safeIconUrl}")`);
+      }
+    }
+    
        el.onclick = (e) => {
          e.stopPropagation();
          // Chuyển phòng trực tiếp không có hiệu ứng
@@ -488,11 +493,7 @@ function addHotspots(roomId) {
         yaw: panoramaPoint.yaw,
         pitch: panoramaPoint.pitch
       });
-      return;
     }
-
-    const fixedPoint = resolveFixedMailPoint(mailPoint, scene);
-    createFixedMailHotspot(index, fixedPoint);
   });
   
   // Add sensor hotspots
@@ -1491,6 +1492,164 @@ function hideSensorOverlay() {
 // Show camera preview in modal
 let activeCameraStream = null;
 let activeCameraRefreshInterval = null;
+let activeCameraPeerConnection = null;
+
+function stopActiveCameraPlayback() {
+  if (activeCameraStream) {
+    activeCameraStream.getTracks().forEach(track => track.stop());
+    activeCameraStream = null;
+  }
+
+  if (activeCameraRefreshInterval) {
+    clearInterval(activeCameraRefreshInterval);
+    activeCameraRefreshInterval = null;
+  }
+
+  if (activeCameraPeerConnection) {
+    try {
+      activeCameraPeerConnection.close();
+    } catch {}
+    activeCameraPeerConnection = null;
+  }
+}
+
+function normalizeWebRtcUrl(streamUrl) {
+  const raw = String(streamUrl || '').trim();
+  if (!raw || raw.startsWith('webcam://')) return null;
+
+  const preferredHttpScheme = window.location.protocol === 'https:' ? 'https://' : 'http://';
+
+  if (raw.startsWith('webrtc://')) {
+    const withoutScheme = raw.slice('webrtc://'.length).replace(/^\/+/, '');
+    return `${preferredHttpScheme}${withoutScheme.replace(/\/+$/, '')}/whep`;
+  }
+
+  if (raw.startsWith('whep://')) {
+    const withoutScheme = raw.slice('whep://'.length).replace(/^\/+/, '');
+    return `${preferredHttpScheme}${withoutScheme}`;
+  }
+
+  if (/^https?:\/\//i.test(raw) && /\/whep(\?|$)/i.test(raw)) {
+    return raw;
+  }
+
+  return null;
+}
+
+function waitForIceGatheringComplete(peerConnection, timeoutMs = 5000) {
+  return new Promise((resolve) => {
+    if (peerConnection.iceGatheringState === 'complete') {
+      resolve(true);
+      return;
+    }
+
+    let settled = false;
+    const done = () => {
+      if (settled) return;
+      settled = true;
+      peerConnection.removeEventListener('icegatheringstatechange', onStateChange);
+      clearTimeout(timer);
+      resolve(true);
+    };
+
+    const onStateChange = () => {
+      if (peerConnection.iceGatheringState === 'complete') {
+        done();
+      }
+    };
+
+    const timer = setTimeout(done, timeoutMs);
+    peerConnection.addEventListener('icegatheringstatechange', onStateChange);
+  });
+}
+
+async function playWebRtcWhep(whepUrl, videoElement) {
+  const peerConnection = new RTCPeerConnection({
+    iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+  });
+  activeCameraPeerConnection = peerConnection;
+
+  peerConnection.addTransceiver('video', { direction: 'recvonly' });
+  peerConnection.addTransceiver('audio', { direction: 'recvonly' });
+
+  peerConnection.ontrack = (event) => {
+    const [firstStream] = event.streams || [];
+    if (firstStream) {
+      videoElement.srcObject = firstStream;
+      return;
+    }
+    const mediaStream = new MediaStream([event.track]);
+    videoElement.srcObject = mediaStream;
+  };
+
+  const offer = await peerConnection.createOffer();
+  await peerConnection.setLocalDescription(offer);
+  await waitForIceGatheringComplete(peerConnection);
+
+  const response = await fetch(whepUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/sdp' },
+    body: peerConnection.localDescription?.sdp || offer.sdp
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => '');
+    throw new Error(errorText || `WHEP server lỗi HTTP ${response.status}`);
+  }
+
+  const answerSdp = await response.text();
+  await peerConnection.setRemoteDescription({ type: 'answer', sdp: answerSdp });
+
+  return peerConnection;
+}
+
+function createCameraInfoBar(camera, rightText) {
+  const infoBar = document.createElement('div');
+  infoBar.className = 'camera-info-bar';
+  infoBar.innerHTML = `
+    <div class="camera-info-item">
+      <strong>Độ phân giải</strong>
+      <span>${camera.camera?.resolution || 'N/A'}</span>
+    </div>
+    <div class="camera-info-item">
+      <strong>Trạng thái</strong>
+      <span id="cameraStatusText">${rightText}</span>
+    </div>
+  `;
+  return infoBar;
+}
+
+function showSnapshotFallback(camera, container, statusText) {
+  const snapshotUrl = (camera.camera?.snapshotUrl || '').trim();
+  if (!snapshotUrl) return false;
+
+  container.innerHTML = '';
+
+  const imgContainer = document.createElement('div');
+  imgContainer.style.cssText = 'position: relative; display: inline-block; width: 100%;';
+
+  const img = document.createElement('img');
+  img.style.cssText = 'width: 100%; border-radius: 12px; background: #000; border: 1px solid rgba(255,255,255,0.1);';
+  img.alt = camera.name;
+
+  const statusDiv = document.createElement('div');
+  statusDiv.className = 'camera-status-badge';
+  statusDiv.innerHTML = '📸 Snapshot';
+
+  imgContainer.appendChild(img);
+  imgContainer.appendChild(statusDiv);
+  container.appendChild(imgContainer);
+  container.appendChild(createCameraInfoBar(camera, statusText || '📸 Snapshot'));
+
+  const updateSnapshot = () => {
+    const separator = snapshotUrl.includes('?') ? '&' : '?';
+    img.src = `${snapshotUrl}${separator}t=${Date.now()}`;
+  };
+
+  updateSnapshot();
+  activeCameraRefreshInterval = setInterval(updateSnapshot, 2000);
+  return true;
+}
 
 function showCameraPreview(camera) {
   const cameraModal = document.getElementById('cameraModal');
@@ -1503,16 +1662,7 @@ function showCameraPreview(camera) {
   cameraModalTitle.textContent = `📹 ${camera.name}`;
   
   // Stop any active camera stream
-  if (activeCameraStream) {
-    activeCameraStream.getTracks().forEach(track => track.stop());
-    activeCameraStream = null;
-  }
-  
-  // Clear refresh interval
-  if (activeCameraRefreshInterval) {
-    clearInterval(activeCameraRefreshInterval);
-    activeCameraRefreshInterval = null;
-  }
+  stopActiveCameraPlayback();
   
   // Clear previous content
   cameraPreviewContainer.innerHTML = '';
@@ -1539,7 +1689,9 @@ function showCameraPreview(camera) {
     return;
   }
   
-  if (camera.camera?.streamUrl === 'webcam://0') {
+  const streamUrl = (camera.camera?.streamUrl || '').trim();
+
+  if (streamUrl === 'webcam://0') {
     // Webcam preview
     const videoContainer = document.createElement('div');
     videoContainer.style.cssText = 'position: relative; display: inline-block; width: 100%;';
@@ -1557,21 +1709,7 @@ function showCameraPreview(camera) {
     videoContainer.appendChild(video);
     videoContainer.appendChild(statusDiv);
     cameraPreviewContainer.appendChild(videoContainer);
-    
-    // Add info bar
-    const infoBar = document.createElement('div');
-    infoBar.className = 'camera-info-bar';
-    infoBar.innerHTML = `
-      <div class="camera-info-item">
-        <strong>Độ phân giải</strong>
-        <span>${camera.camera?.resolution || 'N/A'}</span>
-      </div>
-      <div class="camera-info-item">
-        <strong>Trạng thái</strong>
-        <span id="cameraStatusText">🔴 Đang kết nối</span>
-      </div>
-    `;
-    cameraPreviewContainer.appendChild(infoBar);
+    cameraPreviewContainer.appendChild(createCameraInfoBar(camera, '🔴 Đang kết nối'));
     
     // Request webcam access
     navigator.mediaDevices.getUserMedia({ video: true, audio: false })
@@ -1602,45 +1740,69 @@ function showCameraPreview(camera) {
         }
         cameraPreviewContainer.appendChild(errorMsg);
       });
-  } else if (camera.camera?.snapshotUrl) {
-    // Snapshot URL - show image with auto-refresh
-    const imgContainer = document.createElement('div');
-    imgContainer.style.cssText = 'position: relative; display: inline-block; width: 100%;';
-    
-    const img = document.createElement('img');
-    img.style.cssText = 'width: 100%; border-radius: 12px; background: #000; border: 1px solid rgba(255,255,255,0.1);';
-    img.alt = camera.name;
-    img.src = camera.camera.snapshotUrl + '?t=' + Date.now();
-    
+  } else if (streamUrl) {
+    const videoContainer = document.createElement('div');
+    videoContainer.style.cssText = 'position: relative; display: inline-block; width: 100%;';
+
+    const video = document.createElement('video');
+    video.autoplay = true;
+    video.playsinline = true;
+    video.muted = true;
+    video.controls = true;
+    video.style.cssText = 'width: 100%; border-radius: 12px; background: #000; border: 1px solid rgba(255,255,255,0.1);';
+
     const statusDiv = document.createElement('div');
     statusDiv.className = 'camera-status-badge';
-    statusDiv.innerHTML = '📸 Snapshot';
-    
-    imgContainer.appendChild(img);
-    imgContainer.appendChild(statusDiv);
-    cameraPreviewContainer.appendChild(imgContainer);
-    
-    // Add info bar
-    const infoBar = document.createElement('div');
-    infoBar.className = 'camera-info-bar';
-    infoBar.innerHTML = `
-      <div class="camera-info-item">
-        <strong>Độ phân giải</strong>
-        <span>${camera.camera?.resolution || 'N/A'}</span>
-      </div>
-      <div class="camera-info-item">
-        <strong>Cập nhật</strong>
-        <span>Mỗi 2 giây</span>
-      </div>
-    `;
-    cameraPreviewContainer.appendChild(infoBar);
-    
-    // Auto-refresh snapshot every 2 seconds
-    activeCameraRefreshInterval = setInterval(() => {
-      if (!cameraModal.classList.contains('hidden')) {
-        img.src = camera.camera.snapshotUrl + '?t=' + Date.now();
+    statusDiv.innerHTML = '⏳ Đang kết nối...';
+
+    videoContainer.appendChild(video);
+    videoContainer.appendChild(statusDiv);
+    cameraPreviewContainer.appendChild(videoContainer);
+    cameraPreviewContainer.appendChild(createCameraInfoBar(camera, '⏳ Đang kết nối'));
+
+    const statusTextEl = () => document.getElementById('cameraStatusText');
+    const setStatus = (badgeText, text, badgeColor) => {
+      statusDiv.innerHTML = badgeText;
+      if (badgeColor) statusDiv.style.background = badgeColor;
+      const statusElement = statusTextEl();
+      if (statusElement) statusElement.textContent = text;
+    };
+
+    video.onplaying = () => {
+      setStatus('🟢 LIVE', '🟢 Hoạt động', 'rgba(76, 175, 80, 0.85)');
+    };
+
+    video.onerror = () => {
+      if (showSnapshotFallback(camera, cameraPreviewContainer, '📸 Fallback snapshot')) {
+        return;
       }
-    }, 2000);
+      setStatus('🔴 Lỗi stream', '🔴 Không phát được stream', 'rgba(244, 67, 54, 0.85)');
+    };
+
+    const whepUrl = normalizeWebRtcUrl(streamUrl);
+    if (!whepUrl) {
+      if (showSnapshotFallback(camera, cameraPreviewContainer, '📸 Fallback snapshot')) {
+        setStatus('📸 Snapshot', '📸 Fallback snapshot', 'rgba(52, 152, 219, 0.85)');
+        return;
+      }
+      setStatus('🔴 Sai URL', '🔴 Chỉ hỗ trợ webcam hoặc WebRTC WHEP', 'rgba(244, 67, 54, 0.85)');
+      return;
+    }
+
+    playWebRtcWhep(whepUrl, video)
+      .then(() => {
+        video.play().catch(() => {});
+      })
+      .catch((err) => {
+        if (showSnapshotFallback(camera, cameraPreviewContainer, '📸 Fallback snapshot')) {
+          setStatus('📸 Snapshot', '📸 Fallback snapshot', 'rgba(52, 152, 219, 0.85)');
+          return;
+        }
+        setStatus('🔴 Lỗi kết nối', `🔴 ${err.message}`, 'rgba(244, 67, 54, 0.85)');
+      });
+  } else if (camera.camera?.snapshotUrl) {
+    // Snapshot URL - show image with auto-refresh
+    showSnapshotFallback(camera, cameraPreviewContainer, '📸 Snapshot mỗi 2 giây');
   } else {
     // No stream available
     cameraPreviewContainer.innerHTML = `
@@ -1670,18 +1832,8 @@ function closeCameraModal() {
   if (!cameraModal) return;
   
   cameraModal.classList.add('hidden');
-  
-  // Stop camera stream
-  if (activeCameraStream) {
-    activeCameraStream.getTracks().forEach(track => track.stop());
-    activeCameraStream = null;
-  }
-  
-  // Clear refresh interval
-  if (activeCameraRefreshInterval) {
-    clearInterval(activeCameraRefreshInterval);
-    activeCameraRefreshInterval = null;
-  }
+
+  stopActiveCameraPlayback();
 }
 
 // Add event listeners for camera modal

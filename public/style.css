@@ -2,7 +2,7 @@
   box-sizing: border-box;
 }
 
-/* ADMIN */
+/* ===== ADMIN PAGES: layout + form controls ===== */
 body.admin {
   margin: 0;
   padding: 30px;
@@ -60,7 +60,7 @@ body.admin button:hover {
   background: #1976D2;
 }
 
-/* USER */
+/* ===== USER VIEWER: full screen panorama ===== */
 body.user {
   margin: 0;
   overflow: hidden;
@@ -91,7 +91,7 @@ body.admin #pano > * {
   max-height: 350px !important;
 }
 
-/* ROOM LIST DROPDOWN */
+/* ===== ROOM NAVIGATION: room selector dropdown ===== */
 #roomListWrapper {
   position: fixed;
   top: 20px;
@@ -156,12 +156,11 @@ body.admin #pano > * {
   color: white;
 }
 
-/* Hotspot không transition để di chuyển mượt */
+/* ===== HOTSPOT BASE: icon + hit area ===== */
 .hotspot {
   width: 60px;
   height: 60px;
   cursor: pointer;
-  /* transition: transform 0.2s; */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -170,32 +169,21 @@ body.admin #pano > * {
 }
 
 .hotspot::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-45%, -50%);
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: rgba(58, 48, 48, 0.5);
-  z-index: -1;
-  pointer-events: none;
+  content: none;
 }
 
 .hotspot::before {
   content: '';
-  width: 30px;
-  height: 30px;
-  border-top: 7px solid var(--arrow-color, #000);
-  border-right: 7px solid var(--arrow-color, #000);
-  transform: rotate(var(--rotation, 45deg));
-  transform-origin: center center;
+  width: 54px;
+  height: 54px;
   position: absolute;
   top: 50%;
   left: 50%;
-  margin-top: -15px;
-  margin-left: -15px;
+  transform: translate(-50%, -50%) rotate(var(--rotation, 45deg));
+  background-image: var(--hotspot-icon, url("images/hotspots/double_arrow_tour.gif?v=1")), url("images/hotspots/move-hotspot.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
   pointer-events: none;
 }
 
@@ -203,8 +191,7 @@ body.admin #pano > * {
   transform: scale(1.3);
 }
 
-/* MINIMAP STYLES */
-/* AUTO TOUR CONTROL */
+/* ===== AUTO TOUR CONTROLS (viewer overlay) ===== */
 .auto-tour-control {
   position: absolute;
   top: 20px;
@@ -249,7 +236,7 @@ body.admin #pano > * {
   align-items: center;
 }
 
-/* Tour Control Panel */
+/* Panel điều khiển tour: play/pause/stop + trạng thái */
 .tour-control-panel {
   background: rgba(0, 0, 0, 0.85);
   padding: 15px 20px;
@@ -359,7 +346,7 @@ body.admin #pano > * {
   font-weight: 500;
 }
 
-/* Hotspot highlight animation for tour */
+/* Hiệu ứng nhấp nháy hotspot đang được tour chọn */
 .hotspot.tour-highlight {
   animation: pulse-highlight 1.5s ease-in-out infinite;
   box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
@@ -377,7 +364,7 @@ body.admin #pano > * {
   }
 }
 
-/* Tour info overlay */
+/* Overlay hiển thị thông tin khi tour tự động chạy */
 .tour-info-overlay {
   position: absolute;
   top: 50%;
@@ -419,7 +406,7 @@ body.admin #pano > * {
   color: #ddd;
 }
 
-/* ZOOM CONTROL */
+/* ===== ZOOM CONTROL ===== */
 .zoom-control {
   position: fixed;
   bottom: 20px;
@@ -474,7 +461,7 @@ body.admin #pano > * {
   font-weight: bold;
 }
 
-/* MEDIA HOTSPOTS (USER) */
+/* ===== MEDIA HOTSPOTS (USER): facebook/youtube/note ===== */
 .media-hotspot {
   width: 38px;
   height: 38px;
@@ -501,7 +488,7 @@ body.admin #pano > * {
   filter: brightness(1.1);
 }
 
-/* Facebook hotspot - Facebook blue background with white "f" */
+/* Facebook hotspot: nền xanh + icon trắng */
 .media-hotspot[data-fb] {
   background: linear-gradient(135deg, #1877f2 0%, #0a66c2 100%);
   color: white;
@@ -514,7 +501,7 @@ body.admin #pano > * {
   background: linear-gradient(135deg, #165bc0 0%, #0a52a8 100%);
 }
 
-/* YOUTUBE HOTSPOT - Video player inline */
+/* YouTube hotspot: mở video inline trong viewer */
 .youtube-hotspot {
   width: 360px;
   height: 202px;
@@ -539,7 +526,7 @@ body.admin #pano > * {
   border: none !important;
 }
 
-/* NOTE HOTSPOT - Information icon style */
+/* Note hotspot: marker dạng thông tin */
 .note-hotspot {
   width: 38px;
   height: 38px;
@@ -569,7 +556,7 @@ body.admin #pano > * {
   filter: brightness(1.1);
 }
 
-/* Note Tooltip */
+/* Tooltip cho ghi chú văn bản */
 .note-tooltip {
   display: none;
   position: absolute;
@@ -628,7 +615,7 @@ body.admin #pano > * {
   }
 }
 
-/* MEDIA HOTSPOT OVERLAY (using Marzipano positioning) */
+/* Overlay media hotspot (theo cơ chế định vị của Marzipano) */
 .media-hotspot-overlay {
   position: relative;
   width: 320px;
@@ -895,7 +882,7 @@ body.admin #pano > * {
   text-decoration: underline;
 }
 
-/* MAIL TOOLBOX + HOTSPOTS */
+/* ===== MAIL TOOLBOX + MAIL HOTSPOTS ===== */
 .mail-toolbox {
   position: fixed;
   left: 24px;
@@ -1070,7 +1057,7 @@ body.admin #pano > * {
   background: rgba(244, 67, 54, 0.3);
 }
 
-/* SENSOR WIDGET */
+/* ===== SENSOR WIDGET: panel hiển thị dữ liệu môi trường ===== */
 .sensor-widget {
   position: fixed;
   bottom: 24px;
@@ -1114,7 +1101,7 @@ body.admin #pano > * {
   background: rgba(255,255,255,0.3);
 }
 
-/* SENSOR HOTSPOT */
+/* ===== SENSOR HOTSPOT: marker cảm biến trong panorama ===== */
 .sensor-hotspot {
   width: 44px;
   height: 44px;
@@ -1284,7 +1271,7 @@ body.admin #pano > * {
   background: #111;
 }
 
-/* COMPASS OVERLAY */
+/* ===== COMPASS OVERLAY ===== */
 #compassContainer {
   position: fixed;
   bottom: 20px;
@@ -1304,7 +1291,7 @@ body.admin #pano > * {
   height: 160px;
 }
 
-/* MINIMAP HOTSPOTS STYLES */
+/* ===== MINIMAP HOTSPOTS ===== */
 #minimapWrapper {
   position: fixed;
   top: 20px;
@@ -1506,7 +1493,7 @@ body.admin #pano > * {
   background: #d32f2f;
 }
 
-/* Responsive for mobile */
+/* ===== RESPONSIVE (mobile-first overrides) ===== */
 @media (max-width: 768px) {
   #minimapWrapper {
     top: 10px;
@@ -1550,7 +1537,7 @@ body.admin #pano > * {
   }
 }
 
-/* ===== CAMERA MODAL ===== */
+/* ===== CAMERA MODAL: popup xem camera ===== */
 .camera-modal {
   position: fixed;
   top: 0;
@@ -1695,7 +1682,7 @@ body.admin #pano > * {
   color: #fff;
 }
 
-/* ===== CAMERA PANEL ===== */
+/* ===== CAMERA PANEL: danh sách + trạng thái camera ===== */
 .camera-panel {
   position: fixed;
   left: 20px;
@@ -1864,7 +1851,7 @@ body.admin #pano > * {
   justify-content: space-between;
 }
 
-/* Responsive */
+/* ===== RESPONSIVE (camera modal/panel) ===== */
 @media (max-width: 1024px) {
   .camera-panel {
     width: 300px;
