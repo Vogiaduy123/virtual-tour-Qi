@@ -12,7 +12,10 @@ const { generateCubeTiles } = require("../generate-tiles");
 const router = express.Router();
 
 const DEFAULT_UPLOADS_DIR = path.join(__dirname, "../uploads");
-const UPLOADS_DIR = path.resolve(process.env.UPLOAD_DIR || DEFAULT_UPLOADS_DIR);
+const RAW_UPLOAD_DIR = String(process.env.UPLOAD_DIR || "").trim();
+const UPLOADS_DIR = RAW_UPLOAD_DIR
+  ? (path.isAbsolute(RAW_UPLOAD_DIR) ? RAW_UPLOAD_DIR : path.resolve(__dirname, "..", RAW_UPLOAD_DIR))
+  : DEFAULT_UPLOADS_DIR;
 const MEDIA_UPLOADS_DIR = path.join(UPLOADS_DIR, "media");
 
 if (!fs.existsSync(UPLOADS_DIR)) {
@@ -21,13 +24,6 @@ if (!fs.existsSync(UPLOADS_DIR)) {
 
 if (!fs.existsSync(MEDIA_UPLOADS_DIR)) {
   fs.mkdirSync(MEDIA_UPLOADS_DIR, { recursive: true });
-}
-
-function uploadUrlToAbsolutePath(fileUrl) {
-  const relativeUploadPath = String(fileUrl || "")
-    .replace(/^\/?uploads\/?/, "")
-    .replace(/^\/+/, "");
-  return path.join(UPLOADS_DIR, relativeUploadPath);
 }
 
 /* ===== DATA FILE ===== */
@@ -373,7 +369,7 @@ router.delete("/rooms/:roomId", (req, res) => {
 
   // Optional: Delete uploaded panorama image
   if (room.image && room.image.startsWith('/uploads/')) {
-    const imagePath = uploadUrlToAbsolutePath(room.image);
+    const imagePath = path.join(__dirname, "..", room.image);
     if (fs.existsSync(imagePath)) {
       fs.unlinkSync(imagePath);
       console.log(`🗑️ Deleted image: ${imagePath}`);
@@ -384,7 +380,7 @@ router.delete("/rooms/:roomId", (req, res) => {
   if (room.mediaHotspots && room.mediaHotspots.length > 0) {
     room.mediaHotspots.forEach((media, idx) => {
       if (media.mediaUrl) {
-        const mediaPath = uploadUrlToAbsolutePath(media.mediaUrl);
+        const mediaPath = path.join(__dirname, "..", media.mediaUrl.replace(/^\//, ""));
         try {
           if (fs.existsSync(mediaPath)) {
             fs.unlinkSync(mediaPath);

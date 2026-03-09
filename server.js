@@ -13,7 +13,11 @@ const adminRoutes = require("./public/admin-api");
 const app = express();
 const PORT = process.env.PORT || 3000;
 const DEFAULT_UPLOADS_DIR = path.join(__dirname, "uploads");
-const UPLOADS_DIR = path.resolve(process.env.UPLOAD_DIR || DEFAULT_UPLOADS_DIR);
+const RAW_UPLOAD_DIR = String(process.env.UPLOAD_DIR || "").trim();
+const UPLOADS_DIR = RAW_UPLOAD_DIR
+  ? (path.isAbsolute(RAW_UPLOAD_DIR) ? RAW_UPLOAD_DIR : path.resolve(__dirname, RAW_UPLOAD_DIR))
+  : DEFAULT_UPLOADS_DIR;
+const LEGACY_UPLOADS_DIR = path.join(__dirname, "uploads");
 
 /* ===== DATA FILES ===== */
 const DATA_FILE = path.join(__dirname, "data", "rooms.json");
@@ -346,6 +350,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use("/uploads", express.static(UPLOADS_DIR));
+if (path.resolve(LEGACY_UPLOADS_DIR) !== path.resolve(UPLOADS_DIR)) {
+  // Backward-compatibility: keep serving old files previously saved in local uploads.
+  app.use("/uploads", express.static(LEGACY_UPLOADS_DIR));
+}
 app.use("/backend/tiles", express.static("backend/tiles"));
 
 /* ===== INIT FOLDERS ===== */

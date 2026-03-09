@@ -58,6 +58,7 @@ Ví dụ cấu hình:
 
 ```env
 PORT=3000
+UPLOAD_DIR=/var/www/uploads
 
 # Chọn provider: resend | brevo | sendgrid | smtp
 MAIL_PROVIDER=resend
@@ -77,6 +78,21 @@ SMTP_SECURE=false
 ```
 
 > Nếu không dùng gửi mail, vẫn chạy được project mà không cần điền đủ các biến mail.
+
+### Quan trọng khi chạy trên server riêng
+- Đặt `UPLOAD_DIR` vào thư mục bền vững, ví dụ: `/var/www/uploads`
+- Không đặt vào thư mục tạm của container hoặc thư mục bị xoa khi deploy lại
+- Đảm bảo user chạy Node.js có quyền ghi vào thư mục này
+
+Ví dụ lệnh chuẩn trên Linux:
+
+```bash
+sudo mkdir -p /var/www/uploads/media
+sudo chown -R www-data:www-data /var/www/uploads
+sudo chmod -R 775 /var/www/uploads
+```
+
+> Nếu server dùng user khác (không phải `www-data`), thay đúng user/group đang chạy Node.js.
 
 ---
 
@@ -104,6 +120,12 @@ Khi chạy thành công, mở:
 - Mở `http://localhost:3000/admin-upload.html` kiểm tra trang upload
 - Mở `http://localhost:3000/admin-api-config.html` kiểm tra cấu hình API
 
+Kiểm tra upload có bền sau restart:
+- Upload 1 file từ admin
+- Xem URL file vừa upload có mở được (dạng `/uploads/...`)
+- Restart service (PM2/systemd/Docker)
+- Mở lại đúng URL đó, nếu vẫn thấy ảnh là cấu hình đúng
+
 ---
 
 ## 7) Lỗi thường gặp
@@ -128,6 +150,13 @@ PORT=3001
 - Kiểm tra đã chạy `npm install` chưa
 - Kiểm tra phiên bản node: `node -v` (khuyến nghị 20 LTS)
 - Kiểm tra file `.env` có ký tự lạ hoặc xuống dòng sai
+
+### Upload xong nhưng reset/restart thì mất file
+- Nguyên nhân thường gặp: đang lưu vào vùng đĩa tạm hoặc container không mount volume.
+- Cách xử lý:
+  - Đặt `UPLOAD_DIR=/var/www/uploads` trong `.env`
+  - Tách thư mục upload ra ngoài thư mục source code deploy
+  - Nếu chạy Docker, mount volume host: `-v /var/www/uploads:/var/www/uploads`
 
 ---
 

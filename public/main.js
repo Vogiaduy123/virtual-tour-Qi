@@ -16,6 +16,36 @@ let currentRoomId = null;
 let pendingMailPlacement = null;
 let activeMailHotspotIndex = -1;
 let isMailDragActive = false;
+let activeNoteHotspotEl = null;
+
+if (window.matchMedia) {
+  const setMode = () => {
+    const mql = window.matchMedia("(max-width: 500px), (max-height: 500px)");
+    if (mql.matches) {
+      document.body.classList.remove("desktop");
+      document.body.classList.add("mobile");
+    } else {
+      document.body.classList.remove("mobile");
+      document.body.classList.add("desktop");
+    }
+  };
+
+  setMode();
+  const mql = window.matchMedia("(max-width: 500px), (max-height: 500px)");
+  if (typeof mql.addEventListener === "function") {
+    mql.addEventListener("change", setMode);
+  } else if (typeof mql.addListener === "function") {
+    mql.addListener(setMode);
+  }
+} else {
+  document.body.classList.add("desktop");
+}
+
+document.body.classList.add("no-touch");
+window.addEventListener("touchstart", () => {
+  document.body.classList.remove("no-touch");
+  document.body.classList.add("touch");
+}, { passive: true, once: true });
 
 // Helper: convert degrees to radians
 function degToRad(deg) {
@@ -122,6 +152,13 @@ if (mediaOverlayClose) mediaOverlayClose.addEventListener("click", hideMediaOver
 document.addEventListener("keyup", (e) => {
   if (e.key === "Escape") {
     hideMediaOverlay();
+  }
+});
+
+document.addEventListener("click", () => {
+  if (activeNoteHotspotEl) {
+    activeNoteHotspotEl.classList.remove("visible");
+    activeNoteHotspotEl = null;
   }
 });
 
@@ -345,6 +382,7 @@ function addHotspots(roomId) {
   if (!room || !scene) return;
 
   const container = scene.hotspotContainer();
+  activeNoteHotspotEl = null;
   clearFixedMailHotspots();
   // Remove existing hotspots
   try {
@@ -407,17 +445,74 @@ function addHotspots(roomId) {
     // For notes, create a note hotspot with tooltip
     if (media.mediaType === "note") {
       el = document.createElement("div");
-      el.className = "media-hotspot note-hotspot";
+      el.className = "note-hotspot info-hotspot";
       el.setAttribute("aria-label", media.title || "Ghi chú");
-      el.textContent = MEDIA_ICONS[media.mediaType] || "!";
-      el.style.cursor = "help";
+      el.textContent = "";
+      el.style.cursor = "pointer";
       
-      // Create tooltip container
-      const tooltip = document.createElement("div");
-      tooltip.className = "note-tooltip";
-      tooltip.innerHTML = `<strong>${media.title || 'Ghi chú'}</strong>${media.mediaUrl || media.description || ''}`;
-      
-      el.appendChild(tooltip);
+      const header = document.createElement("div");
+      header.className = "info-hotspot-header";
+
+      const iconWrap = document.createElement("div");
+      iconWrap.className = "info-hotspot-icon-wrapper";
+      const icon = document.createElement("img");
+      icon.className = "info-hotspot-icon";
+      icon.src = "images/info.png";
+      icon.alt = "Info";
+      iconWrap.appendChild(icon);
+
+      const titleWrap = document.createElement("div");
+      titleWrap.className = "info-hotspot-title-wrapper";
+      const title = document.createElement("div");
+      title.className = "info-hotspot-title";
+      title.textContent = media.title || "Ghi chú";
+      titleWrap.appendChild(title);
+
+      const closeWrap = document.createElement("div");
+      closeWrap.className = "info-hotspot-close-wrapper";
+      closeWrap.setAttribute("role", "button");
+      closeWrap.setAttribute("aria-label", "Đóng ghi chú");
+      const closeIcon = document.createElement("span");
+      closeIcon.className = "info-hotspot-close-icon";
+      closeIcon.textContent = "×";
+      closeWrap.appendChild(closeIcon);
+
+      header.appendChild(iconWrap);
+      header.appendChild(titleWrap);
+      header.appendChild(closeWrap);
+
+      const content = document.createElement("div");
+      content.className = "info-hotspot-text";
+      content.textContent = media.mediaUrl || media.description || "Không có nội dung";
+
+      el.appendChild(header);
+      el.appendChild(content);
+
+      closeWrap.addEventListener("click", (e) => {
+        e.stopPropagation();
+        el.classList.remove("visible");
+        if (activeNoteHotspotEl === el) activeNoteHotspotEl = null;
+      });
+
+      header.addEventListener("click", (e) => {
+        e.stopPropagation();
+
+        if (activeNoteHotspotEl && activeNoteHotspotEl !== el) {
+          activeNoteHotspotEl.classList.remove("visible");
+        }
+
+        const willOpen = !el.classList.contains("visible");
+        el.classList.toggle("visible", willOpen);
+        activeNoteHotspotEl = willOpen ? el : null;
+      });
+
+      el.addEventListener("click", (e) => {
+        e.stopPropagation();
+      });
+
+      ["mousedown", "pointerdown", "touchstart", "wheel"].forEach((eventName) => {
+        content.addEventListener(eventName, (e) => e.stopPropagation(), { passive: false });
+      });
     } else if (media.mediaType === "youtube") {
       // For YouTube, create video player directly instead of icon
       const videoId = getYouTubeVideoId(media.mediaUrl);
@@ -1216,7 +1311,6 @@ function createFixedMailHotspot(index, mailPoint) {
   el.className = "mail-hotspot mail-fixed-hotspot";
   el.title = mailPoint.title || "Điểm gửi mail";
   el.textContent = "✉️";
-  applyStableHotspotStyle(el);
   el.style.left = `${Math.max(0, Math.min(1, Number(mailPoint.screenX))) * 100}%`;
   el.style.top = `${Math.max(0, Math.min(1, Number(mailPoint.screenY))) * 100}%`;
 
@@ -1236,7 +1330,6 @@ function createPanoramaMailHotspot(container, index, mailPoint) {
   el.className = "mail-hotspot";
   el.title = mailPoint.title || "Điểm gửi mail";
   el.textContent = "✉️";
-  applyStableHotspotStyle(el);
 
   el.onclick = (event) => {
     event.stopPropagation();
@@ -3332,11 +3425,4 @@ function updateTourUI() {
     startBtn.style.display = 'flex';
     controlPanel.style.display = 'none';
   }
-}
-
-function applyStableHotspotStyle(el) {
-  if (!el) return;
-  // Không animate transform vì Marzipano cập nhật transform liên tục theo frame
-  el.style.transition = "opacity 120ms ease, background-color 120ms ease, box-shadow 120ms ease";
-  el.style.willChange = "transform";
 }
