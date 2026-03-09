@@ -11,11 +11,23 @@ const { generateCubeTiles } = require("../generate-tiles");
 
 const router = express.Router();
 
-const UPLOADS_DIR = path.join(__dirname, "../uploads");
+const DEFAULT_UPLOADS_DIR = path.join(__dirname, "../uploads");
+const UPLOADS_DIR = path.resolve(process.env.UPLOAD_DIR || DEFAULT_UPLOADS_DIR);
 const MEDIA_UPLOADS_DIR = path.join(UPLOADS_DIR, "media");
+
+if (!fs.existsSync(UPLOADS_DIR)) {
+  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+}
 
 if (!fs.existsSync(MEDIA_UPLOADS_DIR)) {
   fs.mkdirSync(MEDIA_UPLOADS_DIR, { recursive: true });
+}
+
+function uploadUrlToAbsolutePath(fileUrl) {
+  const relativeUploadPath = String(fileUrl || "")
+    .replace(/^\/?uploads\/?/, "")
+    .replace(/^\/+/, "");
+  return path.join(UPLOADS_DIR, relativeUploadPath);
 }
 
 /* ===== DATA FILE ===== */
@@ -62,7 +74,7 @@ function saveMinimap(data) {
 
 /* ===== MULTER CONFIG ===== */
 const panoramaStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads"),
+  destination: (req, file, cb) => cb(null, UPLOADS_DIR),
   filename: (req, file, cb) => {
     const timestamp = Date.now();
     const ext = path.extname(file.originalname);
@@ -71,7 +83,7 @@ const panoramaStorage = multer.diskStorage({
 });
 
 const minimapStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads"),
+  destination: (req, file, cb) => cb(null, UPLOADS_DIR),
   filename: (req, file, cb) => {
     const timestamp = Date.now();
     const ext = path.extname(file.originalname);
@@ -361,7 +373,7 @@ router.delete("/rooms/:roomId", (req, res) => {
 
   // Optional: Delete uploaded panorama image
   if (room.image && room.image.startsWith('/uploads/')) {
-    const imagePath = path.join(__dirname, "..", room.image);
+    const imagePath = uploadUrlToAbsolutePath(room.image);
     if (fs.existsSync(imagePath)) {
       fs.unlinkSync(imagePath);
       console.log(`🗑️ Deleted image: ${imagePath}`);
@@ -372,7 +384,7 @@ router.delete("/rooms/:roomId", (req, res) => {
   if (room.mediaHotspots && room.mediaHotspots.length > 0) {
     room.mediaHotspots.forEach((media, idx) => {
       if (media.mediaUrl) {
-        const mediaPath = path.join(__dirname, "..", media.mediaUrl.replace(/^\//, ""));
+        const mediaPath = uploadUrlToAbsolutePath(media.mediaUrl);
         try {
           if (fs.existsSync(mediaPath)) {
             fs.unlinkSync(mediaPath);

@@ -12,6 +12,8 @@ const adminRoutes = require("./public/admin-api");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const DEFAULT_UPLOADS_DIR = path.join(__dirname, "uploads");
+const UPLOADS_DIR = path.resolve(process.env.UPLOAD_DIR || DEFAULT_UPLOADS_DIR);
 
 /* ===== DATA FILES ===== */
 const DATA_FILE = path.join(__dirname, "data", "rooms.json");
@@ -343,11 +345,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static(UPLOADS_DIR));
 app.use("/backend/tiles", express.static("backend/tiles"));
 
 /* ===== INIT FOLDERS ===== */
-if (!fs.existsSync("uploads")) fs.mkdirSync("uploads");
+if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 if (!fs.existsSync("data")) fs.mkdirSync("data");
 if (!fs.existsSync("backend")) fs.mkdirSync("backend");
 if (!fs.existsSync("backend/raw")) fs.mkdirSync("backend/raw", { recursive: true });
@@ -389,7 +391,7 @@ app.get("/events", (req, res) => {
 
 /* ===== MULTER ===== */
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads"),
+  destination: (req, file, cb) => cb(null, UPLOADS_DIR),
   filename: (req, file, cb) =>
     cb(null, Date.now() + path.extname(file.originalname))
 });
