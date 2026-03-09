@@ -5,6 +5,7 @@ const cors = require("cors");
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
+const os = require("os");
 const nodemailer = require("nodemailer");
 
 // Import admin routes
@@ -14,10 +15,41 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const DEFAULT_UPLOADS_DIR = path.join(__dirname, "uploads");
 const RAW_UPLOAD_DIR = String(process.env.UPLOAD_DIR || "").trim();
-const UPLOADS_DIR = RAW_UPLOAD_DIR
+const ENV_UPLOADS_DIR = RAW_UPLOAD_DIR
   ? (path.isAbsolute(RAW_UPLOAD_DIR) ? RAW_UPLOAD_DIR : path.resolve(__dirname, RAW_UPLOAD_DIR))
-  : DEFAULT_UPLOADS_DIR;
+  : "";
 const LEGACY_UPLOADS_DIR = path.join(__dirname, "uploads");
+
+function canUseDirectory(dirPath) {
+  try {
+    fs.mkdirSync(dirPath, { recursive: true });
+    fs.accessSync(dirPath, fs.constants.W_OK);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function resolveUploadsDir() {
+  const candidates = [
+    ENV_UPLOADS_DIR,
+    DEFAULT_UPLOADS_DIR,
+    path.join(os.tmpdir(), "virtual-tour-uploads")
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    if (canUseDirectory(candidate)) {
+      if (candidate !== ENV_UPLOADS_DIR && ENV_UPLOADS_DIR) {
+        console.warn(`[UPLOAD_DIR] Cannot write to ${ENV_UPLOADS_DIR}. Fallback to ${candidate}`);
+      }
+      return candidate;
+    }
+  }
+
+  throw new Error("No writable uploads directory found. Please set UPLOAD_DIR to a writable path.");
+}
+
+const UPLOADS_DIR = resolveUploadsDir();
 
 /* ===== DATA FILES ===== */
 const DATA_FILE = path.join(__dirname, "data", "rooms.json");
@@ -357,7 +389,9 @@ if (path.resolve(LEGACY_UPLOADS_DIR) !== path.resolve(UPLOADS_DIR)) {
 app.use("/backend/tiles", express.static("backend/tiles"));
 
 /* ===== INIT FOLDERS ===== */
-if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+if (!canUseDirectory(UPLOADS_DIR)) {
+  throw new Error(`Cannot create/write uploads directory: ${UPLOADS_DIR}`);
+}
 if (!fs.existsSync("data")) fs.mkdirSync("data");
 if (!fs.existsSync("backend")) fs.mkdirSync("backend");
 if (!fs.existsSync("backend/raw")) fs.mkdirSync("backend/raw", { recursive: true });

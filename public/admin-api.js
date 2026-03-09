@@ -7,23 +7,51 @@ const express = require("express");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const os = require("os");
 const { generateCubeTiles } = require("../generate-tiles");
 
 const router = express.Router();
 
 const DEFAULT_UPLOADS_DIR = path.join(__dirname, "../uploads");
 const RAW_UPLOAD_DIR = String(process.env.UPLOAD_DIR || "").trim();
-const UPLOADS_DIR = RAW_UPLOAD_DIR
+const ENV_UPLOADS_DIR = RAW_UPLOAD_DIR
   ? (path.isAbsolute(RAW_UPLOAD_DIR) ? RAW_UPLOAD_DIR : path.resolve(__dirname, "..", RAW_UPLOAD_DIR))
-  : DEFAULT_UPLOADS_DIR;
-const MEDIA_UPLOADS_DIR = path.join(UPLOADS_DIR, "media");
+  : "";
 
-if (!fs.existsSync(UPLOADS_DIR)) {
-  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+function canUseDirectory(dirPath) {
+  try {
+    fs.mkdirSync(dirPath, { recursive: true });
+    fs.accessSync(dirPath, fs.constants.W_OK);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
-if (!fs.existsSync(MEDIA_UPLOADS_DIR)) {
-  fs.mkdirSync(MEDIA_UPLOADS_DIR, { recursive: true });
+function resolveUploadsDir() {
+  const candidates = [
+    ENV_UPLOADS_DIR,
+    DEFAULT_UPLOADS_DIR,
+    path.join(os.tmpdir(), "virtual-tour-uploads")
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    if (canUseDirectory(candidate)) {
+      if (candidate !== ENV_UPLOADS_DIR && ENV_UPLOADS_DIR) {
+        console.warn(`[UPLOAD_DIR] Cannot write to ${ENV_UPLOADS_DIR}. Fallback to ${candidate}`);
+      }
+      return candidate;
+    }
+  }
+
+  throw new Error("No writable uploads directory found. Please set UPLOAD_DIR to a writable path.");
+}
+
+const UPLOADS_DIR = resolveUploadsDir();
+const MEDIA_UPLOADS_DIR = path.join(UPLOADS_DIR, "media");
+
+if (!canUseDirectory(MEDIA_UPLOADS_DIR)) {
+  throw new Error(`Cannot create/write media uploads directory: ${MEDIA_UPLOADS_DIR}`);
 }
 
 /* ===== DATA FILE ===== */
