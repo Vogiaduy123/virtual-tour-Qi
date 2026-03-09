@@ -209,7 +209,7 @@ body.admin #pano > * {
   align-items: center;
   gap: 8px;
   padding: 12px 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #82828284 0%, #9f9f9f 100%);
   color: white;
   border: none;
   border-radius: 50px;
@@ -238,7 +238,7 @@ body.admin #pano > * {
 
 /* Panel điều khiển tour: play/pause/stop + trạng thái */
 .tour-control-panel {
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(149, 149, 149, 0.85);
   padding: 15px 20px;
   border-radius: 20px;
   backdrop-filter: blur(10px);
@@ -412,7 +412,7 @@ body.admin #pano > * {
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(193, 193, 193, 0.432);
   padding: 12px 20px;
   border-radius: 8px;
   display: flex;
@@ -442,7 +442,7 @@ body.admin #pano > * {
   border-radius: 50%;
   background: #4CAF50;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 4px rgba(170, 170, 170, 0.3);
 }
 
 .zoom-slider::-moz-range-thumb {
@@ -452,7 +452,7 @@ body.admin #pano > * {
   background: #4CAF50;
   cursor: pointer;
   border: none;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 4px rgba(108, 108, 108, 0.3);
 }
 
 #zoomValue {
@@ -619,6 +619,7 @@ body.admin #pano > * {
 .note-hotspot .info-hotspot-title {
   display: inline-block;
   vertical-align: middle;
+  color: white;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -660,10 +661,11 @@ body.admin #pano > * {
   width: 300px;
   height: auto;
   max-height: 200px;
+  color: white;
   top: 40px;
   left: 0;
   padding: 10px;
-  background-color: rgb(58, 68, 84);
+  background-color: rgb(103 115 131 / 56%);
   border-bottom-right-radius: 5px;
   border-bottom-left-radius: 5px;
   overflow-y: auto;
@@ -1013,12 +1015,12 @@ body.admin #pano > * {
   cursor: pointer;
   font-size: 18px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: box-shadow 0.15s ease, filter 0.15s ease;
 }
 
 .mail-hotspot:hover {
-  transform: scale(1.08);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  filter: brightness(1.08);
 }
 
 .mail-fixed-hotspot {
@@ -1367,10 +1369,10 @@ body.admin #pano > * {
   top: 20px;
   right: 20px;
   max-width: 260px;
-  background: rgba(0,0,0,0.75);
+  background: rgba(117, 117, 117, 0.11);
   color: white;
   border-radius: 10px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 32px rgba(70, 68, 68, 0.4);
   padding: 12px;
   backdrop-filter: blur(6px);
   z-index: 30;
@@ -1636,9 +1638,9 @@ body.admin #pano > * {
 }
 
 .camera-modal-content {
-  background: #1a1a1a;
+  background: #606060;
   border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 20px 60px rgba(134, 134, 134, 0.8);
   max-width: 90vw;
   width: 100%;
   max-height: 90vh;
