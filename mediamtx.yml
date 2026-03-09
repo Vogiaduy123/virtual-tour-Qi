@@ -1,0 +1,13 @@
+# MediaMTX config for RTSP -> WebRTC (WHEP)
+# Run MediaMTX in this folder and it will expose WHEP endpoint on port 8889.
+
+logLevel: info
+
+# WebRTC (WHEP/WHIP) listener
+webrtc: yes
+webrtcAddress: :8889
+
+paths:
+  cam101:
+    source: rtsp://admin:RUBY2017@10.10.100.30:554/Streaming/channels/101
+    sourceOnDemand: yes
