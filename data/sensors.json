@@ -49,30 +49,30 @@
     "roomId": 1769668421984,
     "type": "environment",
     "position": {
-      "yaw": 0,
-      "pitch": 0
+      "yaw": -42.23,
+      "pitch": 16.41
     },
     "sensors": {
       "temperature": {
-        "value": 23,
+        "value": 18,
         "unit": "°C",
         "min": 0,
         "max": 50
       },
       "humidity": {
-        "value": 66,
+        "value": 69,
         "unit": "%",
         "min": 0,
         "max": 100
       },
       "pm25": {
-        "value": 146,
+        "value": 74,
         "unit": "µg/m³",
         "min": 0,
         "max": 500
       }
     },
-    "lastUpdate": "2026-03-06T04:04:10.227Z",
+    "lastUpdate": "2026-03-11T02:18:14.504Z",
     "color": "#4CAF50"
   },
   {
@@ -103,23 +103,23 @@
       "yaw": 0,
       "pitch": 0
     },
-    "lastUpdate": "2026-02-25T02:24:25.571Z",
+    "lastUpdate": "2026-03-11T02:12:52.416Z",
     "color": "#4CAF50",
     "sensors": {
       "temperature": {
-        "value": 26.50294695173022,
+        "value": 29.326253027653774,
         "unit": "°C",
         "min": 0,
         "max": 50
       },
       "humidity": {
-        "value": 71.16369587415414,
+        "value": 77.09857573806427,
         "unit": "%",
         "min": 0,
         "max": 100
       },
       "pm25": {
-        "value": 31.8,
+        "value": 40.2,
         "unit": "µg/m³",
         "min": 0,
         "max": 500

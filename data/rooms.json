@@ -23,29 +23,9 @@
         "description": "Giữ xe nhân viên\n",
         "mediaUrl": "Giữ xe nhân viên",
         "mediaType": "note"
-      },
-      {
-        "yaw": -4.75,
-        "pitch": 1.39,
-        "title": "gggg",
-        "description": "eeee",
-        "mediaUrl": "/uploads/media/media_1771924434513_Minimap.png",
-        "mediaType": "image"
       }
     ],
-    "mailHotspots": [
-      {
-        "title": "Gửi mail",
-        "recipient": "",
-        "subject": "",
-        "body": "",
-        "updatedAt": "2026-03-09T02:15:15.655Z",
-        "yaw": -70.22299276870051,
-        "pitch": -13.079077039003767,
-        "screenX": 0.5340314136125655,
-        "screenY": 0.5368852459016393
-      }
-    ]
+    "mailHotspots": []
   },
   {
     "id": 1769668421984,
@@ -58,7 +38,7 @@
         "yaw": -5.58,
         "pitch": -6.81,
         "target": 1769668457253,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       },
       {
@@ -81,7 +61,7 @@
         "yaw": -91.3,
         "pitch": -10.53,
         "target": 1769668497247,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       },
       {
@@ -111,7 +91,7 @@
         "yaw": -105.83,
         "pitch": -15.96,
         "target": 1769668457253,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       }
     ],
@@ -160,14 +140,14 @@
         "yaw": 162.12,
         "pitch": -37.69,
         "target": 1769668532698,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       },
       {
         "yaw": 70.02,
         "pitch": -1.99,
         "target": 1769668639049,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       }
     ],
@@ -193,14 +173,14 @@
         "yaw": -165,
         "pitch": -34.47,
         "target": 1769668600603,
-        "rotation": 0,
+        "rotation": 20,
         "color": "#c2c2c2"
       },
       {
         "yaw": 150.13,
         "pitch": -1,
         "target": 1769668710027,
-        "rotation": 0,
+        "rotation": 50,
         "color": "#c2c2c2"
       }
     ]
@@ -216,21 +196,21 @@
         "yaw": 92.68,
         "pitch": -45.72,
         "target": 1769668746757,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       },
       {
         "yaw": -20.79,
         "pitch": -16.89,
         "target": 1769668860551,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       },
       {
         "yaw": 27.46,
         "pitch": -39.11,
         "target": 1769668639049,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       }
     ],
@@ -256,21 +236,21 @@
         "yaw": -7.45,
         "pitch": -24.82,
         "target": 1769668710027,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       },
       {
         "yaw": -50.28,
         "pitch": -26.99,
         "target": 1769668822666,
-        "rotation": 270,
+        "rotation": 300,
         "color": "#c2c2c2"
       },
       {
         "yaw": 19.76,
         "pitch": -5.55,
         "target": 1769668791710,
-        "rotation": 90,
+        "rotation": 120,
         "color": "#c2c2c2"
       }
     ]
@@ -286,7 +266,7 @@
         "yaw": 88.28,
         "pitch": -32.39,
         "target": 1769668746757,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       }
     ]
@@ -302,7 +282,7 @@
         "yaw": 93.69,
         "pitch": -36.78,
         "target": 1769668746757,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       }
     ],
@@ -328,14 +308,14 @@
         "yaw": -155.05,
         "pitch": -49.28,
         "target": 1769668710027,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       },
       {
         "yaw": -84.34,
         "pitch": -46.61,
         "target": 1769668901015,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       }
     ]
@@ -351,21 +331,21 @@
         "yaw": 47.32,
         "pitch": -24.93,
         "target": 1769668860551,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       },
       {
         "yaw": -51.94,
         "pitch": -28.25,
         "target": 1769668938397,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       },
       {
         "yaw": 129.58,
         "pitch": -33.93,
         "target": 1769669039212,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       }
     ]
@@ -381,14 +361,14 @@
         "yaw": -45.91,
         "pitch": -30.74,
         "target": 1769668973593,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       },
       {
         "yaw": 25.81,
         "pitch": -31.29,
         "target": 1769668901015,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       }
     ]
@@ -404,7 +384,7 @@
         "yaw": 12.14,
         "pitch": -32.43,
         "target": 1769668938397,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       }
     ],
@@ -438,7 +418,7 @@
         "yaw": -71.71,
         "pitch": -27.02,
         "target": 1769669089476,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       },
       {
@@ -461,21 +441,21 @@
         "yaw": 1.8,
         "pitch": -23.96,
         "target": 1769668901015,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       },
       {
         "yaw": -80.88,
         "pitch": -17.68,
         "target": 1769669187612,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       },
       {
         "yaw": 94.05,
         "pitch": -17.65,
         "target": 1769669142397,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       }
     ]
@@ -491,7 +471,7 @@
         "yaw": -3.65,
         "pitch": -17.13,
         "target": 1769669089476,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       }
     ]
@@ -507,7 +487,7 @@
         "yaw": -62.38,
         "pitch": -21.13,
         "target": 1769669089476,
-        "rotation": 0,
+        "rotation": 30,
         "color": "#c2c2c2"
       }
     ]

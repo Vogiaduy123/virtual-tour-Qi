@@ -97,10 +97,10 @@ body.admin #pano > * {
   top: 20px;
   left: 20px;
   z-index: 10;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.249);
   padding: 12px 16px;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 28%);
   backdrop-filter: blur(10px);
 }
 
@@ -1416,7 +1416,7 @@ body.admin #pano > * {
   justify-content: space-between;
   align-items: center;
   padding: 10px 12px;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.223);
   font-weight: 600;
   font-size: 13px;
 }
