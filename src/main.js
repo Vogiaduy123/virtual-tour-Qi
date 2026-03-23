@@ -12,7 +12,7 @@ import { initSensors, loadSensors, updateSensorWidget, renderCameraPanel, addSen
 import { initMailFeature, resolveMailPointToPanorama, createPanoramaMailHotspot, clearFixedMailHotspots, closeMailComposer } from './features/mail.js';
 import { initAutoTour } from './features/autotour.js';
 import { initCompass } from './features/compass.js';
-import { initMediaOverlay, createMediaHotspotOverlay, hideMediaOverlay, showMediaOverlay, MEDIA_ICONS, createMediaHotspotElement, resetActiveNoteHotspot } from './features/media-overlay.js';
+import { initMediaOverlay, createMediaHotspotOverlay, hideMediaOverlay, showMediaOverlay, MEDIA_ICONS, createMediaHotspotElement, resetActiveNoteHotspot, create3DHighlightElement } from './features/media-overlay.js';
 
 /* ===== HELPERS ===== */
 /**
@@ -230,6 +230,18 @@ function addHotspots(roomId) {
         pitch: panoramaPoint.pitch
       });
     }
+  });
+
+  // Render 3D highlight polygons
+  mediaHotspots.forEach(media => {
+    if (media.mediaType !== '3d' || !media.highlightPolygon || media.highlightPolygon.length < 3) return;
+    const result = create3DHighlightElement(media);
+    if (!result) return;
+    const { el, anchorYaw, anchorPitch } = result;
+    container.createHotspot(el, {
+      yaw: degToRad(anchorYaw),
+      pitch: degToRad(-anchorPitch)
+    });
   });
 
   addSensorHotspots(roomId);

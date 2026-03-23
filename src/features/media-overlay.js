@@ -1,4 +1,4 @@
-export const MEDIA_ICONS = { image: "🖼️", pdf: "📄", video: "🎥", "3d": "🎮", gallery: "📸", youtube: "▶️", facebook: "", web: "🌐", note: "i" };
+export const MEDIA_ICONS = { image: "🖼️", pdf: "📄", video: "🎥", "3d": "🧊", gallery: "📸", youtube: "▶️", facebook: "", web: "🌐", note: "i" };
 
 // Media overlay elements
 let mediaOverlay, mediaOverlayTitle, mediaOverlayDescription, mediaOverlayContent, mediaOverlayLink, mediaOverlayClose;
@@ -785,4 +785,63 @@ export function createMediaHotspotElement(media, onClickHandler) {
   }
 
   return el;
+}
+
+/**
+ * Creates a 3D highlight polygon element for Marzipano.
+ * Renders an SVG polygon with blue fill + white glow, anchored at the centroid.
+ * @param {Object} media - media hotspot data with highlightPolygon: [[yaw,pitch],...]
+ * @returns {{ el: HTMLElement, anchorYaw: number, anchorPitch: number } | null}
+ */
+export function create3DHighlightElement(media) {
+  const points = media.highlightPolygon;
+  if (!points || points.length < 3) return null;
+
+  // Compute centroid in yaw/pitch space
+  const cx = points.reduce((s, p) => s + p[0], 0) / points.length;
+  const cy = points.reduce((s, p) => s + p[1], 0) / points.length;
+
+  const SCALE = 10; // px per degree
+  const OFFSET = 500; // SVG center
+  const SIZE = 1000;
+
+  const svgPoints = points.map(([y, p]) => {
+    const sx = OFFSET + (y - cx) * SCALE;
+    const sy = OFFSET - (p - cy) * SCALE;
+    return `${sx},${sy}`;
+  }).join(' ');
+
+  const el = document.createElement('div');
+  el.className = 'highlight-3d-hotspot';
+  el.style.cssText = 'position:absolute;pointer-events:none;width:0;height:0;overflow:visible;';
+
+  el.innerHTML = `
+    <svg width="${SIZE}" height="${SIZE}" viewBox="0 0 ${SIZE} ${SIZE}"
+         xmlns="http://www.w3.org/2000/svg"
+         style="position:absolute;left:-${OFFSET}px;top:-${OFFSET}px;overflow:visible;pointer-events:none;">
+      <defs>
+        <filter id="glow-3d-filter" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- Outer glow -->
+      <polygon points="${svgPoints}"
+        fill="none"
+        stroke="rgba(60,160,255,0.45)"
+        stroke-width="10"
+        stroke-linejoin="round"
+        opacity="0.7"/>
+      <!-- Main polygon -->
+      <polygon points="${svgPoints}"
+        fill="rgba(30,100,255,0.25)"
+        stroke="rgba(255,255,255,0.88)"
+        stroke-width="2.5"
+        stroke-linejoin="round"
+        filter="url(#glow-3d-filter)"
+        class="highlight-3d-polygon"/>
+    </svg>
+  `.trim();
+
+  return { el, anchorYaw: cx, anchorPitch: cy };
 }

@@ -2240,3 +2240,13 @@ body.admin #pano>* {
 .hotspot.hotspot-highlight .hotspot-arrow {
   filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.9));
 }
+
+/* ===== 3D HIGHLIGHT POLYGON ===== */
+@keyframes highlight-3d-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
+
+.highlight-3d-polygon {
+  animation: highlight-3d-pulse 2.5s ease-in-out infinite;
+}
