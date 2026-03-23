@@ -155,6 +155,13 @@ function switchRoom(roomId) {
     roomSelect.value = roomId;
   }
 
+  // Bind polygon update when view changes for this scene
+  const view = scene.view();
+  if (view) {
+    view.removeEventListener('change', update3DPolygons);
+    view.addEventListener('change', update3DPolygons);
+  }
+
   scene.switchTo();
   addHotspots(roomId);
   updateMinimapHighlight();
@@ -232,17 +239,59 @@ function addHotspots(roomId) {
     }
   });
 
-  // Render 3D highlight polygons
-  mediaHotspots.forEach(media => {
-    if (media.mediaType !== '3d' || !media.highlightPolygon || media.highlightPolygon.length < 3) return;
-    const result = create3DHighlightElement(media);
-    if (!result) return;
-    const { el, anchorYaw, anchorPitch } = result;
-    container.createHotspot(el, {
-      yaw: degToRad(anchorYaw),
-      pitch: degToRad(-anchorPitch)
-    });
-  });
+  // Render 3D highlight polygons dynamically
+  window.currentRoomMediaHotspots = mediaHotspots;
+  update3DPolygons();
 
   addSensorHotspots(roomId);
+}
+
+/* ===== 3D HIGHLIGHT POLYGONS ===== */
+function update3DPolygons() {
+  const viewer = getViewer();
+  if (!viewer) return;
+  const scene = viewer.scene();
+  if (!scene) return;
+  const view = scene.view();
+  const svg = document.getElementById('polygonOverlay');
+  if (!svg) return;
+  
+  if (!window.currentRoomMediaHotspots) {
+    svg.innerHTML = '';
+    return;
+  }
+
+  let pathsHTML = `
+    <defs>
+      <filter id="glow-3d-filter-real" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="5" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+  `;
+
+  let hasPolygon = false;
+  window.currentRoomMediaHotspots.forEach(media => {
+    if (media.mediaType !== '3d' || !media.highlightPolygon || media.highlightPolygon.length < 3) return;
+    
+    // Project points
+    const points = media.highlightPolygon.map(([y, p]) => {
+      const coords = view.coordinatesToScreen({yaw: degToRad(y), pitch: degToRad(-p)});
+      if (!coords || typeof coords.x !== 'number') return null;
+      return `${coords.x},${coords.y}`;
+    });
+    
+    if (points.includes(null)) return;
+    
+    const d = points.join(' ');
+    
+    pathsHTML += `
+      <!-- Outer glow -->
+      <polygon points="${d}" fill="rgba(80, 80, 200, 0.4)" stroke="rgba(255, 255, 255, 0.9)" stroke-width="2" stroke-linejoin="round" />
+      <polygon points="${d}" fill="none" class="highlight-3d-polygon" stroke="rgba(100, 150, 255, 0.6)" stroke-width="8" stroke-linejoin="round" filter="url(#glow-3d-filter-real)" style="mix-blend-mode: screen; pointer-events: none;" />
+    `;
+    hasPolygon = true;
+  });
+  
+  svg.innerHTML = hasPolygon ? pathsHTML : '';
 }
