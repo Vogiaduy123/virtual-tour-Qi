@@ -14,6 +14,40 @@ import { initAutoTour } from './features/autotour.js';
 import { initCompass } from './features/compass.js';
 import { initMediaOverlay, createMediaHotspotOverlay, hideMediaOverlay, showMediaOverlay, MEDIA_ICONS, createMediaHotspotElement, resetActiveNoteHotspot } from './features/media-overlay.js';
 
+/* ===== HELPERS ===== */
+/**
+ * Creates a clean SVG double-chevron arrow element for navigation hotspots.
+ * Two stacked "^" shapes, top one brighter, bottom one faded — EVN style.
+ */
+function createChevronArrow() {
+  const wrap = document.createElement("div");
+  wrap.className = "hotspot-arrow";
+  wrap.innerHTML = `
+    <svg viewBox="0 0 44 36" width="44" height="36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <!-- top chevron (brighter) -->
+      <polyline
+        points="8,22 22,8 36,22"
+        fill="none"
+        stroke="rgba(255,255,255,0.95)"
+        stroke-width="4"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <!-- bottom chevron (faded) -->
+      <polyline
+        points="8,34 22,20 36,34"
+        fill="none"
+        stroke="rgba(255,255,255,0.45)"
+        stroke-width="4"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  `.trim();
+  return wrap;
+}
+
+
 /* ===== INITIAL LOAD ===== */
 async function initApp() {
   try {
@@ -167,18 +201,11 @@ function addHotspots(roomId) {
         const safeIconUrl = normalizedIconUrl.replace(/"/g, "\\\"");
         el.style.setProperty('--hotspot-icon', `url("${safeIconUrl}")`);
       } else {
-        // Empty iconUrl → default chevron
-        const arrow = document.createElement("div");
-        arrow.className = "hotspot-arrow";
-        arrow.innerHTML = "<span></span><span></span>";
-        el.appendChild(arrow);
+        el.appendChild(createChevronArrow());
       }
     } else {
-      // No iconUrl → default EVN-style double chevron
-      const arrow = document.createElement("div");
-      arrow.className = "hotspot-arrow";
-      arrow.innerHTML = "<span></span><span></span>";
-      el.appendChild(arrow);
+      // No iconUrl → default EVN-style double chevron SVG
+      el.appendChild(createChevronArrow());
     }
 
     el.onclick = (e) => {

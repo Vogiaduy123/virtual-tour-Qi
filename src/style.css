@@ -2222,32 +2222,15 @@ body.admin #pano>* {
   animation: hotspot-float 2.2s ease-in-out infinite;
 }
 
-/* Double chevron arrow (default — no custom icon) */
+/* SVG double chevron wrapper */
 .hotspot-arrow {
   position: absolute;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
   z-index: 1;
   animation: hotspot-float 2.2s ease-in-out infinite;
-}
-
-.hotspot-arrow span {
-  display: block;
-  width: 18px;
-  height: 18px;
-  border-right: 3.5px solid rgba(255, 255, 255, 0.95);
-  border-top: 3.5px solid rgba(255, 255, 255, 0.95);
-  transform: rotate(-45deg);
-  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.9));
-  border-radius: 1px;
-}
-
-.hotspot-arrow span:first-child {
-  opacity: 0.5;
-  margin-bottom: 4px;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.75));
 }
 
 /* Hover states */
@@ -2261,7 +2244,8 @@ body.admin #pano>* {
 
 .hotspot:hover .hotspot-arrow {
   animation: none;
-  transform: translateY(-5px);
+  transform: translateY(-6px);
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 1));
 }
 
 .hotspot:hover::after {
