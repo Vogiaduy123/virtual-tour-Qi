@@ -140,6 +140,21 @@ try {
     updateSensorWidget();
     renderCameraPanel();
   });
+
+  // Handle clicks on polygon overlay
+  const polygonOverlay = document.getElementById('polygonOverlay');
+  if (polygonOverlay) {
+    polygonOverlay.addEventListener('click', (e) => {
+      const target = e.target;
+      const mediaIndex = target.getAttribute('data-media-index');
+      if (mediaIndex !== null && window.currentRoomMediaHotspots && window.currentHotspotContainer) {
+        const media = window.currentRoomMediaHotspots[mediaIndex];
+        if (media) {
+          createMediaHotspotOverlay(media, window.currentHotspotContainer, degToRad(media.yaw), degToRad(-media.pitch));
+        }
+      }
+    });
+  }
 } catch (e) {
   console.warn("SSE not supported:", e);
 }
@@ -216,7 +231,15 @@ function addHotspots(roomId) {
     });
   });
 
-  mediaHotspots.forEach(media => {
+  mediaHotspots.forEach((media, index) => {
+    // If it has a highlight polygon, we ONLY render the SVG polygon later, no icon.
+    // However, we inject the index so the SVG click handler can find the media object.
+    const hasPolygon = media.mediaType === '3d' && media.highlightPolygon && media.highlightPolygon.length >= 3;
+    if (hasPolygon) {
+      media._originalIndex = index; // Save index for update3DPolygons
+      return; 
+    }
+
     const el = createMediaHotspotElement(media, () => {
       createMediaHotspotOverlay(media, container, degToRad(media.yaw), degToRad(-media.pitch));
     });
@@ -241,6 +264,7 @@ function addHotspots(roomId) {
 
   // Render 3D highlight polygons dynamically
   window.currentRoomMediaHotspots = mediaHotspots;
+  window.currentHotspotContainer = container;
   update3DPolygons();
 
   addSensorHotspots(roomId);
@@ -286,8 +310,10 @@ function update3DPolygons() {
     const d = points.join(' ');
     
     pathsHTML += `
-      <!-- Outer glow -->
-      <polygon points="${d}" fill="rgba(80, 80, 200, 0.4)" stroke="rgba(255, 255, 255, 0.9)" stroke-width="2" stroke-linejoin="round" />
+      <!-- Outer glow/click target -->
+      <polygon points="${d}" fill="rgba(80, 80, 200, 0.4)" stroke="rgba(255, 255, 255, 0.9)" stroke-width="2" stroke-linejoin="round"
+        style="pointer-events: visiblePainted; cursor: pointer;"
+        data-media-index="${media._originalIndex}" />
       <polygon points="${d}" fill="none" class="highlight-3d-polygon" stroke="rgba(100, 150, 255, 0.6)" stroke-width="8" stroke-linejoin="round" filter="url(#glow-3d-filter-real)" style="mix-blend-mode: screen; pointer-events: none;" />
     `;
     hasPolygon = true;
