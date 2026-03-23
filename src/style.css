@@ -2176,3 +2176,125 @@ body.admin #pano>* {
     padding: 20px;
   }
 }
+
+/* ===== NAVIGATION HOTSPOT — EVN style double chevron arrow ===== */
+.hotspot {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+/* Glowing circle background */
+.hotspot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 0 14px rgba(255, 255, 255, 0.45),
+    0 0 32px rgba(255, 255, 255, 0.2);
+  animation: hotspot-pulse 2.2s ease-in-out infinite;
+  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+/* Custom icon (when iconUrl is set) */
+.hotspot::after {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 32px;
+  background-image: var(--hotspot-icon, none);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.85));
+  animation: hotspot-float 2.2s ease-in-out infinite;
+}
+
+/* Double chevron arrow (default — no custom icon) */
+.hotspot-arrow {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  z-index: 1;
+  animation: hotspot-float 2.2s ease-in-out infinite;
+}
+
+.hotspot-arrow span {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-right: 3.5px solid rgba(255, 255, 255, 0.95);
+  border-bottom: 3.5px solid rgba(255, 255, 255, 0.95);
+  transform: rotate(-45deg);
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.9));
+  border-radius: 1px;
+}
+
+.hotspot-arrow span:first-child {
+  opacity: 0.5;
+  margin-top: 2px;
+}
+
+/* Hover states */
+.hotspot:hover::before {
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 0 22px rgba(255, 255, 255, 0.75),
+    0 0 55px rgba(255, 255, 255, 0.35);
+  transform: scale(1.18);
+}
+
+.hotspot:hover .hotspot-arrow {
+  animation: none;
+  transform: translateY(-5px);
+}
+
+.hotspot:hover::after {
+  animation: none;
+  transform: translateY(-3px);
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 1));
+}
+
+/* Keyframes */
+@keyframes hotspot-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 14px rgba(255, 255, 255, 0.45),
+      0 0 32px rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow:
+      0 0 24px rgba(255, 255, 255, 0.75),
+      0 0 55px rgba(255, 255, 255, 0.35);
+  }
+}
+
+@keyframes hotspot-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
+}
+
+/* Autotour highlight state */
+.hotspot.hotspot-highlight::before {
+  background: rgba(255, 215, 0, 0.28);
+  border-color: rgba(255, 215, 0, 0.85);
+  box-shadow:
+    0 0 22px rgba(255, 215, 0, 0.85),
+    0 0 44px rgba(255, 215, 0, 0.4);
+  animation: pulse-highlight 1s ease-in-out infinite;
+}
