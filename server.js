@@ -389,32 +389,32 @@ if (path.resolve(LEGACY_UPLOADS_DIR) !== path.resolve(UPLOADS_DIR)) {
 }
 app.use("/backend/tiles", express.static("backend/tiles"));
 
-// Fallback for development mode when frontend isn't built to dist/
+// Serve built frontend (dist/index.html) or show error if not built
 app.get("/", (req, res) => {
-  res.send(`
+  const indexFile = path.join(__dirname, "dist", "index.html");
+  if (fs.existsSync(indexFile)) {
+    return res.sendFile(indexFile);
+  }
+  // dist/index.html not found — likely not built yet
+  res.status(503).send(`
     <!DOCTYPE html>
     <html lang="vi">
     <head>
       <meta charset="utf-8">
-      <title>Dev Mode - Virtual Tour</title>
+      <title>Virtual Tour - Chưa build</title>
       <style>
         body { font-family: system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #f0f4f8; margin: 0; color: #333; }
-        .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; }
-        h1 { margin-top: 0; color: #2c3e50; }
-        a { display: inline-block; margin-top: 20px; padding: 12px 24px; background: #3498db; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; transition: background 0.3s; }
-        a:hover { background: #2980b9; }
+        .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; max-width: 500px; }
+        h1 { margin-top: 0; color: #e74c3c; }
+        code { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
       </style>
     </head>
     <body>
       <div class="card">
-        <h1>Vite Dev Mode Tích Cực 🚀</h1>
-        <p>Giao diện xem tour đang chạy trên cổng Vite thay vì server Express hiện tại.</p>
-        <p>Vui lòng click vào link bên dưới nếu trình duyệt không tự chuyển hướng:</p>
-        <a href="http://localhost:5173/">Mở Frontend VITE (localhost:5173)</a>
+        <h1>⚠️ Frontend chưa được build</h1>
+        <p>Không tìm thấy <code>dist/index.html</code>.</p>
+        <p>Hãy chạy <code>npm run build:ui</code> trước khi khởi động server.</p>
       </div>
-      <script>
-        setTimeout(() => { window.location.href = "http://localhost:5173/"; }, 3000);
-      </script>
     </body>
     </html>
   `);

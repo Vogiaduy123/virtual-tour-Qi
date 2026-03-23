@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: virtual-tour-qi
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        generateValue: false
+        value: 10000
