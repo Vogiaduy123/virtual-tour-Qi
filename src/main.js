@@ -16,17 +16,25 @@ import { initMediaOverlay, createMediaHotspotOverlay, hideMediaOverlay, showMedi
 
 /* ===== HELPERS ===== */
 /**
- * Creates a clean SVG single-chevron arrow for navigation hotspots.
+ * Creates a clean SVG double-chevron arrow for navigation hotspots.
  */
 function createChevronArrow() {
   const wrap = document.createElement("div");
   wrap.className = "hotspot-arrow";
   wrap.innerHTML = `
-    <svg viewBox="0 0 44 30" width="44" height="30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <svg viewBox="0 0 44 36" width="44" height="36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <polyline
-        points="8,24 22,8 36,24"
+        points="8,20 22,6 36,20"
         fill="none"
         stroke="rgba(255,255,255,0.95)"
+        stroke-width="4.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <polyline
+        points="8,32 22,18 36,32"
+        fill="none"
+        stroke="rgba(255,255,255,0.5)"
         stroke-width="4.5"
         stroke-linecap="round"
         stroke-linejoin="round"
