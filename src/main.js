@@ -66,7 +66,7 @@ async function initApp() {
       getCurrentRoomId: () => currentRoomId,
       switchRoom: switchRoom
     });
-    
+
     initSensors({
       getCurrentRoomId: () => currentRoomId,
       getRoomsData: () => getRoomsData(),
@@ -79,13 +79,13 @@ async function initApp() {
       alert("Chưa có phòng nào");
       return;
     }
-    
+
     initRooms(rooms, roomSelect);
     switchRoom(rooms[0].id);
-    
+
     await loadMinimap();
     await loadSensors();
-    
+
     initZoomControl();
     initCompass({
       getCurrentRoomId: () => currentRoomId,
@@ -129,11 +129,11 @@ try {
       switchRoom(rooms[0].id);
     }
   });
-  
+
   es.addEventListener("sensors", (e) => {
     const sensors = JSON.parse(e.data || "[]");
     if (!sensors || sensors.length === 0) return;
-    
+
     // Update sensor hotspots in current room
     if (currentRoomId) {
       addSensorHotspots(currentRoomId);
@@ -163,7 +163,7 @@ function switchRoom(roomId) {
   hideMediaOverlay();
   closeCameraModal();
   closeMailComposer();
-  
+
   updateSensorWidget();
   renderCameraPanel();
 }
@@ -182,7 +182,7 @@ function addHotspots(roomId) {
   try {
     const existing = container.listHotspots();
     existing.forEach(h => container.destroyHotspot(h));
-  } catch {}
+  } catch { }
 
   const hotspots = room.hotspots || [];
   const mediaHotspots = room.mediaHotspots || [];
@@ -195,17 +195,10 @@ function addHotspots(roomId) {
     const yawRad = degToRad(hs.yaw);
     const pitchRad = degToRad(-hs.pitch);
 
-    if (hs.iconUrl && typeof hs.iconUrl === "string" && hs.iconUrl.trim()) {
-      // External icon: show as <img>, replaces the default chevron
-      const img = document.createElement("img");
-      img.src = hs.iconUrl.trim();
-      img.className = "hotspot-icon-img";
-      img.alt = "";
-      el.appendChild(img);
-    } else {
-      // Default: SVG double chevron arrow
-      el.appendChild(createChevronArrow());
-    }
+    // Always use the built-in SVG chevron arrow (default)
+    // iconUrl from admin is intentionally ignored for navigation hotspots
+    // to prevent duplicate arrows issue
+    el.appendChild(createChevronArrow());
 
     el.onclick = (e) => {
       e.stopPropagation();
@@ -225,7 +218,7 @@ function addHotspots(roomId) {
 
     container.createHotspot(el, {
       yaw: degToRad(media.yaw),
-      pitch: degToRad(-media.pitch) 
+      pitch: degToRad(-media.pitch)
     });
   });
 
@@ -240,6 +233,6 @@ function addHotspots(roomId) {
       });
     }
   });
-  
+
   addSensorHotspots(roomId);
 }
