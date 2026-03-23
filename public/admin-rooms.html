@@ -1874,9 +1874,10 @@
         // Add media hotspots
         if (room.mediaHotspots && room.mediaHotspots.length > 0) {
           room.mediaHotspots.forEach((media, idx) => {
-            const icons = { image: '🖼️', pdf: '📄', video: '🎥', '3d': '🧧' };
+            const icons = { image: '🖼️', pdf: '📄', video: '🎥', '3d': '🧊' };
             const icon = icons[media.mediaType] || '📁';
-            const label = `${icon} ${media.title}`;
+            const polyText = (media.mediaType === '3d' && media.highlightPolygon && media.highlightPolygon.length >= 3) ? ' [Vùng sáng]' : '';
+            const label = `${icon} ${media.title}${polyText}`;
 
             panoramaViewer.addHotSpot({
               id: `media-${idx}`,
@@ -2326,11 +2327,13 @@
         return;
       }
 
-      const icons = { image: '🖼️', pdf: '📄', video: '🎥', '3d': '🧧', youtube: '▶️', facebook: '👍', web: '🌐', note: '!' };
+      const icons = { image: '🖼️', pdf: '📄', video: '🎥', '3d': '🧊', youtube: '▶️', facebook: '👍', web: '🌐', note: '!' };
 
-      list.innerHTML = mediaHotspots.map((media, idx) => `
+      list.innerHTML = mediaHotspots.map((media, idx) => {
+        const polyText = (media.mediaType === '3d' && media.highlightPolygon && media.highlightPolygon.length >= 3) ? '<span style="font-size:11px;color:#e74c3c;background:#fdebd0;padding:2px 4px;border-radius:4px;margin-left:5px;display:inline-block;vertical-align:middle;">🔲 Có vùng sáng</span>' : '';
+        return `
         <div class="hotspot-item" style="background: #e8f5e9; border-left-color: #27ae60;">
-          <h5>${icons[media.mediaType] || '📁'} ${media.title}</h5>
+          <h5>${icons[media.mediaType] || '📁'} ${media.title}${polyText}</h5>
           <div class="hotspot-info">
             <span>${media.description || ''}</span>
             <span><strong>Yaw:</strong> ${media.yaw?.toFixed(2) || '?'}° | <strong>Pitch:</strong> ${media.pitch?.toFixed(2) || '?'}°</span>
