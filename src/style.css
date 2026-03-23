@@ -19,12 +19,13 @@ body.admin h2 {
   margin-top: 0;
   color: #333;
 }
+
 body.admin form {
   background: white;
   padding: 20px;
   max-width: 400px;
   border-radius: 6px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 body.admin label {
@@ -84,7 +85,7 @@ body.admin #pano {
   position: relative;
 }
 
-body.admin #pano > * {
+body.admin #pano>* {
   width: 100% !important;
   height: 100% !important;
   max-width: 500px !important;
@@ -354,10 +355,13 @@ body.admin #pano > * {
 }
 
 @keyframes pulse-highlight {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
   }
+
   50% {
     transform: scale(1.3);
     box-shadow: 0 0 30px rgba(255, 215, 0, 1);
@@ -387,6 +391,7 @@ body.admin #pano > * {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.9);
   }
+
   to {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
@@ -692,11 +697,11 @@ body.admin #pano > * {
   position: relative;
   width: 320px;
   max-width: 90vw;
-  background: rgba(0,0,0,0.88);
+  background: rgba(0, 0, 0, 0.88);
   backdrop-filter: blur(10px);
   color: #f8f8f8;
   border-radius: 12px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -733,8 +738,8 @@ body.admin #pano > * {
 }
 
 .media-overlay-content {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   padding: 8px;
   max-height: 300px;
@@ -775,9 +780,9 @@ body.admin #pano > * {
 }
 
 .media-overlay-close-btn {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   color: #fff;
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 6px;
   width: 28px;
   height: 28px;
@@ -792,8 +797,8 @@ body.admin #pano > * {
 }
 
 .media-overlay-close-btn:hover {
-  background: rgba(255,255,255,0.15);
-  border-color: rgba(255,255,255,0.3);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .media-overlay {
@@ -802,11 +807,11 @@ body.admin #pano > * {
   right: 24px;
   width: min(420px, 90vw);
   max-height: 70vh;
-  background: rgba(0,0,0,0.78);
+  background: rgba(0, 0, 0, 0.78);
   backdrop-filter: blur(10px);
   color: #f8f8f8;
   border-radius: 14px;
-  box-shadow: 0 18px 50px rgba(0,0,0,0.45);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
   padding: 16px 18px;
   display: flex;
   flex-direction: column;
@@ -843,8 +848,8 @@ body.admin #pano > * {
 }
 
 .media-overlay .overlay-content {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 10px;
   padding: 10px;
   max-height: 38vh;
@@ -875,9 +880,9 @@ body.admin #pano > * {
 }
 
 .media-overlay .close-btn {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   color: #fff;
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
   width: 32px;
   height: 32px;
@@ -891,8 +896,8 @@ body.admin #pano > * {
 }
 
 .media-overlay .close-btn:hover {
-  background: rgba(255,255,255,0.15);
-  border-color: rgba(255,255,255,0.25);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .media-overlay__header {
@@ -923,8 +928,8 @@ body.admin #pano > * {
 }
 
 .media-overlay__content {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 10px;
   padding: 10px;
   max-height: 38vh;
@@ -1136,16 +1141,16 @@ body.admin #pano > * {
   right: 24px;
   width: min(320px, 90vw);
   max-height: 50vh;
-  background: rgba(0,0,0,0.78);
+  background: rgba(0, 0, 0, 0.78);
   backdrop-filter: blur(10px);
   color: #f8f8f8;
   border-radius: 14px;
-  box-shadow: 0 18px 50px rgba(0,0,0,0.45);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
   display: flex;
   flex-direction: column;
   z-index: 35;
   overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .sensor-widget-content {
@@ -1160,16 +1165,16 @@ body.admin #pano > * {
 }
 
 .sensor-widget-content::-webkit-scrollbar-track {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .sensor-widget-content::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 3px;
 }
 
 .sensor-widget-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.3);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* ===== SENSOR HOTSPOT: marker cảm biến trong panorama ===== */
@@ -1186,14 +1191,14 @@ body.admin #pano > * {
   font-size: 20px;
   cursor: pointer;
   box-shadow: none;
-  border: 2px solid rgba(255,255,255,0.38);
+  border: 2px solid rgba(255, 255, 255, 0.38);
   transition: box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
 .sensor-hotspot:hover {
   background: #45a049;
   box-shadow: none;
-  border-color: rgba(255,255,255,0.6);
+  border-color: rgba(255, 255, 255, 0.6);
 }
 
 .sensor-hotspot.temperature {
@@ -1249,8 +1254,8 @@ body.admin #pano > * {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  border: 2px solid rgba(0,0,0,0.45);
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.3);
+  border: 2px solid rgba(0, 0, 0, 0.45);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3);
   pointer-events: none;
 }
 
@@ -1306,14 +1311,14 @@ body.admin #pano > * {
   transform: translateY(-50%);
   width: 240px;
   background: rgba(0, 0, 0, 0.9);
-  border: 1px solid rgba(255,255,255,0.18);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 10px;
   padding: 12px;
   color: #fff;
   font-size: 12px;
   z-index: 20;
   pointer-events: none;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
 .sensor-hotspot:hover .sensor-hotspot-tooltip {
@@ -1337,7 +1342,7 @@ body.admin #pano > * {
   height: 120px;
   object-fit: cover;
   border-radius: 6px;
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   margin-top: 6px;
   background: #111;
 }
@@ -1350,11 +1355,12 @@ body.admin #pano > * {
   width: 160px;
   height: 160px;
   border-radius: 50%;
-  background: radial-gradient(circle at center, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.35) 65%, rgba(255,255,255,0.15) 66%, rgba(255,255,255,0.15) 100%);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.35) 65%, rgba(255, 255, 255, 0.15) 66%, rgba(255, 255, 255, 0.15) 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   z-index: 15;
   pointer-events: none;
-  display: none; /* Ẩn la bàn */
+  display: none;
+  /* Ẩn la bàn */
 }
 
 #compassCanvas {
@@ -1386,8 +1392,8 @@ body.admin #pano > * {
 
 .floor-tab {
   padding: 4px 10px;
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 4px;
   cursor: pointer;
   font-size: 11px;
@@ -1397,14 +1403,14 @@ body.admin #pano > * {
 }
 
 .floor-tab:hover {
-  background: rgba(255,255,255,0.25);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .floor-tab.active {
   background: #2196F3;
   border-color: #2196F3;
 
-  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   overflow: hidden;
   z-index: 30;
   backdrop-filter: blur(6px);
@@ -1422,7 +1428,7 @@ body.admin #pano > * {
 
 #minimapToggle {
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.4);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   color: white;
   width: 26px;
   height: 26px;
@@ -1500,14 +1506,39 @@ body.admin #pano > * {
 }
 
 #userMinimapContainer {
+  width: 240px;
+  user-select: none;
+}
+
+/* Viewport: clips content at 240x180, handles drag/click events */
+#minimapViewport {
+  width: 240px;
+  height: 180px;
+  overflow: hidden;
   position: relative;
-  max-width: 240px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.2);
+  cursor: grab;
+}
+
+#minimapViewport:active {
+  cursor: grabbing;
+}
+
+/* Transform layer — image + canvas are scaled/translated together here */
+#minimapLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+  width: 240px;
 }
 
 #userMinimapImage {
-  max-width: 100%;
-  height: auto;
   display: block;
+  width: 100%;
+  height: auto;
   user-select: none;
   pointer-events: none;
 }
@@ -1517,6 +1548,44 @@ body.admin #pano > * {
   inset: 0;
   width: 100%;
   height: 100%;
+  pointer-events: none;
+}
+
+/* Zoom controls bar */
+#minimapZoomControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+#minimapZoomControls button {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  width: 26px;
+  height: 26px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: bold;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#minimapZoomControls button:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+#minimapZoomLabel {
+  min-width: 38px;
+  text-align: center;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.8);
+  font-variant-numeric: tabular-nums;
 }
 
 #minimapPreviewContainer {
@@ -1571,16 +1640,16 @@ body.admin #pano > * {
     right: 10px;
     max-width: 200px;
   }
-  
+
   #minimapHeader {
     padding: 8px 12px;
     font-size: 12px;
   }
-  
+
   #userMinimapImage {
     max-height: 200px;
   }
-  
+
   .zoom-control {
     bottom: 10px;
     left: 10px;
@@ -1589,7 +1658,7 @@ body.admin #pano > * {
     padding: 10px 15px;
     font-size: 12px;
   }
-  
+
   .zoom-slider {
     width: 100px;
   }
@@ -1602,6 +1671,7 @@ body.admin #pano > * {
     width: 130px;
     height: 130px;
   }
+
   #compassCanvas {
     width: 130px;
     height: 130px;
@@ -1927,7 +1997,7 @@ body.admin #pano > * {
   .camera-panel {
     width: 300px;
   }
-  
+
   .camera-panel-content {
     grid-template-columns: 1fr;
   }
@@ -1943,3 +2013,166 @@ body.admin #pano > * {
 }
 
 
+/* ===== MUSEUM CARD LAYOUT (FOR 3D) ===== */
+.museum-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeInBackdrop 0.25s ease;
+}
+
+@keyframes fadeInBackdrop {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.museum-card-fullscreen {
+  width: min(860px, 92vw);
+  max-height: 90vh;
+  animation: slideUpCard 0.3s ease;
+}
+
+@keyframes slideUpCard {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.museum-card-overlay {
+  position: relative;
+  width: 800px;
+  max-width: 90vw;
+  background: rgba(220, 225, 230, 0.85);
+  /* Slightly greyish light glass */
+  backdrop-filter: blur(25px);
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  pointer-events: auto;
+  z-index: 50;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.museum-card-left {
+  width: 50%;
+  height: 420px;
+  background: linear-gradient(180deg, #c8ccd8 0%, #edeef2 100%);
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.museum-card-left model-viewer {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: transparent;
+}
+
+.museum-card-right {
+  width: 50%;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.museum-card-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #2b3d7a;
+  margin: 0 0 15px 0;
+  line-height: 1.3;
+}
+
+.museum-card-desc {
+  font-size: 14px;
+  color: #444;
+  line-height: 1.6;
+  flex: 1;
+  overflow-y: auto;
+  max-height: 200px;
+}
+
+.museum-card-buttons {
+  margin-top: 25px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.btn-primary {
+  background: #39478f;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex: 1;
+  text-align: center;
+}
+
+.btn-primary:hover {
+  background: #2b3570;
+}
+
+.btn-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  background: #39478f;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background 0.2s;
+}
+
+.btn-icon:hover {
+  background: #2b3570;
+}
+
+@media (max-width: 768px) {
+  .museum-card-overlay {
+    flex-direction: column;
+    width: 90vw;
+  }
+
+  .museum-card-left,
+  .museum-card-right {
+    width: 100%;
+  }
+
+  .museum-card-left {
+    min-height: 250px;
+  }
+
+  .museum-card-right {
+    padding: 20px;
+  }
+}

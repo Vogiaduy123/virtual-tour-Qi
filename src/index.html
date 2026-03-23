@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Virtual Tour</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/marzipano@0.10.2/dist/marzipano.js"></script>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+</head>
+
+<body class="user">
+
+  <!-- MINIMAP -->
+  <div id="minimapWrapper" style="display: none;">
+    <div id="minimapHeader">
+      <span>🗺️ Sơ đồ tổng quan</span>
+      <button id="minimapToggle" title="Thu gọn/Mở rộng">−</button>
+    </div>
+    <div id="minimapContent">
+      <div id="floorTabs" class="floor-tabs"></div>
+      <div id="userMinimapContainer">
+        <div id="minimapViewport">
+          <div id="minimapLayer">
+            <img id="userMinimapImage" draggable="false">
+            <canvas id="userMinimapCanvas"></canvas>
+          </div>
+        </div>
+        <div id="minimapZoomControls">
+          <button id="minimapZoomOut" title="Thu nhỏ">−</button>
+          <span id="minimapZoomLabel">100%</span>
+          <button id="minimapZoomIn" title="Phóng to">+</button>
+          <button id="minimapZoomReset" title="Về mặc định">↺</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DANH SÁCH PHÒNG -->
+  <div id="roomListWrapper">
+    <label for="roomSelect">📍 Chọn phòng:</label>
+    <select id="roomSelect"></select>
+  </div>
+
+  <!-- AUTO TOUR CONTROL -->
+  <div id="autoTourControl" class="auto-tour-control">
+    <!-- Start Button (shown when tour is not active) -->
+    <button id="autoTourStartBtn" class="auto-tour-btn" title="Bắt đầu tham quan tự động">
+      <span class="tour-icon">▶</span>
+      <span class="tour-text">Tham quan tự động</span>
+    </button>
+
+    <!-- Control Panel (shown during tour) -->
+    <div id="tourControlPanel" class="tour-control-panel" style="display: none;">
+      <div class="tour-controls">
+        <button id="tourPlayPauseBtn" class="tour-control-btn" title="Tạm dừng/Tiếp tục">
+          <span class="control-icon">⏸</span>
+        </button>
+        <button id="tourPrevBtn" class="tour-control-btn" title="Điểm trước">
+          <span class="control-icon">⏮</span>
+        </button>
+        <button id="tourNextBtn" class="tour-control-btn" title="Điểm tiếp theo">
+          <span class="control-icon">⏭</span>
+        </button>
+        <button id="tourRestartBtn" class="tour-control-btn" title="Bắt đầu lại">
+          <span class="control-icon">🔄</span>
+        </button>
+        <button id="tourStopBtn" class="tour-control-btn stop" title="Dừng tour">
+          <span class="control-icon">⏹</span>
+        </button>
+      </div>
+      <div id="tourProgress" class="tour-progress">
+        <div class="progress-bar">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+        <span id="tourStatus" class="tour-status">Đang tham quan...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPASS OVERLAY -->
+  <div id="compassContainer">
+    <canvas id="compassCanvas" width="160" height="160"></canvas>
+  </div>
+
+  <!-- ZOOM CONTROL -->
+  <div id="zoomControl" class="zoom-control">
+    <span>🔍 Zoom</span>
+    <input type="range" id="zoomSlider" min="75" max="85" value="90" class="zoom-slider">
+    <span id="zoomValue">90</span>°
+  </div>
+
+  <!-- MEDIA OVERLAY -->
+  <div id="mediaOverlay" class="media-overlay hidden">
+    <div class="overlay-header">
+      <h3 id="mediaOverlayTitle">Tư liệu</h3>
+      <button id="mediaOverlayClose" class="close-btn" title="Đóng">×</button>
+    </div>
+    <p id="mediaOverlayDescription" style="display: none; margin: 8px 0; color: #d7d7d7; font-size: 12px;"></p>
+    <div id="mediaOverlayContent" class="overlay-content"></div>
+    <a id="mediaOverlayLink" href="#" target="_blank" class="overlay-link" style="display: none;">
+      🔗 Mở trong tab mới
+    </a>
+  </div>
+
+  <!-- CAMERA MODAL -->
+  <div id="cameraModal" class="camera-modal hidden">
+    <div class="camera-modal-backdrop"></div>
+    <div class="camera-modal-content">
+      <div class="camera-modal-header">
+        <h2 id="cameraModalTitle">📹 Camera</h2>
+        <button id="cameraModalClose" class="camera-modal-close" title="Đóng">×</button>
+      </div>
+      <div class="camera-modal-body">
+        <div id="cameraPreviewContainer" style="text-align: center;">
+          <div style="padding: 40px; color: #999;">Đang tải camera...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SENSOR WIDGET REMOVED -->
+
+  <!-- CAMERA PANEL -->
+  <div id="cameraPanel" class="camera-panel hidden">
+    <div class="camera-panel-header">
+      <h3>📹 Camera</h3>
+      <button id="cameraPanelToggle" class="camera-panel-toggle" title="Thu gọn">−</button>
+    </div>
+    <div id="cameraPanelContent" class="camera-panel-content">
+      <div style="text-align: center; padding: 20px; color: #999; font-size: 12px;">
+        Không có camera
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIL TOOLBOX -->
+  <div id="mailToolbox" class="mail-toolbox">
+    <div id="mailDragIcon" class="mail-drag-icon" draggable="true">✉️</div>
+  </div>
+
+  <!-- MAIL COMPOSER PANEL -->
+  <div id="mailComposerPanel" class="mail-composer hidden">
+    <div class="mail-composer-header">
+      <h3 id="mailComposerTitle">✉️ Gửi mail</h3>
+      <button id="mailComposerClose" class="mail-composer-close" title="Đóng">×</button>
+    </div>
+
+    <label for="mailPointTitle">Tên điểm mail</label>
+    <input id="mailPointTitle" type="text" placeholder="Ví dụ: Hỗ trợ khách tham quan">
+
+    <label for="mailRecipientSelect">Chọn người nhận đã lưu</label>
+    <select id="mailRecipientSelect">
+      <option value="">-- Chọn hoặc nhập mới --</option>
+    </select>
+
+    <label for="mailRecipientInput">Email người nhận</label>
+    <input id="mailRecipientInput" type="email" placeholder="example@email.com">
+
+    <label for="mailSubjectInput">Tiêu đề</label>
+    <input id="mailSubjectInput" type="text" placeholder="Tiêu đề mail">
+
+    <label for="mailBodyInput">Nội dung mail</label>
+    <textarea id="mailBodyInput" rows="5" placeholder="Nhập nội dung mail..."></textarea>
+
+    <div id="mailComposerStatus" class="mail-composer-status"></div>
+
+    <div class="mail-composer-actions">
+      <button id="mailSaveBtn" class="mail-btn">💾 Lưu</button>
+      <button id="mailSendBtn" class="mail-btn">📤 Gửi</button>
+      <button id="mailDeleteBtn" class="mail-btn danger">🗑 Xóa</button>
+    </div>
+  </div>
+
+  <!-- TOUR -->
+  <div id="pano"></div>
+
+  <script src="admin-runtime-config.js"></script>
+  <script src="admin-api-base.js"></script>
+  <script type="module" src="/main.js"></script>
+</body>
+
+</html>
