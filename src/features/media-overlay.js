@@ -774,6 +774,32 @@ export function createMediaHotspotElement(media, onClickHandler) {
       path.setAttribute("d", "M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z");
       svg.appendChild(path);
       el.appendChild(svg);
+    } else if (media.mediaType === "3d") {
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("viewBox", "0 0 100 100");
+      svg.setAttribute("width", "26");
+      svg.setAttribute("height", "26");
+      // Align SVG slightly to look perfectly centered
+      svg.style.transform = "translateY(1px)";
+      
+      svg.innerHTML = `
+        <!-- Left Face -->
+        <path d="M50 90 L15 70 L15 35 L50 55 Z" fill="#3b82f6" />
+        <!-- Right Face -->
+        <path d="M50 90 L85 70 L85 35 L50 55 Z" fill="#2563eb" />
+        <!-- Top Face -->
+        <path d="M50 15 L85 35 L50 55 L15 35 Z" fill="#7ce4fb" />
+        
+        <!-- Sparkles (Stars/Dots) -->
+        <circle cx="27" cy="48" r="2.5" fill="white" opacity="0.9"/>
+        <circle cx="36" cy="65" r="1.8" fill="white" opacity="0.7"/>
+        <circle cx="68" cy="46" r="2.2" fill="white" opacity="0.8"/>
+        <circle cx="75" cy="62" r="1.5" fill="white" opacity="0.6"/>
+        <circle cx="50" cy="30" r="2" fill="white" opacity="0.8"/>
+        <circle cx="64" cy="24" r="1.2" fill="white" opacity="0.6"/>
+        <circle cx="34" cy="26" r="1.5" fill="white" opacity="0.5"/>
+      `;
+      el.appendChild(svg);
     } else {
       el.textContent = MEDIA_ICONS[media.mediaType] || "📁";
     }
