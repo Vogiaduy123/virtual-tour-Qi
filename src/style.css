@@ -2239,7 +2239,7 @@ body.admin #pano>* {
   width: 18px;
   height: 18px;
   border-right: 3.5px solid rgba(255, 255, 255, 0.95);
-  border-bottom: 3.5px solid rgba(255, 255, 255, 0.95);
+  border-top: 3.5px solid rgba(255, 255, 255, 0.95);
   transform: rotate(-45deg);
   filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.9));
   border-radius: 1px;
@@ -2247,7 +2247,7 @@ body.admin #pano>* {
 
 .hotspot-arrow span:first-child {
   opacity: 0.5;
-  margin-top: 2px;
+  margin-bottom: 4px;
 }
 
 /* Hover states */
