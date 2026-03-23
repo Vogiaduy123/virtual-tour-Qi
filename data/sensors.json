@@ -54,25 +54,25 @@
     },
     "sensors": {
       "temperature": {
-        "value": 18,
+        "value": 24,
         "unit": "°C",
         "min": 0,
         "max": 50
       },
       "humidity": {
-        "value": 69,
+        "value": 81,
         "unit": "%",
         "min": 0,
         "max": 100
       },
       "pm25": {
-        "value": 74,
+        "value": 40,
         "unit": "µg/m³",
         "min": 0,
         "max": 500
       }
     },
-    "lastUpdate": "2026-03-11T02:18:14.504Z",
+    "lastUpdate": "2026-03-23T02:48:11.335Z",
     "color": "#4CAF50"
   },
   {
@@ -103,23 +103,23 @@
       "yaw": 0,
       "pitch": 0
     },
-    "lastUpdate": "2026-03-11T02:12:52.416Z",
+    "lastUpdate": "2026-03-11T02:32:14.512Z",
     "color": "#4CAF50",
     "sensors": {
       "temperature": {
-        "value": 29.326253027653774,
+        "value": 27.642170178710018,
         "unit": "°C",
         "min": 0,
         "max": 50
       },
       "humidity": {
-        "value": 77.09857573806427,
+        "value": 77.63973892438536,
         "unit": "%",
         "min": 0,
         "max": 100
       },
       "pm25": {
-        "value": 40.2,
+        "value": 27.6,
         "unit": "µg/m³",
         "min": 0,
         "max": 500

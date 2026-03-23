@@ -1,0 +1,176 @@
+# 📊 Phân tích dự án Virtual Tour
+
+## Tổng quan
+
+Dự án **Virtual Tour** là ứng dụng web tham quan ảo 360° sử dụng **Marzipano** engine, cho phép người dùng khám phá các không gian thông qua ảnh panorama với nhiều tính năng tương tác.
+
+| Thành phần | Công nghệ | Kích thước |
+|---|---|---|
+| Backend | Node.js + Express 5 | [server.js](file:///d:/virtual-tour/server.js) (1197 dòng) |
+| Frontend | Vanilla JS + Marzipano | [main.js](file:///d:/virtual-tour/public/main.js) (3438 dòng) |
+| Styling | CSS thuần | [style.css](file:///d:/virtual-tour/public/style.css) (36KB) |
+| Data | JSON files | [data/](file:///d:/virtual-tour/public/main.js#2242-2245) folder |
+
+---
+
+## ✅ Các tính năng đã hoàn thành
+
+### 🏠 Core Tour
+- ✅ Hiển thị panorama 360° (Marzipano)
+- ✅ Chuyển phòng bằng hotspot
+- ✅ Dropdown chọn phòng
+- ✅ La bàn (compass overlay)
+- ✅ Zoom control (slider)
+- ✅ Responsive mobile/desktop
+
+### 🗺️ Minimap
+- ✅ Sơ đồ tổng quan nhiều tầng (floor tabs)
+- ✅ Marker phòng trên minimap
+- ✅ Highlight phòng đang xem
+- ✅ Thu gọn/mở rộng
+
+### 🎬 Auto Tour
+- ✅ Kịch bản tour tự động
+- ✅ Play/Pause/Stop/Previous/Next/Restart
+- ✅ Progress bar
+- ✅ Cấu hình tốc độ camera
+
+### 📎 Media Hotspots
+- ✅ Hình ảnh (image overlay)
+- ✅ Video (HTML5 video)
+- ✅ PDF (iframe)
+- ✅ YouTube (embedded player)
+- ✅ Facebook (preview + link)
+- ✅ Ghi chú (note - info hotspot)
+- ✅ Web links
+
+### 📡 Sensor & Camera
+- ✅ Widget cảm biến môi trường (nhiệt độ, độ ẩm, CO2, PM2.5, khói)
+- ✅ Camera IP (stream URL, snapshot)
+- ✅ Camera modal viewer
+- ✅ Real-time SSE updates
+
+### ✉️ Mail
+- ✅ Mail hotspot trên panorama
+- ✅ Soạn & gửi mail từ tour
+- ✅ Hỗ trợ: SMTP, Resend, Brevo, SendGrid
+
+### 🌤️ API Môi trường
+- ✅ OpenWeatherMap (nhiệt độ, độ ẩm)
+- ✅ WAQI (chất lượng không khí, PM2.5, AQI)
+- ✅ Cấu hình riêng cho từng phòng
+
+### ⚙️ Admin
+- ✅ Upload panorama + sinh tiles ([admin-upload.html](file:///d:/virtual-tour/public/admin-upload.html))
+- ✅ Quản lý phòng & hotspot ([admin-rooms.html](file:///d:/virtual-tour/public/admin-rooms.html))
+- ✅ Chỉnh minimap ([admin-minimap.html](file:///d:/virtual-tour/public/admin-minimap.html))
+- ✅ Kịch bản tour ([admin-tour.html](file:///d:/virtual-tour/public/admin-tour.html))
+- ✅ Cấu hình API ([admin-api-config.html](file:///d:/virtual-tour/public/admin-api-config.html))
+
+---
+
+## ⚠️ Các vấn đề cần cải thiện
+
+### 1. 🏗️ Kiến trúc code
+- **[main.js](file:///d:/virtual-tour/public/main.js) quá lớn** (3438 dòng, 110KB) → Nên tách module (ES modules hoặc bundler)
+- **[server.js](file:///d:/virtual-tour/server.js) monolithic** (1197 dòng) → Nên tách routes ra files riêng
+- **Không có build tool** → Cân nhắc Vite/Webpack cho frontend
+- **Dữ liệu JSON file** → Ổn cho MVP nhưng nên dùng database (SQLite/MongoDB) khi scale
+
+### 2. 🔒 Bảo mật
+- **API key hardcoded** trong [server.js](file:///d:/virtual-tour/server.js) dòng 366-371 (OpenWeatherMap + WAQI token)
+- **Không có authentication** cho admin pages → Ai cũng access được admin
+- **Không có rate limiting** → Risk spam API/upload
+- **CORS mở hoàn toàn** (`app.use(cors())`)
+
+### 3. 🎨 UI/UX
+- **Admin pages rất lớn** → [admin-rooms.html](file:///d:/virtual-tour/public/admin-rooms.html) 105KB, nên tách component
+- **Không có loading state** rõ ràng khi chờ data
+- **Thiếu error boundary** → user thấy lỗi raw khi API fail
+
+### 4. 📦 Performance
+- **Ảnh panorama full-size** được load → Nên dùng tile-based loading (đã có [generate-tiles.js](file:///d:/virtual-tour/generate-tiles.js) nhưng chưa rõ có sử dụng đầy đủ)
+- **Không có caching** cho API responses
+- **SSE reconnect** chưa có retry strategy
+
+### 5. 🧪 Testing
+- **Không có test nào** (`"test": "echo \"Error: no test specified\""`)
+- Không có unit test, integration test, hay E2E test
+
+---
+
+## 🚀 Hướng phát triển đề xuất
+
+### Ưu tiên cao (Nên làm ngay)
+
+| # | Việc cần làm | Lý do |
+|---|---|---|
+| 1 | **Thêm authentication cho admin** | Bảo mật - hiện ai cũng vào được admin |
+| 2 | **Di chuyển API keys vào .env** | API key đang bị hardcoded trong source |
+| 3 | **Tách [main.js](file:///d:/virtual-tour/public/main.js) thành modules** | 3438 dòng rất khó maintain |
+| 4 | **Thêm basic tests** | Không có test = sửa bug hay add feature rất dễ gây lỗi khác |
+
+### Ưu tiên trung bình
+
+| # | Việc cần làm | Lý do |
+|---|---|---|
+| 5 | **Tách [server.js](file:///d:/virtual-tour/server.js) routes** | Dễ maintain và mở rộng |
+| 6 | **Thêm input validation** | Tránh bad data vào hệ thống |
+| 7 | **UI loading states + error handling** | Trải nghiệm user tốt hơn |
+| 8 | **Optimize panorama loading** | Load nhanh hơn, tiết kiệm bandwidth |
+
+### Ưu tiên thấp (Tương lai)
+
+| # | Việc cần làm | Lý do |
+|---|---|---|
+| 9 | **Chuyển sang database** (SQLite/MongoDB) | JSON files không scale tốt |
+| 10 | **Add bundler** (Vite) cho frontend | Module system, tree-shaking, HMR |
+| 11 | **PWA support** | Offline access, installable |
+| 12 | **Multi-language** | Mở rộng cho khách quốc tế |
+| 13 | **Analytics** | Tracking user behavior trong tour |
+
+---
+
+## 📁 Cấu trúc file hiện tại
+
+```
+d:\virtual-tour\
+├── server.js              # Express server chính (1197 dòng)
+├── package.json           # Dependencies: express, cors, multer, sharp, nodemailer, dotenv
+├── generate-tiles.js      # Script sinh panorama tiles
+├── mediamtx.yml           # WebRTC/RTSP gateway config
+├── netlify.toml           # Deploy config
+├── .env / .env.example    # Environment variables
+│
+├── public/                # Frontend
+│   ├── index.html         # Trang user xem tour
+│   ├── main.js            # Logic chính (3438 dòng)
+│   ├── style.css          # Styles (36KB)
+│   ├── admin.html         # Dashboard admin
+│   ├── admin-upload.html  # Upload panorama
+│   ├── admin-rooms.html   # Quản lý phòng (105KB!)
+│   ├── admin-minimap.html # Chỉnh minimap
+│   ├── admin-tour.html    # Kịch bản tour
+│   ├── admin-api-config.html # Cấu hình API
+│   ├── admin-api.js       # Admin API logic
+│   ├── admin-api-base.js  # API base URL
+│   └── admin-runtime-config.js
+│
+├── data/                  # JSON data files
+│   ├── rooms.json         # Phòng + hotspots
+│   ├── minimap.json       # Tầng + markers
+│   ├── sensors.json       # Cảm biến
+│   ├── tour-scenario.json # Kịch bản tour
+│   ├── api-config.json    # Cấu hình API
+│   └── room-api-configs/  # Config riêng mỗi phòng
+│
+├── uploads/               # Ảnh upload
+├── backend/               # Tiles + raw images
+│   ├── tiles/
+│   ├── raw/
+│   └── hls/
+└── .agent/                # Superpowers config
+```
+
+> [!TIP]
+> Bạn có thể bắt đầu với bất kỳ mục nào trong danh sách đề xuất. Tôi sẵn sàng giúp bạn triển khai từng bước!

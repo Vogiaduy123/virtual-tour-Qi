@@ -8,9 +8,7 @@ let env = {
   switchRoom: (id) => {}
 };
 
-// Sensor widget elements
-let sensorWidget = null;
-let sensorWidgetContent = null;
+// Sensor widget elements (removed completely layout)
 
 // Sensors data
 let sensorsData = [];
@@ -24,8 +22,7 @@ let activeCameraPeerConnection = null;
 export function initSensors(dependencies) {
   env = { ...env, ...dependencies };
 
-  sensorWidget = document.getElementById("sensorWidget");
-  sensorWidgetContent = document.getElementById("sensorWidgetContent");
+  // Sensor widget removed from initialization
 
   // Add event listeners for camera modal
   const cameraModal = document.getElementById('cameraModal');
@@ -447,127 +444,7 @@ export function closeCameraModal() {
 
 // Update sensor widget with all sensors
 export function updateSensorWidget() {
-  const currentRoomId = env.getCurrentRoomId();
-  if (!sensorWidgetContent) return;
-  sensorWidgetContent.innerHTML = "";
-  
-  // Filter sensors for current room only - ONLY environment sensors, exclude cameras
-  const currentRoomSensors = sensorsData.filter(s => s.roomId === currentRoomId && s.type !== 'camera');
-  
-  if (currentRoomSensors.length === 0) {
-    sensorWidgetContent.innerHTML = `
-      <div style="text-align: center; padding: 16px; color: #888; font-size: 12px;">
-        Chưa có cảm biến trong phòng này
-      </div>
-    `;
-    return;
-  }
-  
-  // Add header
-  const header = document.createElement("div");
-  header.style.cssText = `
-    padding: 8px 10px;
-    background: rgba(255,255,255,0.06);
-    border-bottom: 1px solid rgba(255,255,255,0.12);
-    font-weight: 600;
-    font-size: 12px;
-    color: #9ac7ff;
-  `;
-  
-  const envCount = currentRoomSensors.length;
-  header.textContent = `🌡️ Cảm biến (${envCount})`;
-  sensorWidgetContent.appendChild(header);
-  
-  // Add each sensor
-  const itemsContainer = document.createElement("div");
-  itemsContainer.style.cssText = `
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 8px;
-    max-height: 300px;
-    overflow-y: auto;
-  `;
-  
-  currentRoomSensors.forEach(sensor => {
-    // Render Environment Sensor
-    const status = getSensorStatus(sensor.sensors || {});
-    const pm25Value = sensor.sensors?.pm25?.value || 0;
-    
-    // Determine color based on PM2.5 AQI levels
-    let borderColor, statusIcon, statusColor;
-    if (status === "critical" || pm25Value > 150.4) {
-      borderColor = '#FF1744'; // Red - Không tốt
-      statusIcon = '🔴';
-      statusColor = 'rgba(255, 23, 68, 0.3)';
-    } else if (status === "warning" || pm25Value > 55.4) {
-      borderColor = '#FF9800'; // Orange - Nhạy cảm
-      statusIcon = '🟠';
-      statusColor = 'rgba(255, 152, 0, 0.3)';
-    } else if (pm25Value > 35.4) {
-      borderColor = '#FFC107'; // Yellow - Chấp nhận được
-      statusIcon = '🟡';
-      statusColor = 'rgba(255, 193, 7, 0.3)';
-    } else {
-      borderColor = '#4CAF50'; // Green - Tốt
-      statusIcon = '🟢';
-      statusColor = 'rgba(76, 175, 80, 0.3)';
-    }
-    
-    const temp = sensor.sensors?.temperature?.value || '--';
-    const humidity = sensor.sensors?.humidity?.value || '--';
-    const pm25 = sensor.sensors?.pm25?.value || '--';
-    
-    const item = document.createElement("div");
-    item.style.cssText = `
-      padding: 8px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid ${statusColor};
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border-left: 3px solid ${borderColor};
-    `;
-    
-    const roomsData = env.getRoomsData();
-    item.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
-        <div>
-          <div style="font-size: 11px; color: #9ac7ff; font-weight: 600;">${sensor.name}</div>
-          <div style="font-size: 12px; color: #fff; margin-top: 2px;">
-            🌡️${temp}° 💧${humidity}% 💨${pm25}
-          </div>
-          <div style="font-size: 10px; color: #888; margin-top: 2px;">
-            📍 ${sensor.location || (sensor.roomId && roomsData[sensor.roomId] ? roomsData[sensor.roomId].name : 'Không xác định')}
-          </div>
-        </div>
-        <div style="text-align: right;">
-          <div style="font-size: 14px;">${statusIcon}</div>
-        </div>
-      </div>
-    `;
-    
-    item.onmouseover = () => {
-      item.style.background = 'rgba(255,255,255,0.08)';
-      const hoverColor = statusColor.replace('0.3', '0.5');
-      item.style.borderColor = hoverColor;
-    };
-  
-    item.onmouseout = () => {
-      item.style.background = 'rgba(255,255,255,0.04)';
-      item.style.borderColor = statusColor;
-    };
-    
-    item.onclick = () => {
-      if (sensor.roomId && roomsData[sensor.roomId]) {
-        env.switchRoom(sensor.roomId);
-      }
-    };
-    
-    itemsContainer.appendChild(item);
-  });
-  
-  sensorWidgetContent.appendChild(itemsContainer);
+  // Sensor List rendering removed per user request
   
   // Render camera panel if there are cameras
   renderCameraPanel();

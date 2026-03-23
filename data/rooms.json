@@ -7,12 +7,11 @@
     "floor": 1,
     "hotspots": [
       {
-        "yaw": -123.53,
-        "pitch": -2.66,
+        "yaw": -122.6,
+        "pitch": -3.89,
         "target": 1769668421984,
         "rotation": 0,
-        "color": "#ff0000",
-        "iconUrl": "/uploads/media/media_1772590486302_M__i_t__n.png"
+        "color": "#ff0000"
       }
     ],
     "mediaHotspots": [
@@ -23,9 +22,40 @@
         "description": "Giữ xe nhân viên\n",
         "mediaUrl": "Giữ xe nhân viên",
         "mediaType": "note"
+      },
+      {
+        "yaw": -10.41,
+        "pitch": -5.24,
+        "title": "Sơ đồ phòng Qi",
+        "description": "eeeee",
+        "mediaUrl": "/uploads/media/media_1773997677768_Orangutan.glb",
+        "mediaType": "3d"
       }
     ],
-    "mailHotspots": []
+    "mailHotspots": [
+      {
+        "title": "Gửi mail",
+        "recipient": "vogiaduy11@gmail.com",
+        "subject": "chỉnh sửassss",
+        "body": "ssssss",
+        "updatedAt": "2026-03-16T09:07:59.587Z",
+        "yaw": -138.02641024803373,
+        "pitch": -8.241557529281977,
+        "screenX": 0.5268324607329843,
+        "screenY": 0.4972677595628415
+      },
+      {
+        "title": "Gửi mail",
+        "recipient": "vogiaduy11@gmail.com",
+        "subject": "",
+        "body": "Test SubjectThis is a test body.",
+        "updatedAt": "2026-03-20T08:38:48.343Z",
+        "yaw": 0,
+        "pitch": 0,
+        "screenX": 0.5,
+        "screenY": 0.5
+      }
+    ]
   },
   {
     "id": 1769668421984,
@@ -45,7 +75,7 @@
         "yaw": 125.44,
         "pitch": -13.78,
         "target": 1769668397635,
-        "rotation": 0,
+        "rotation": 90,
         "color": "#c2c2c2"
       }
     ]
@@ -252,6 +282,16 @@
         "target": 1769668791710,
         "rotation": 120,
         "color": "#c2c2c2"
+      }
+    ],
+    "mediaHotspots": [
+      {
+        "yaw": 17.65,
+        "pitch": 2.63,
+        "title": "Sơ đồ phòng Qi",
+        "description": "",
+        "mediaUrl": "/uploads/media/media_1773196310101_Map_T2.png",
+        "mediaType": "image"
       }
     ]
   },
