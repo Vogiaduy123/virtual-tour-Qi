@@ -174,18 +174,7 @@ body.admin #pano>* {
 }
 
 .hotspot::before {
-  content: '';
-  width: 54px;
-  height: 54px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(var(--hotspot-roll-compensation, 0deg));
-  background-image: var(--hotspot-icon, url("images/hotspots/double_arrow_tour.gif?v=1")), url("images/hotspots/move-hotspot.svg");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  pointer-events: none;
+  content: none;
 }
 
 .hotspot-saved:hover {
