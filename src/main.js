@@ -195,16 +195,15 @@ function addHotspots(roomId) {
     const yawRad = degToRad(hs.yaw);
     const pitchRad = degToRad(-hs.pitch);
 
-    if (hs.iconUrl && typeof hs.iconUrl === "string") {
-      const normalizedIconUrl = hs.iconUrl.trim();
-      if (normalizedIconUrl) {
-        const safeIconUrl = normalizedIconUrl.replace(/"/g, "\\\"");
-        el.style.setProperty('--hotspot-icon', `url("${safeIconUrl}")`);
-      } else {
-        el.appendChild(createChevronArrow());
-      }
+    if (hs.iconUrl && typeof hs.iconUrl === "string" && hs.iconUrl.trim()) {
+      // External icon: show as <img>, replaces the default chevron
+      const img = document.createElement("img");
+      img.src = hs.iconUrl.trim();
+      img.className = "hotspot-icon-img";
+      img.alt = "";
+      el.appendChild(img);
     } else {
-      // No iconUrl → default EVN-style double chevron SVG
+      // Default: SVG double chevron arrow
       el.appendChild(createChevronArrow());
     }
 

@@ -2210,6 +2210,24 @@ body.admin #pano>* {
   filter: drop-shadow(0 0 10px rgba(255, 255, 255, 1));
 }
 
+/* External icon image (replaces default chevron) */
+.hotspot-icon-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
+  animation: hotspot-float 2.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.hotspot:hover .hotspot-icon-img {
+  animation: none;
+  transform: translateY(-6px);
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 1));
+}
+
 /* Keyframes */
 @keyframes hotspot-pulse {
   0%, 100% {
