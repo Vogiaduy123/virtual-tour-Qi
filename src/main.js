@@ -16,29 +16,18 @@ import { initMediaOverlay, createMediaHotspotOverlay, hideMediaOverlay, showMedi
 
 /* ===== HELPERS ===== */
 /**
- * Creates a clean SVG double-chevron arrow element for navigation hotspots.
- * Two stacked "^" shapes, top one brighter, bottom one faded — EVN style.
+ * Creates a clean SVG single-chevron arrow for navigation hotspots.
  */
 function createChevronArrow() {
   const wrap = document.createElement("div");
   wrap.className = "hotspot-arrow";
   wrap.innerHTML = `
-    <svg viewBox="0 0 44 36" width="44" height="36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <!-- top chevron (brighter) -->
+    <svg viewBox="0 0 44 30" width="44" height="30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <polyline
-        points="8,22 22,8 36,22"
+        points="8,24 22,8 36,24"
         fill="none"
         stroke="rgba(255,255,255,0.95)"
-        stroke-width="4"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      />
-      <!-- bottom chevron (faded) -->
-      <polyline
-        points="8,34 22,20 36,34"
-        fill="none"
-        stroke="rgba(255,255,255,0.45)"
-        stroke-width="4"
+        stroke-width="4.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
@@ -46,6 +35,7 @@ function createChevronArrow() {
   `.trim();
   return wrap;
 }
+
 
 
 /* ===== INITIAL LOAD ===== */
