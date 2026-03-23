@@ -2191,36 +2191,6 @@ body.admin #pano>* {
   outline: none;
 }
 
-/* Glowing circle background */
-.hotspot::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
-  border: 2px solid rgba(255, 255, 255, 0.55);
-  box-shadow:
-    0 0 14px rgba(255, 255, 255, 0.45),
-    0 0 32px rgba(255, 255, 255, 0.2);
-  animation: hotspot-pulse 2.2s ease-in-out infinite;
-  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
-}
-
-/* Custom icon (when iconUrl is set) */
-.hotspot::after {
-  content: '';
-  display: block;
-  width: 32px;
-  height: 32px;
-  background-image: var(--hotspot-icon, none);
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  position: relative;
-  z-index: 1;
-  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.85));
-  animation: hotspot-float 2.2s ease-in-out infinite;
-}
 
 /* SVG double chevron wrapper */
 .hotspot-arrow {
@@ -2233,25 +2203,11 @@ body.admin #pano>* {
   filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.75));
 }
 
-/* Hover states */
-.hotspot:hover::before {
-  background: rgba(255, 255, 255, 0.3);
-  box-shadow:
-    0 0 22px rgba(255, 255, 255, 0.75),
-    0 0 55px rgba(255, 255, 255, 0.35);
-  transform: scale(1.18);
-}
-
+/* Hover state — arrow lifts and glows brighter */
 .hotspot:hover .hotspot-arrow {
   animation: none;
   transform: translateY(-6px);
   filter: drop-shadow(0 0 10px rgba(255, 255, 255, 1));
-}
-
-.hotspot:hover::after {
-  animation: none;
-  transform: translateY(-3px);
-  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 1));
 }
 
 /* Keyframes */
@@ -2274,11 +2230,6 @@ body.admin #pano>* {
 }
 
 /* Autotour highlight state */
-.hotspot.hotspot-highlight::before {
-  background: rgba(255, 215, 0, 0.28);
-  border-color: rgba(255, 215, 0, 0.85);
-  box-shadow:
-    0 0 22px rgba(255, 215, 0, 0.85),
-    0 0 44px rgba(255, 215, 0, 0.4);
-  animation: pulse-highlight 1s ease-in-out infinite;
+.hotspot.hotspot-highlight .hotspot-arrow {
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.9));
 }
