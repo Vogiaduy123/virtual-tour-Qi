@@ -2035,6 +2035,10 @@
       if (polyStatus) polyStatus.textContent = '';
       const polySection = document.getElementById('polygonHighlightSection');
       if (polySection) polySection.style.display = 'none';
+      
+      // Hide floating finish button
+      const finishBtn = document.getElementById('floatingFinishDrawBtn');
+      if (finishBtn) finishBtn.style.display = 'none';
     }
 
     /* ===== POLYGON DRAWING ===== */
@@ -2042,14 +2046,42 @@
       isPolygonDrawMode = !isPolygonDrawMode;
       const btn = document.getElementById('polygonDrawBtn');
       const status = document.getElementById('polygonStatus');
+      const modal = document.getElementById('mediaHotspotModal');
+      
       if (isPolygonDrawMode) {
-        btn.textContent = '⏹️ Dừng vẽ';
+        // Change button state
+        btn.textContent = '✏️ Đang vẽ (Click Xong phía trên)';
         btn.style.background = '#e74c3c';
         status.textContent = `✏️ Click trên ảnh 360 phía trên. Đã có ${polygonPoints.length} điểm.`;
+        
+        // Hide modal so user can click panorama
+        modal.classList.remove('active');
+        
+        // Show floating finish button on panorama
+        let finishBtn = document.getElementById('floatingFinishDrawBtn');
+        if (!finishBtn) {
+          finishBtn = document.createElement('button');
+          finishBtn.id = 'floatingFinishDrawBtn';
+          finishBtn.innerHTML = '✅ Lưu vùng vẽ & Trở lại form';
+          finishBtn.className = 'btn';
+          finishBtn.style.cssText = 'position: absolute; top: 15px; right: 15px; z-index: 10000; background: #e74c3c; color: white; margin: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.4); padding: 10px 16px; border-radius: 8px; font-weight: bold; font-size: 14px;';
+          finishBtn.onclick = togglePolygonDrawMode;
+          document.getElementById('panoramaViewer').appendChild(finishBtn);
+        }
+        finishBtn.style.display = 'block';
+        
       } else {
-        btn.textContent = '✏️ Bắt đầu vẽ';
+        // Change button state
+        btn.textContent = '✏️ Sửa vùng vẽ';
         btn.style.background = '#3498db';
         status.textContent = polygonPoints.length > 0 ? `✅ ${polygonPoints.length} điểm đã lưu.` : '';
+        
+        // Restore modal
+        modal.classList.add('active');
+        
+        // Hide floating finish button
+        const finishBtn = document.getElementById('floatingFinishDrawBtn');
+        if (finishBtn) finishBtn.style.display = 'none';
       }
     }
     window.togglePolygonDrawMode = togglePolygonDrawMode;
