@@ -5,7 +5,7 @@ let env = {
   getRoomsData: () => ({}),
   getScene: (id) => null,
   getPano: () => null,
-  addHotspots: (id) => {}
+  addHotspots: (id) => { }
 };
 
 // Mail state
@@ -14,9 +14,9 @@ let activeMailHotspotIndex = -1;
 let isMailDragActive = false;
 
 // Mail DOM elements
-let mailToolbox, mailDragIcon, mailComposerPanel, mailComposerTitle, mailComposerClose, 
-    mailPointTitle, mailRecipientSelect, mailRecipientInput, mailSubjectInput, 
-    mailBodyInput, mailComposerStatus, mailSaveBtn, mailSendBtn, mailDeleteBtn;
+let mailToolbox, mailDragIcon, mailComposerPanel, mailComposerTitle, mailComposerClose,
+  mailPointTitle, mailRecipientSelect, mailRecipientInput, mailSubjectInput,
+  mailBodyInput, mailComposerStatus, mailSaveBtn, mailSendBtn, mailDeleteBtn;
 
 export function initMailFeature(dependencies) {
   env = { ...env, ...dependencies };

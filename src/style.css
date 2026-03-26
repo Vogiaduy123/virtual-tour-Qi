@@ -2178,6 +2178,7 @@ body.admin #pano>* {
   background: transparent;
   border: none;
   outline: none;
+  transform-style: preserve-3d;
 }
 
 
@@ -2188,14 +2189,14 @@ body.admin #pano>* {
   align-items: center;
   justify-content: center;
   z-index: 1;
-  animation: hotspot-float 2.2s ease-in-out infinite;
+  animation: hotspot-float-3d 2.2s ease-in-out infinite;
   filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.75));
 }
 
 /* Hover state — arrow lifts and glows brighter */
 .hotspot:hover .hotspot-arrow {
   animation: none;
-  transform: translateY(-6px);
+  transform: translateZ(12px);
   filter: drop-shadow(0 0 10px rgba(255, 255, 255, 1));
 }
 
@@ -2234,6 +2235,11 @@ body.admin #pano>* {
 @keyframes hotspot-float {
   0%, 100% { transform: translateY(0px); }
   50%       { transform: translateY(-6px); }
+}
+
+@keyframes hotspot-float-3d {
+  0%, 100% { transform: translateZ(0px); }
+  50%       { transform: translateZ(8px); }
 }
 
 /* Autotour highlight state */

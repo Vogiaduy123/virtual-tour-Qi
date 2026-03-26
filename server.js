@@ -9,7 +9,7 @@ const os = require("os");
 const nodemailer = require("nodemailer");
 
 // Import admin routes
-const adminRoutes = require("./public/admin-api");
+const adminRoutes = require("./backend/admin-api");
 
 const app = express();
 const PORT = process.env.PORT || 3000;

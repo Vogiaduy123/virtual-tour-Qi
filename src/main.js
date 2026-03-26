@@ -228,6 +228,11 @@ function addHotspots(roomId) {
     container.createHotspot(el, {
       yaw: yawRad,
       pitch: pitchRad
+    }, {
+      perspective: {
+        radius: 1000,
+        extraTransforms: `rotateX(60deg) rotateZ(${hs.rotation || 0}deg) scale(2.5)`
+      }
     });
   });
 

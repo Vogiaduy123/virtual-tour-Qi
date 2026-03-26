@@ -24,12 +24,56 @@
         "mediaType": "note"
       },
       {
-        "yaw": -10.41,
-        "pitch": -5.24,
-        "title": "Sơ đồ phòng Qi",
-        "description": "eeeee",
-        "mediaUrl": "/uploads/media/media_1773997677768_Orangutan.glb",
-        "mediaType": "3d"
+        "yaw": -67.49,
+        "pitch": 8.11,
+        "title": "tranh",
+        "description": "abc",
+        "mediaUrl": "/uploads/media/media_1774493707896_media_1774241653630_Orangutan.glb",
+        "mediaType": "3d",
+        "highlightPolygon": [
+          [
+            -69.69132871459111,
+            10.562055602815398
+          ],
+          [
+            -61.0319938237039,
+            11.209033883961014
+          ],
+          [
+            -61.09768257317937,
+            -5.4713735027000325
+          ],
+          [
+            -69.71766471854569,
+            -5.380642296808986
+          ]
+        ]
+      },
+      {
+        "yaw": -35.77,
+        "pitch": 5.33,
+        "title": "tranh",
+        "description": "vdaf",
+        "mediaUrl": "/uploads/media/media_1774493738402_media_1774241653630_Orangutan.glb",
+        "mediaType": "3d",
+        "highlightPolygon": [
+          [
+            -36.25468643228225,
+            4.969927768951358
+          ],
+          [
+            -23.82308038361658,
+            4.46536926399364
+          ],
+          [
+            -23.373673206383415,
+            -3.378124401625321
+          ],
+          [
+            -36.200439910010815,
+            -3.219214575373101
+          ]
+        ]
       }
     ],
     "mailHotspots": [
@@ -43,17 +87,6 @@
         "pitch": -8.241557529281977,
         "screenX": 0.5268324607329843,
         "screenY": 0.4972677595628415
-      },
-      {
-        "title": "Gửi mail",
-        "recipient": "vogiaduy11@gmail.com",
-        "subject": "",
-        "body": "Test SubjectThis is a test body.",
-        "updatedAt": "2026-03-20T08:38:48.343Z",
-        "yaw": 0,
-        "pitch": 0,
-        "screenX": 0.5,
-        "screenY": 0.5
       }
     ]
   },
@@ -108,7 +141,8 @@
         "rotation": 0,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "mediaHotspots": []
   },
   {
     "id": 1769668497247,

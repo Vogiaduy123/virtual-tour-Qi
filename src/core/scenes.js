@@ -32,8 +32,25 @@ export function initRooms(rooms, roomSelectEl) {
 
     // Create scene if new
     if (!scenes[room.id]) {
-      const source = Marzipano.ImageUrlSource.fromString(room.image);
-      const geometry = new Marzipano.EquirectGeometry([{ width: 4000 }]);
+      let source, geometry;
+
+      if (room.tilesConfig && room.tilesConfig.levels && room.tilesPath) {
+        // Multi-resolution Tile Pyramid
+        let basePath = room.tilesPath;
+        if (!basePath.startsWith('/') && !basePath.startsWith('http')) {
+          basePath = '/backend/' + basePath;
+        }
+        
+        // Marzipano Multi-Res Equirectangular support
+        source = Marzipano.ImageUrlSource.fromString(basePath + "/{z}/{y}/{x}.jpg");
+        geometry = new Marzipano.EquirectGeometry(room.tilesConfig.levels);
+      } else {
+        // Legacy single image fallback
+        const imageUrl = room.image.startsWith('http') ? room.image : window.location.origin + room.image;
+        source = Marzipano.ImageUrlSource.fromString(imageUrl);
+        geometry = new Marzipano.EquirectGeometry([{ width: 4000 }]);
+      }
+
       const view = new Marzipano.RectilinearView({ fov: Math.PI / 2 });
 
       const scene = viewer.createScene({ source, geometry, view });

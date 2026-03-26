@@ -196,7 +196,7 @@ router.post("/upload-panorama", uploadPanorama.single("panorama"), async (req, r
     console.log("🎨 Generating tiles...");
 
     try {
-      await generateCubeTiles(rawPath, outputDir, [512, 1024, 2048, 4096]);
+      const config = await generateCubeTiles(rawPath, outputDir);
       
       console.log("✅ Tiles generated successfully!");
       console.log("📁 Output:", outputDir);
@@ -208,6 +208,7 @@ router.post("/upload-panorama", uploadPanorama.single("panorama"), async (req, r
         name: roomNameInput,
         image: "/uploads/" + req.file.filename,
         tilesPath: `tiles/${timestamp}`,
+        tilesConfig: config,
         floor: req.body.floor ? Number(req.body.floor) : 1,
         hotspots: []
       };
@@ -453,7 +454,7 @@ router.post("/media/upload", uploadMediaWithJsonError, (req, res) => {
 // Add media hotspot to room
 router.post("/rooms/:roomId/media-hotspots", (req, res) => {
   const roomId = Number(req.params.roomId);
-  const { yaw, pitch, title, description, mediaUrl, mediaType } = req.body;
+  const { yaw, pitch, title, description, mediaUrl, mediaType, highlightPolygon } = req.body;
 
   // Validate required fields - mediaUrl can be empty for 'note' type
   if (yaw === undefined || yaw === null || yaw === "" ||
@@ -487,6 +488,10 @@ router.post("/rooms/:roomId/media-hotspots", (req, res) => {
     mediaUrl,
     mediaType
   };
+  
+  if (highlightPolygon !== undefined) {
+    mediaHotspot.highlightPolygon = highlightPolygon;
+  }
 
   room.mediaHotspots.push(mediaHotspot);
   saveRooms(rooms);
@@ -512,7 +517,7 @@ router.get("/rooms/:roomId/media-hotspots", (req, res) => {
 router.patch("/rooms/:roomId/media-hotspots/:index", (req, res) => {
   const roomId = Number(req.params.roomId);
   const index = Number(req.params.index);
-  const { yaw, pitch, title, description, mediaUrl, mediaType } = req.body;
+  const { yaw, pitch, title, description, mediaUrl, mediaType, highlightPolygon } = req.body;
 
   const rooms = getRooms();
   const room = rooms.find(r => r.id === roomId);
@@ -548,6 +553,7 @@ router.patch("/rooms/:roomId/media-hotspots/:index", (req, res) => {
   if (description !== undefined) room.mediaHotspots[index].description = description;
   if (mediaUrl !== undefined) room.mediaHotspots[index].mediaUrl = mediaUrl;
   if (mediaType !== undefined) room.mediaHotspots[index].mediaType = mediaType;
+  if (highlightPolygon !== undefined) room.mediaHotspots[index].highlightPolygon = highlightPolygon;
 
   saveRooms(rooms);
 

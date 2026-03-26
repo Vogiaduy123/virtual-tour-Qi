@@ -1,126 +1,106 @@
 #!/usr/bin/env node
 
 /**
- * Marzipano Tile Generator
- * Converts equirectangular panorama to cube tiles
+ * Marzipano Tile Generator (Equirectangular Pyramid)
+ * Slices a high-resolution equirectangular panorama into a multi-level tile pyramid.
  */
 
 const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 
-async function generateCubeTiles(inputPath, outputDir, resolutions = [512, 1024, 2048, 4096]) {
-  console.log('🎨 Starting tile generation...');
+/**
+ * Generate Equirectangular Tile Pyramid
+ * @param {string} inputPath Path to original panorama image
+ * @param {string} outputDir Output directory for tiles
+ * @returns {Object} Marzipano geometry config
+ */
+async function generateEquirectangularTiles(inputPath, outputDir) {
+  console.log('🎨 Starting Equirectangular tile generation...');
   console.log('📷 Input:', inputPath);
   console.log('📁 Output:', outputDir);
 
-  // Create output directory structure
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
   }
 
-  // Create levels directory
-  const levelsDir = path.join(outputDir, 'levels');
-  if (!fs.existsSync(levelsDir)) {
-    fs.mkdirSync(levelsDir, { recursive: true });
-  }
-
-  // Load the equirectangular image once
+  // Load metadata
   const metadata = await sharp(inputPath).metadata();
+  const maxWidth = metadata.width;
   
-  console.log(`📐 Image dimensions: ${metadata.width}x${metadata.height}`);
+  if (!maxWidth) {
+    throw new Error('Could not read image dimensions');
+  }
 
-  // Convert equirectangular to cube faces
-  // For simplicity, we'll create a basic cube mapping
-  // In production, you'd want to use proper equirectangular to cubemap conversion
+  console.log(`📐 Image dimensions: ${maxWidth}x${metadata.height}`);
 
-  const faces = ['f', 'b', 'l', 'r', 'u', 'd']; // front, back, left, right, up, down
+  // Calculate power-of-2 levels to build the pyramid smoothly
+  const levels = [];
+  let w = 1024;
+  while (w < maxWidth) {
+    levels.push({ width: w, height: Math.floor(w / 2) });
+    w *= 2;
+  }
+  // Make sure the highest resolution uses the native image width
+  if (levels.length === 0 || levels[levels.length - 1].width !== maxWidth) {
+    levels.push({ width: maxWidth, height: metadata.height });
+  }
+
+  const tileSize = 512;
   
-  // Generate tiles for each resolution level
-  for (let level = 0; level < resolutions.length; level++) {
-    const resolution = resolutions[level];
-    const levelDir = path.join(outputDir, level.toString());
+  for (let z = 0; z < levels.length; z++) {
+    const levelWidth = levels[z].width;
+    const levelHeight = levels[z].height;
     
-    console.log(`📦 Generating level ${level} (${resolution}x${resolution})...`);
+    // Marzipano uses 1-based indexing for levels by default, but we will use 1-based indexing for folders here.
+    const levelDir = path.join(outputDir, String(z + 1));
+    console.log(`📦 Generating level ${z + 1}/${levels.length} (${levelWidth}x${levelHeight})...`);
     
-    // Create level directory
-    if (!fs.existsSync(levelDir)) {
-      fs.mkdirSync(levelDir, { recursive: true });
-    }
+    if (!fs.existsSync(levelDir)) fs.mkdirSync(levelDir, { recursive: true });
 
-    // For each cube face
-    for (const face of faces) {
-      const faceDir = path.join(levelDir, face);
-      if (!fs.existsSync(faceDir)) {
-        fs.mkdirSync(faceDir, { recursive: true });
-      }
+    // Resize the full image for the current pyramid level
+    const levelImageBuffer = await sharp(inputPath)
+      .resize(levelWidth, levelHeight, { fit: 'fill' })
+      .toBuffer();
+    
+    const cols = Math.ceil(levelWidth / tileSize);
+    const rows = Math.ceil(levelHeight / tileSize);
+    
+    for (let row = 0; row < rows; row++) {
+      const rowDir = path.join(levelDir, String(row));
+      if (!fs.existsSync(rowDir)) fs.mkdirSync(rowDir, { recursive: true });
+      
+      for (let col = 0; col < cols; col++) {
+        const tilePath = path.join(rowDir, `${col}.jpg`);
+        
+        const extractWidth = Math.min(tileSize, levelWidth - col * tileSize);
+        const extractHeight = Math.min(tileSize, levelHeight - row * tileSize);
+        
+        // Skip invalid dimensions
+        if (extractWidth <= 0 || extractHeight <= 0) continue;
 
-      // Create a simple tile (in production, this would be proper cubemap projection)
-      // For now, we'll create a placeholder that works with Marzipano structure
-      const tileSize = 512;
-      const numTiles = Math.ceil(resolution / tileSize);
-
-      for (let y = 0; y < numTiles; y++) {
-        const yDir = path.join(faceDir, y.toString());
-        if (!fs.existsSync(yDir)) {
-          fs.mkdirSync(yDir, { recursive: true });
-        }
-
-        for (let x = 0; x < numTiles; x++) {
-          const tilePath = path.join(yDir, `${x}.jpg`);
-          
-          // Skip if tile already exists
-          if (fs.existsSync(tilePath)) {
-            continue;
-          }
-          
-          // Calculate tile boundaries proportionally to image size
-          // Each tile represents a portion of the image at this resolution level
-          const tileStartX = (x / numTiles) * metadata.width;
-          const tileStartY = (y / numTiles) * metadata.height;
-          const tileEndX = ((x + 1) / numTiles) * metadata.width;
-          const tileEndY = ((y + 1) / numTiles) * metadata.height;
-          
-          const left = Math.floor(tileStartX);
-          const top = Math.floor(tileStartY);
-          const right = Math.ceil(tileEndX);
-          const bottom = Math.ceil(tileEndY);
-          
-          let width = Math.max(1, right - left);
-          let height = Math.max(1, bottom - top);
-          
-          // Clamp to image bounds
-          width = Math.min(width, metadata.width - left);
-          height = Math.min(height, metadata.height - top);
-
-          // Validate bounds
-          if (left < 0 || top < 0 || left >= metadata.width || top >= metadata.height || width <= 0 || height <= 0) {
-            continue;
-          }
-
-          try {
-            await sharp(inputPath)
-              .extract({ left, top, width, height })
-              .resize(tileSize, tileSize, { fit: 'cover' })
-              .jpeg({ quality: 80 })
-              .toFile(tilePath);
-          } catch (tileErr) {
-            console.error(`❌ Error generating tile (${face}/${level}/${y}/${x}):`, tileErr.message);
-            throw tileErr;
-          }
+        try {
+          await sharp(levelImageBuffer)
+            .extract({ 
+              left: col * tileSize, 
+              top: row * tileSize, 
+              width: extractWidth, 
+              height: extractHeight 
+            })
+            .jpeg({ quality: 85, mozjpeg: true })
+            .toFile(tilePath);
+        } catch (err) {
+          console.error(`❌ Error generating tile (z/y/x = ${z+1}/${row}/${col}):`, err.message);
+          throw err;
         }
       }
     }
   }
 
-  // Create config.json
   const config = {
-    type: 'cube',
-    levels: resolutions.map((res, idx) => ({
-      tileSize: 512,
-      size: res,
-      fallbackOnly: idx === 0
-    }))
+    type: 'equirectangular',
+    tileSize: tileSize,
+    levels: levels.map(l => ({ width: l.width }))
   };
 
   fs.writeFileSync(
@@ -134,7 +114,11 @@ async function generateCubeTiles(inputPath, outputDir, resolutions = [512, 1024,
   return config;
 }
 
-module.exports = { generateCubeTiles };
+// Keep the old export name `generateCubeTiles` as an alias to avoid breaking backend references if they missed update
+module.exports = { 
+  generateEquirectangularTiles, 
+  generateCubeTiles: generateEquirectangularTiles 
+};
 
 // CLI usage
 if (require.main === module) {
@@ -145,5 +129,5 @@ if (require.main === module) {
   }
 
   const [input, output] = args;
-  generateCubeTiles(input, output).catch(console.error);
+  generateEquirectangularTiles(input, output).catch(console.error);
 }

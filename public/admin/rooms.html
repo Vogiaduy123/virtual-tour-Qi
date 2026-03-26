@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Phòng - Admin</title>
+  <script src="/js/admin-runtime-config.js"></script>
+  <script src="/js/admin-api-base.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
+  <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+  <link rel="stylesheet" href="/css/admin-rooms.css">
+</head>
+
+<body>
+  <!-- ===== HEADER ===== -->
+  <div class="admin-header">
+    <div class="header-content">
+      <div class="header-title">🏢 Virtual Tour Admin</div>
+      <div class="header-nav">
+        <a href="/admin/upload.html" class="nav-link">📤 Upload</a>
+        <a href="/admin/rooms.html" class="nav-link active">🏠 Quản lý Phòng</a>
+        <a href="/admin/minimap.html" class="nav-link">🗺️ Minimap</a>
+        <a href="/admin/tour.html" class="nav-link special">⚡ Kịch bản</a>
+        <div class="admin-menu">
+          <button class="menu-button">
+            ☰ Menu
+            <span style="font-size: 10px;">▼</span>
+          </button>
+          <div class="menu-dropdown">
+            <a href="/admin/index.html" class="menu-item">🏠 Dashboard</a>
+            <a href="/admin/upload.html" class="menu-item">📤 Upload Panorama</a>
+            <a href="/admin/rooms.html" class="menu-item active">🏠 Quản lý Phòng</a>
+            <a href="/admin/minimap.html" class="menu-item">🗺️ Minimap</a>
+            <a href="/admin/tour.html" class="menu-item">⚡ Kịch bản Tour</a>
+            <a href="/" class="menu-item" style="border-top: 1px solid #e1e8ed; margin-top: 8px; padding-top: 16px;">👁️
+              Xem Tour</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CONTAINER ===== -->
+  <div class="container">
+    <!-- ===== SIDEBAR ===== -->
+    <div class="sidebar">
+      <div class="sidebar-panel">
+        <div class="sidebar-header">📋 Danh sách Phòng</div>
+        <div class="sidebar-content">
+          <div id="roomsList" class="rooms-list">
+            <div class="empty-state">
+              <div class="empty-state-icon">📭</div>
+              <p>Chưa có phòng</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-panel">
+        <div class="sidebar-header">🌡️ CẢM BIẾN MÔI TRƯỜNG</div>
+        <div class="sidebar-content">
+          <button class="btn" id="addSensorBtn"
+            style="margin-bottom: 10px; background: linear-gradient(135deg, #FF6B6B 0%, #EE5A6F 100%); color: white;">➕
+            Thêm thiết bị IoT</button>
+          <div
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 8px; background: #f8f9fa; border-radius: 6px; font-size: 11px;">
+            <span id="autoRefreshStatus">🔄 Auto-refresh: OFF</span>
+            <button class="btn" onclick="toggleAutoRefresh()"
+              style="padding: 4px 8px; font-size: 10px; margin: 0; background: #3498db; color: white;">Toggle</button>
+          </div>
+          <div id="sensorsList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div>
+      <!-- ===== HOTSPOTS PANEL ===== -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">🎯 Quản lý Hotspot</div>
+          <div class="panel-subtitle">Thêm, sửa, xóa hotspot & tư liệu</div>
+        </div>
+        <div class="panel-body">
+          <div id="selectedRoomInfo" class="empty-state">
+            <div class="empty-state-icon">👆</div>
+            <p>Chọn phòng từ danh sách</p>
+          </div>
+
+          <div id="hotspotSection" style="display: none;">
+            <div id="panoramaViewer" class="panorama-viewer"></div>
+
+            <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+              <button type="button" class="btn btn-success btn-small" id="addHotspotBtn" style="width: auto; flex: 1;">➕
+                Di chuyển</button>
+              <button type="button" class="btn btn-success btn-small" id="addMediaBtn" style="width: auto; flex: 1;">📁
+                Tư liệu</button>
+            </div>
+
+            <div class="hotspots-list" id="hotspotsList"></div>
+
+            <h4 style="font-size: 13px; color: #2c3e50; margin-top: 20px; margin-bottom: 10px; font-weight: 600;">📚 Tư
+              liệu của Phòng:</h4>
+            <div class="hotspots-list" id="mediaHotspotsList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODALS ===== -->
+  <!-- ===== SENSOR MODAL ===== -->
+  <div class="modal" id="sensorModal">
+    <div class="modal-content" style="max-width: 700px; max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <h3 style="margin: 0;" id="sensorModalTitle">🌡️ Thêm Thiết bị IoT</h3>
+        <button class="close-modal" type="button" onclick="closeSensorModal()">&times;</button>
+      </div>
+
+      <form id="sensorForm">
+        <div class="form-group">
+          <label>Tên cảm biến:</label>
+          <input type="text" id="sensorName" placeholder="Ví dụ: Cảm biến phòng khách" required>
+        </div>
+
+        <div class="form-group">
+          <label>Loại thiết bị:</label>
+          <select id="sensorType" onchange="toggleSensorFields()"
+            style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px; font-size: 14px;">
+            <option value="environment">🌡️ Cảm biến môi trường (Nhiệt độ, Độ ẩm, PM2.5)</option>
+            <option value="camera">📹 Camera IoT</option>
+          </select>
+        </div>
+
+        <div class="form-group"
+          style="background: #f8f9fa; border: 1px solid #e1e8ed; border-radius: 8px; padding: 12px;">
+          <label style="display: block; margin-bottom: 8px;">📍 Vị trí trên ảnh 360:</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+            <input type="number" id="sensorYaw" min="-180" max="180" step="0.01" value="0" placeholder="Yaw">
+            <input type="number" id="sensorPitch" min="-90" max="90" step="0.01" value="0" placeholder="Pitch">
+          </div>
+          <button type="button" class="btn btn-small" id="pickSensorPositionBtn" onclick="startSensorPositionPick()"
+            style="background: #27ae60; color: white; margin: 0;">🎯 Chọn trên ảnh 360</button>
+          <div id="sensorPositionHint" style="margin-top: 8px; font-size: 12px; color: #7f8c8d;">Có thể nhập tay hoặc
+            bấm nút để click trực tiếp trên ảnh.</div>
+        </div>
+
+        <!-- API Configuration Section -->
+        <div
+          style="background: #f8f9fa; border: 1px solid #e1e8ed; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h4 style="margin: 0; font-size: 14px; color: #2c3e50;">⚙️ Cấu hình API cho phòng này</h4>
+            <button type="button" id="toggleApiConfig" onclick="toggleApiConfigSection()"
+              style="padding: 6px 12px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📝
+              Chỉnh sửa</button>
+          </div>
+
+          <div id="apiConfigSection" style="display: none;">
+            <!-- OpenWeatherMap Config -->
+            <div style="background: white; border-radius: 6px; padding: 12px; margin-bottom: 10px;">
+              <h5 style="margin: 0 0 10px; font-size: 13px; color: #3498db;">🌤️ OpenWeatherMap API</h5>
+              <div style="margin-bottom: 8px;">
+                <label style="display: block; margin-bottom: 3px; font-size: 12px; font-weight: 600;">API URL:</label>
+                <input type="text" id="roomWeatherUrl" placeholder="https://api.openweathermap.org/data/2.5/weather"
+                  style="width: 100%; padding: 8px; border: 1px solid #e1e8ed; border-radius: 4px; font-size: 13px;">
+              </div>
+              <div style="margin-bottom: 8px;">
+                <label style="display: block; margin-bottom: 3px; font-size: 12px; font-weight: 600;">API Key:</label>
+                <input type="text" id="roomWeatherApiKey" placeholder="Nhập API key"
+                  style="width: 100%; padding: 8px; border: 1px solid #e1e8ed; border-radius: 4px; font-size: 13px;">
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                  <label style="display: block; margin-bottom: 3px; font-size: 12px; font-weight: 600;">Vĩ độ:</label>
+                  <input type="number" id="roomWeatherLat" step="0.0001" value="10.7769"
+                    style="width: 100%; padding: 8px; border: 1px solid #e1e8ed; border-radius: 4px; font-size: 13px;">
+                </div>
+                <div>
+                  <label style="display: block; margin-bottom: 3px; font-size: 12px; font-weight: 600;">Kinh độ:</label>
+                  <input type="number" id="roomWeatherLon" step="0.0001" value="106.7009"
+                    style="width: 100%; padding: 8px; border: 1px solid #e1e8ed; border-radius: 4px; font-size: 13px;">
+                </div>
+              </div>
+            </div>
+
+            <!-- WAQI Config -->
+            <div style="background: white; border-radius: 6px; padding: 12px;">
+              <h5 style="margin: 0 0 10px; font-size: 13px; color: #f39c12;">💨 WAQI API</h5>
+              <div style="margin-bottom: 8px;">
+                <label style="display: block; margin-bottom: 3px; font-size: 12px; font-weight: 600;">API URL:</label>
+                <input type="text" id="roomAirUrl" placeholder="https://api.waqi.info/feed/@13659/"
+                  style="width: 100%; padding: 8px; border: 1px solid #e1e8ed; border-radius: 4px; font-size: 13px;">
+              </div>
+              <div style="margin-bottom: 8px;">
+                <label style="display: block; margin-bottom: 3px; font-size: 12px; font-weight: 600;">API Token:</label>
+                <input type="text" id="roomAirToken" placeholder="Nhập token"
+                  style="width: 100%; padding: 8px; border: 1px solid #e1e8ed; border-radius: 4px; font-size: 13px;">
+              </div>
+            </div>
+          </div>
+
+          <div id="apiConfigSummary" style="font-size: 12px; color: #7f8c8d;">
+            <p style="margin: 5px 0;">🌤️ Weather: <span id="summaryWeatherStatus">Chưa cấu hình</span></p>
+            <p style="margin: 5px 0;">💨 Air Quality: <span id="summaryAirStatus">Chưa cấu hình</span></p>
+          </div>
+        </div>
+
+        <!-- Environment Sensor Fields -->
+        <div id="environmentFields">
+          <div class="form-group">
+            <label style="display: flex; justify-content: space-between; align-items: center;">
+              <span>Dữ liệu môi trường:</span>
+              <button type="button" class="btn" onclick="fetchRealWeatherData()"
+                style="margin: 0; padding: 8px 16px; background: #27ae60; color: white; font-size: 12px;">🌍 Lấy dữ liệu
+                thực</button>
+            </label>
+            <div id="weatherDataInfo"
+              style="background: #f8f9fa; border: 1px solid #e1e8ed; border-radius: 6px; padding: 10px; font-size: 12px; color: #7f8c8d; margin-bottom: 10px; min-height: 20px;">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Nhiệt độ (°C):</label>
+            <input type="number" id="sensorTemp" min="0" max="50" step="0.1" value="25">
+          </div>
+
+          <div class="form-group">
+            <label>Độ ẩm (%):</label>
+            <input type="number" id="sensorHumidity" min="0" max="100" step="1" value="60">
+          </div>
+
+          <div class="form-group">
+            <label>PM2.5 (µg/m³):</label>
+            <input type="number" id="sensorPM25" min="0" max="500" step="0.1" value="25">
+          </div>
+        </div>
+
+        <!-- Camera Fields -->
+        <div id="cameraFields" style="display: none;">
+          <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 10px;">
+              <input type="checkbox" id="useWebcam" onchange="toggleWebcam()" style="width: auto; margin: 0;">
+              <span>💻 Sử dụng Webcam Laptop (Test)</span>
+            </label>
+            <div id="webcamPreview" style="display: none; margin-top: 10px; text-align: center;">
+              <video id="webcamVideo" autoplay playsinline muted
+                style="width: 100%; max-width: 400px; border-radius: 8px; border: 2px solid #2196F3;"></video>
+              <div style="margin-top: 8px;">
+                <button type="button" class="btn btn-small" onclick="startWebcam()"
+                  style="background: #27ae60; color: white; margin: 0 5px;">▶️ Bật Webcam</button>
+                <button type="button" class="btn btn-small" onclick="stopWebcam()"
+                  style="background: #e74c3c; color: white; margin: 0 5px;">⏹️ Tắt Webcam</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group" id="manualCameraUrlGroup">
+            <label>📡 URL Stream Camera (WebRTC/WHEP):</label>
+            <input type="text" id="cameraStreamUrl"
+              placeholder="https://camera-gateway.local/live/cam01/whep hoặc webrtc://camera-gateway.local/live/cam01">
+            <small style="color: #7f8c8d; font-size: 12px;">Hỗ trợ: URL chứa /whep hoặc dạng webrtc://host/path</small>
+          </div>
+
+          <div class="form-group">
+            <label>📸 URL Ảnh Snapshot:</label>
+            <input type="text" id="cameraSnapshotUrl" placeholder="http://192.168.1.100/snapshot.jpg">
+            <small style="color: #7f8c8d; font-size: 12px;">URL để lấy ảnh tĩnh từ camera</small>
+            <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
+              <button type="button" class="btn btn-small" onclick="previewCameraStream()"
+                style="background: #3498db; color: white; margin: 0;">🎥 Xem stream</button>
+              <button type="button" class="btn btn-small" onclick="checkCameraStreamUrl()"
+                style="background: #8e44ad; color: white; margin: 0;">📡 Kiểm tra URL</button>
+            </div>
+            <div id="cameraConnectionStatus"
+              style="margin-top: 8px; font-size: 12px; color: #7f8c8d; min-height: 18px;"></div>
+            <div id="snapshotPreviewWrapper"
+              style="display: none; margin-top: 10px; border: 1px solid #e1e8ed; border-radius: 8px; padding: 8px; background: #f8f9fa; min-height: 120px;">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>📐 Độ phân giải:</label>
+            <select id="cameraResolution"
+              style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;">
+              <option value="1920x1080">1920x1080 (Full HD)</option>
+              <option value="1280x720">1280x720 (HD)</option>
+              <option value="640x480">640x480 (VGA)</option>
+              <option value="3840x2160">3840x2160 (4K)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>🔌 Trạng thái:</label>
+            <select id="cameraStatus"
+              style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;">
+              <option value="online">🟢 Online</option>
+              <option value="offline">🔴 Offline</option>
+              <option value="maintenance">🟡 Bảo trì</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>📝 Ghi chú:</label>
+            <textarea id="cameraNotes" rows="3" placeholder="Thông tin bổ sung về camera..."
+              style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px; resize: vertical;"></textarea>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button type="submit" class="btn" style="flex: 1; margin-bottom: 0; background: #FF6B6B; color: white;">💾
+            Lưu</button>
+          <button type="button" class="btn" onclick="closeSensorModal()"
+            style="flex: 1; margin-bottom: 0; background: #ecf0f6; color: #2c3e50;">Hủy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal" id="hotspotModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Thêm Hotspot</h3>
+        <button class="close-modal" type="button"
+          onclick="document.getElementById('hotspotModal').classList.remove('active')">&times;</button>
+      </div>
+      <form id="hotspotForm">
+        <div class="form-group">
+          <label>Phòng đích</label>
+          <select id="targetRoom">
+            <option value="">-- Chọn phòng đích --</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Góc Yaw (-180 - 180°)</label>
+          <input type="number" id="yaw" min="-180" max="180" step="0.01" required>
+        </div>
+
+        <div class="form-group">
+          <label>Góc Pitch (-90 - 90°)</label>
+          <input type="number" id="pitch" min="-90" max="90" step="0.01" required>
+        </div>
+
+        <div class="form-group">
+          <label>Xoay (0 - 360°)</label>
+          <input type="number" id="rotation" min="0" max="360" step="0.01" value="0">
+        </div>
+
+        <div class="form-group">
+          <label>Màu sắc</label>
+          <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 12px;">
+            <input type="text" id="color" placeholder="#ff0000" value="#ff0000">
+            <input type="color" id="colorPicker" value="#ff0000" style="width: 45px; height: 40px; cursor: pointer;">
+          </div>
+          <div>
+            <div class="color-swatch" data-color="#ff0000" style="background: #ff0000;" title="Đỏ"></div>
+            <div class="color-swatch" data-color="#00ff00" style="background: #00ff00;" title="Xanh lá"></div>
+            <div class="color-swatch" data-color="#0000ff" style="background: #0000ff;" title="Xanh dương"></div>
+            <div class="color-swatch" data-color="#ffff00" style="background: #ffff00;" title="Vàng"></div>
+            <div class="color-swatch" data-color="#ff00ff" style="background: #ff00ff;" title="Hồng"></div>
+            <div class="color-swatch" data-color="#00ffff" style="background: #00ffff;" title="Cyan"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Icon hotspot (tùy chọn)</label>
+          <div style="display: flex; gap: 8px; margin-bottom: 8px; align-items: center;">
+            <input type="text" id="hotspotIconUrl" placeholder="https://... hoặc /uploads/media/...">
+            <label class="btn"
+              style="margin: 0; white-space: nowrap; background: #ecf0f6; color: #2c3e50; cursor: pointer;">
+              📁 Chọn ảnh
+              <input type="file" id="hotspotIconFile" accept="image/*" style="display: none;">
+            </label>
+          </div>
+          <div id="hotspotIconFileInfo" style="font-size: 12px; color: #7f8c8d;"></div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button type="submit" class="btn btn-primary" style="flex: 1; margin-bottom: 0;">💾 Lưu</button>
+          <button type="button" class="btn" onclick="document.getElementById('hotspotModal').classList.remove('active')"
+            style="flex: 1; margin-bottom: 0; background: #ecf0f6; color: #2c3e50;">Hủy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== MEDIA HOTSPOT MODAL ===== -->
+  <div class="modal" id="mediaHotspotModal">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3 style="margin: 0;">📁 Thêm Tư liệu</h3>
+        <button class="close-modal" type="button" onclick="closeMediaHotspotModal()">&times;</button>
+      </div>
+
+      <form id="mediaHotspotForm">
+        <div class="form-group">
+          <label>Tiêu đề:</label>
+          <input type="text" id="mediaTitle" placeholder="Ví dụ: Tranh sơn mài..." required>
+        </div>
+
+        <div class="form-group">
+          <label>Mô tả:</label>
+          <textarea id="mediaDescription" rows="2" placeholder="Thông tin chi tiết..."
+            style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 6px;"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Loại tư liệu:</label>
+          <select id="mediaType" required onchange="updateMediaUploadHint()">
+            <option value="">-- Chọn loại --</option>
+            <option value="image">🖼️ Hình ảnh</option>
+            <option value="pdf">📄 PDF</option>
+            <option value="video">🎥 Video</option>
+            <option value="3d">&#x1F9CA; Mô hình 3D</option>
+            <option value="youtube">▶️ YouTube</option>
+            <option value="facebook">👍 Facebook</option>
+            <option value="web">🌐 Trang web</option>
+            <option value="note">Ghi chú</option>
+          </select>
+        </div>
+
+        <div id="fileUploadSection" class="form-group">
+          <label>Upload file:</label>
+          <div
+            style="background: #f8f9fa; border: 2px dashed #3498db; border-radius: 6px; padding: 20px; text-align: center; cursor: pointer;"
+            onclick="document.getElementById('mediaFileInput').click()">
+            <div style="font-size: 28px; margin-bottom: 8px;">📁</div>
+            <div id="mediaUploadHint" style="color: #3498db; font-weight: 600; font-size: 13px;">Chọn file</div>
+            <div id="mediaFileInfo" style="color: #7f8c8d; font-size: 11px; margin-top: 6px;"></div>
+          </div>
+          <input type="file" id="mediaFileInput" style="display: none;" onchange="handleMediaFileSelect(event)">
+        </div>
+
+        <div id="linkInputSection" class="form-group" style="display: none;">
+          <label>Link URL:</label>
+          <input type="text" id="mediaUrl"
+            placeholder="https://www.youtube.com/watch?v=... hoặc https://www.facebook.com/..."
+            style="width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 6px;">
+        </div>
+
+        <div class="form-group">
+          <label>Góc Yaw (-180 - 180°):</label>
+          <input type="number" id="mediaYaw" min="-180" max="180" step="0.01" required>
+        </div>
+
+        <div class="form-group">
+          <label>Góc Pitch (-90 - 90°):</label>
+          <input type="number" id="mediaPitch" min="-90" max="90" step="0.01" required>
+        </div>
+
+        <!-- Polygon highlight section — only shown for 3d type -->
+        <div id="polygonHighlightSection" style="display:none; margin-bottom:16px;">
+          <label style="display:block; margin-bottom:6px; font-weight:600; color:#2c3e50; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">
+            🔷 Vùng Highlight 3D (tùy chọn)
+          </label>
+          <div style="background:#f0f7ff; border:1px solid #3498db; border-radius:6px; padding:12px;">
+            <p style="font-size:12px; color:#555; margin-bottom:10px;">
+              Vẽ vùng bao quanh vật thể trên ảnh 360 để tạo highlight màu xanh trong tour.<br>
+              <em>Cần ít nhất 3 điểm. Sau khi bật vẽ, click lên ảnh panorama phía trên để đánh điểm.</em>
+            </p>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;">
+              <button type="button" id="polygonDrawBtn" onclick="togglePolygonDrawMode()"
+                style="padding:7px 12px; background:#3498db; color:white; border:none; border-radius:5px; font-size:12px; font-weight:600; cursor:pointer;">
+                ✏️ Bắt đầu vẽ
+              </button>
+              <button type="button" onclick="undoPolygonPoint()"
+                style="padding:7px 12px; background:#f39c12; color:white; border:none; border-radius:5px; font-size:12px; cursor:pointer;">
+                ↩️ Xóa điểm cuối
+              </button>
+              <button type="button" onclick="clearPolygon()"
+                style="padding:7px 12px; background:#e74c3c; color:white; border:none; border-radius:5px; font-size:12px; cursor:pointer;">
+                🗑️ Xóa tất cả
+              </button>
+            </div>
+            <div id="polygonStatus" style="font-size:11px; color:#3498db; min-height:16px;"></div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button type="submit" class="btn" style="flex: 1; margin-bottom: 0; background: #27ae60; color: white;">💾
+            Lưu</button>
+          <button type="button" class="btn" onclick="closeMediaHotspotModal()"
+            style="flex: 1; margin-bottom: 0; background: #ecf0f6; color: #2c3e50;">Hủy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/admin-rooms.js"></script>
+</body>
+
+</html>
