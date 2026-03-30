@@ -245,51 +245,6 @@
       box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
     }
 
-    .save-btn, .preview-btn, .back-btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      min-height: 40px;
-      white-space: nowrap;
-    }
-
-    .save-btn {
-      background: #4CAF50;
-      color: white;
-    }
-
-    .save-btn:hover {
-      background: #45a049;
-      transform: translateY(-1px);
-    }
-
-    .preview-btn {
-      background: #2196F3;
-      color: white;
-    }
-
-    .preview-btn:hover {
-      background: #0b7dda;
-      transform: translateY(-1px);
-    }
-
-    .back-btn {
-      background: #757575;
-      color: white;
-    }
-
-    .back-btn:hover {
-      background: #616161;
-      transform: translateY(-1px);
-    }
 
     .drag-handle {
       cursor: move;
@@ -504,8 +459,8 @@
     <div class="editor-header">
       <h1>⚡ Quản lý Kịch bản Auto Tour</h1>
       <div class="header-actions">
-        <button class="preview-btn" onclick="previewTour()">👁️ Xem trước</button>
-        <button class="save-btn" onclick="saveTourScenario()">💾 Lưu kịch bản</button>
+        <button class="btn btn-primary btn-small" onclick="previewTour()">👁️ Xem trước</button>
+        <button class="btn btn-success btn-small" onclick="saveTourScenario()">💾 Lưu kịch bản</button>
       </div>
     </div>
 
