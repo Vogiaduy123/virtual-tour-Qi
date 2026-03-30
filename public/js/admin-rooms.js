@@ -463,8 +463,39 @@
     }
 
     // ===== LOAD & RENDER ROOMS =====
+    let adminBuildings = [];
+
+    async function loadBuildings() {
+      try {
+        const res = await apiFetch('/api/buildings');
+        if (res && res.buildings) {
+          adminBuildings = res.buildings;
+          const filterSel = document.getElementById('filterBuilding');
+          const editSel = document.getElementById('editRoomBuilding');
+          
+          if (filterSel) {
+             const defaultOption1 = '<option value="">-- Tất cả tòa nhà --</option>';
+             const defaultOption2 = '<option value="none">-- Phòng rời (không có) --</option>';
+             let options = defaultOption1 + defaultOption2;
+             adminBuildings.forEach(b => options += `<option value="${b.id}">${b.name}</option>`);
+             filterSel.innerHTML = options;
+          }
+          
+          if (editSel) {
+             const defaultOption = '<option value="">-- Phòng rời (không có) --</option>';
+             let options = defaultOption;
+             adminBuildings.forEach(b => options += `<option value="${b.id}">${b.name}</option>`);
+             editSel.innerHTML = options;
+          }
+        }
+      } catch (error) {
+        console.error('Error loading buildings:', error);
+      }
+    }
+
     async function loadRooms() {
       try {
+        if (adminBuildings.length === 0) await loadBuildings();
         const res = await fetch('/api/rooms');
         rooms = await res.json();
         renderRooms();
@@ -475,20 +506,31 @@
     }
 
     function renderRooms() {
-      if (rooms.length === 0) {
-        roomsList.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><p>Chưa có phòng</p></div>';
+      const filterVal = document.getElementById('filterBuilding')?.value;
+      const filteredRooms = rooms.filter(room => {
+        if (!filterVal) return true;
+        if (filterVal === 'none') return !room.buildingId;
+        return room.buildingId === filterVal;
+      });
+
+      if (filteredRooms.length === 0) {
+        roomsList.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><p>Không có phòng nào</p></div>';
         return;
       }
 
-      roomsList.innerHTML = rooms.map(room => `
+      roomsList.innerHTML = filteredRooms.map(room => {
+        const b = adminBuildings.find(x => x.id === room.buildingId);
+        const bName = b ? `🏢 ${b.name}` : `🏢 Phòng rời`;
+        return `
         <div class="room-item ${room.id === selectedRoomId ? 'active' : ''}">
           <div class="room-item-text" onclick="selectRoom(${room.id})">
             <div class="room-item-name">🏠 ${room.name}</div>
-            <div class="room-item-info">Hotspot: ${room.hotspots ? room.hotspots.length : 0} | Tầng ${room.floor || 1}</div>
+            <div class="room-item-info">Hotspot: ${room.hotspots ? room.hotspots.length : 0} | Tầng ${room.floor || 1} | ${bName}</div>
           </div>
           <button class="room-item-delete" onclick="deleteRoom(${room.id}, event)">🗑️</button>
         </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function updateTargetRoomSelect() {
@@ -1604,6 +1646,13 @@
     // Update selectRoom to load media hotspots and sensors
     window.selectRoom = function (roomId) {
       selectedRoomId = roomId;
+      const room = rooms.find(r => r.id === roomId);
+      if (room) {
+        const editSel = document.getElementById('editRoomBuilding');
+        if (editSel) {
+           editSel.value = room.buildingId || '';
+        }
+      }
       renderRooms();
       updateTargetRoomSelect();
       renderHotspots();
@@ -1612,6 +1661,37 @@
       loadSensors();
       hotspotSection.style.display = 'block';
       selectedRoomInfo.style.display = 'none';
+    };
+
+    window.saveRoomBuilding = async function() {
+      if (!selectedRoomId) return;
+      const editSel = document.getElementById('editRoomBuilding');
+      if (!editSel) return;
+      const newBuildingId = editSel.value;
+      const room = rooms.find(r => r.id === selectedRoomId);
+      if (!room) return;
+      if (room.buildingId === newBuildingId) {
+         alert("Phòng đã ở tòa nhà này.");
+         return;
+      }
+      if (!confirm("Bạn có muốn chuyển phòng này sang tòa nhà khác? Các file ảnh cũng sẽ được di chuyển theo.")) return;
+
+      try {
+        const res = await apiFetch(`/api/rooms/${selectedRoomId}`, {
+           method: "PATCH",
+           body: JSON.stringify({ buildingId: newBuildingId || null })
+        });
+        if (res && res.success) {
+           alert("Chuyển phòng thành công!");
+           await loadRooms();
+           selectRoom(selectedRoomId);
+        } else {
+           alert("Lỗi: " + (res?.error || "Không rõ nguyên nhân."));
+        }
+      } catch(e) {
+        console.error(e);
+        alert("Lỗi khi chuyển phòng.");
+      }
     };
 
     // (Handled inside panorama mousedown)

@@ -18,6 +18,7 @@
     <div class="header-content">
       <div class="header-title">🏢 Virtual Tour Admin</div>
       <div class="header-nav">
+        <a href="/admin/buildings.html" class="nav-link">🏢 Tòa nhà</a>
         <a href="/admin/upload.html" class="nav-link">📤 Upload</a>
         <a href="/admin/rooms.html" class="nav-link active">🏠 Quản lý Phòng</a>
         <a href="/admin/minimap.html" class="nav-link">🗺️ Minimap</a>
@@ -29,6 +30,7 @@
           </button>
           <div class="menu-dropdown">
             <a href="/admin/index.html" class="menu-item">🏠 Dashboard</a>
+            <a href="/admin/buildings.html" class="menu-item">🏢 Tòa nhà</a>
             <a href="/admin/upload.html" class="menu-item">📤 Upload Panorama</a>
             <a href="/admin/rooms.html" class="menu-item active">🏠 Quản lý Phòng</a>
             <a href="/admin/minimap.html" class="menu-item">🗺️ Minimap</a>
@@ -48,6 +50,10 @@
       <div class="sidebar-panel">
         <div class="sidebar-header">📋 Danh sách Phòng</div>
         <div class="sidebar-content">
+          <select id="filterBuilding" onchange="renderRooms()" style="width: 100%; margin-bottom: 10px; padding: 8px; border-radius: 4px; border: 1px solid #ccc; font-size: 13px;">
+            <option value="">-- Tất cả tòa nhà --</option>
+            <option value="none">-- Phòng rời (không có) --</option>
+          </select>
           <div id="roomsList" class="rooms-list">
             <div class="empty-state">
               <div class="empty-state-icon">📭</div>
@@ -89,6 +95,14 @@
           </div>
 
           <div id="hotspotSection" style="display: none;">
+            <div style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 6px; border: 1px solid #e1e8ed; display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 13px; font-weight: 600;">🏢 Tòa nhà:</span>
+              <select id="editRoomBuilding" style="flex: 1; padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 13px;">
+                <option value="">-- Phòng rời (không có) --</option>
+              </select>
+              <button class="btn btn-small" onclick="saveRoomBuilding()" style="background: #3498db; color: white; display: inline-block; width: auto; margin:0;">💾 Đổi Tòa Nhà</button>
+            </div>
+
             <div id="panoramaViewer" class="panorama-viewer"></div>
 
             <div style="display: flex; gap: 8px; margin-bottom: 15px;">
