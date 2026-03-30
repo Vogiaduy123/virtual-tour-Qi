@@ -467,7 +467,7 @@
 
     async function loadBuildings() {
       try {
-        const rawRes = await fetch('/api/buildings');
+        const rawRes = await fetch('/api/admin/buildings');
         const res = await rawRes.json();
         if (res && res.buildings) {
           adminBuildings = res.buildings;
@@ -1678,7 +1678,7 @@
       if (!confirm("Bạn có muốn chuyển phòng này sang tòa nhà khác? Các file ảnh cũng sẽ được di chuyển theo.")) return;
 
       try {
-        const rawRes = await fetch(`/api/rooms/${selectedRoomId}`, {
+        const rawRes = await fetch(`/api/admin/rooms/${selectedRoomId}`, {
            method: "PATCH",
            headers: { "Content-Type": "application/json" },
            body: JSON.stringify({ buildingId: newBuildingId || null })

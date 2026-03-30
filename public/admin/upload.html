@@ -532,7 +532,7 @@
 
     async function initBuildings() {
       try {
-        const rawRes = await fetch('/api/buildings');
+        const rawRes = await fetch('/api/admin/buildings');
         const res = await rawRes.json();
         if (res && res.success && res.buildings.length > 0) {
           res.buildings.forEach(b => {

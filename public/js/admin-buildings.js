@@ -2,7 +2,7 @@ let buildings = [];
 
 async function loadBuildings() {
   try {
-    const rawRes = await fetch('/api/buildings');
+    const rawRes = await fetch('/api/admin/buildings');
     const res = await rawRes.json();
     if (res && res.success) {
       buildings = res.buildings;
@@ -47,7 +47,7 @@ async function addBuilding() {
   if (!name) return alert("Vui lòng nhập tên tòa nhà!");
 
   try {
-    const rawRes = await fetch('/api/buildings', {
+    const rawRes = await fetch('/api/admin/buildings', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name })
@@ -73,7 +73,7 @@ async function editBuilding(id, currentName) {
   if (!confirm(`Xác nhận đổi tên từ "${currentName}" sang "${newName}"?\nViệc này cũng sẽ cập nhật thư mục lưu trữ của các phòng liên quan.`)) return;
 
   try {
-    const rawRes = await fetch(`/api/buildings/${id}`, {
+    const rawRes = await fetch(`/api/admin/buildings/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: newName.trim() })
@@ -95,7 +95,7 @@ async function deleteBuilding(id, name) {
   if (!confirm(`⚠️ CHÚ Ý: Bạn có chắc chắn muốn xóa Tòa nhà "${name}"?\n- Các phòng thuộc tòa nhà này sẽ biến thành "Phòng rời" (không thuộc tòa nhà nào).\n- File trên server vẫn giữ nguyên.`)) return;
 
   try {
-    const rawRes = await fetch(`/api/buildings/${id}`, {
+    const rawRes = await fetch(`/api/admin/buildings/${id}`, {
       method: "DELETE"
     });
     const res = await rawRes.json();
