@@ -41,18 +41,18 @@ function renderBuildings() {
     const roomCount = allRooms.filter(r => r.buildingId === b.id).length;
 
     const card = document.createElement("div");
-    card.style.cssText = "display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border:1px solid #e1e8ed;border-radius:10px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.04)";
+    card.className = "building-card";
     card.innerHTML = `
-      <div>
-        <div style="font-weight:700;font-size:16px;color:#2c3e50">🏢 ${b.name}</div>
-        <div style="font-size:12px;color:#7f8c8d;margin-top:4px">${roomCount} phòng đã gán</div>
+      <div class="building-card-info">
+        <div class="building-card-name">🏢 ${b.name}</div>
+        <div class="building-card-meta">${roomCount} phòng đã gán</div>
       </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-small" style="background:#27ae60;color:white;margin:0"
+      <div class="building-card-actions">
+        <button class="btn btn-success btn-small"
           onclick="openAssignModal('${escAttr(b.id)}')">🏠 Gán Phòng</button>
-        <button class="btn btn-small" style="background:#3498db;color:white;margin:0"
+        <button class="btn btn-edit btn-small"
           onclick="editBuilding('${escAttr(b.id)}', '${escAttr(b.name)}')">✏️ Đổi tên</button>
-        <button class="btn btn-small" style="background:#e74c3c;color:white;margin:0"
+        <button class="btn btn-danger btn-small"
           onclick="deleteBuilding('${escAttr(b.id)}', '${escAttr(b.name)}')">🗑️ Xóa</button>
       </div>
     `;
