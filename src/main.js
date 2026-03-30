@@ -1,7 +1,11 @@
 const pano = document.getElementById("pano");
 const roomSelect = document.getElementById("roomSelect");
+const buildingSelect = document.getElementById("buildingSelect");
+const buildingSelectWrapper = document.getElementById("buildingSelectWrapper");
 
 let currentRoomId = null;
+let allRooms = [];
+let allBuildings = [];
 
 import { degToRad, radToDeg, parseJsonResponse } from './core/utils.js';
 import { fetchRooms } from './core/api.js';
@@ -46,6 +50,74 @@ function createChevronArrow() {
 
 
 
+/* ===== BUILDING SELECTOR ===== */
+function initBuildingSelector(rooms, buildings) {
+  if (!buildingSelect || !buildingSelectWrapper) return;
+
+  // Only show if there are buildings with rooms assigned
+  const buildingsWithRooms = buildings.filter(b => rooms.some(r => r.buildingId === b.id));
+  const hasUnassigned = rooms.some(r => !r.buildingId);
+
+  if (buildingsWithRooms.length === 0) {
+    // No buildings configured — hide selector, show all rooms normally
+    buildingSelectWrapper.style.display = 'none';
+    return;
+  }
+
+  buildingSelectWrapper.style.display = 'block';
+  buildingSelect.innerHTML = '';
+
+  // Option: All rooms
+  if (hasUnassigned || buildingsWithRooms.length > 1) {
+    const allOpt = document.createElement('option');
+    allOpt.value = '';
+    allOpt.textContent = '🌐 Tất cả phân khu';
+    buildingSelect.appendChild(allOpt);
+  }
+
+  buildingsWithRooms.forEach(b => {
+    const opt = document.createElement('option');
+    opt.value = b.id;
+    opt.textContent = '🏢 ' + b.name;
+    buildingSelect.appendChild(opt);
+  });
+
+  // Auto-select first building (with rooms)
+  const firstBuilding = buildingsWithRooms[0];
+  buildingSelect.value = firstBuilding.id;
+  filterRoomsByBuilding(firstBuilding.id);
+
+  buildingSelect.onchange = () => {
+    filterRoomsByBuilding(buildingSelect.value);
+  };
+}
+
+function filterRoomsByBuilding(buildingId) {
+  if (!roomSelect) return;
+
+  const filtered = buildingId
+    ? allRooms.filter(r => r.buildingId === buildingId)
+    : allRooms;
+
+  // Rebuild room dropdown
+  roomSelect.innerHTML = '';
+  filtered.forEach(room => {
+    const opt = document.createElement('option');
+    opt.value = room.id;
+    opt.textContent = room.name;
+    roomSelect.appendChild(opt);
+  });
+
+  roomSelect.onchange = (e) => {
+    switchRoom(parseInt(e.target.value));
+  };
+
+  // Switch to first room of this building
+  if (filtered.length > 0) {
+    switchRoom(filtered[0].id);
+  }
+}
+
 /* ===== INITIAL LOAD ===== */
 async function initApp() {
   try {
@@ -77,7 +149,15 @@ async function initApp() {
       alert("Chưa có phòng nào");
       return;
     }
+    allRooms = rooms;
 
+    // Load buildings
+    try {
+      const bRes = await fetch('/api/admin/buildings').then(r => r.json());
+      allBuildings = (bRes && bRes.success) ? bRes.buildings : [];
+    } catch { allBuildings = []; }
+
+    initBuildingSelector(allRooms, allBuildings);
     initRooms(rooms, roomSelect);
     switchRoom(rooms[0].id);
 

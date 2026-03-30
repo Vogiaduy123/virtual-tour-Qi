@@ -137,6 +137,42 @@ body.admin #pano>* {
   box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
 
+#buildingSelectWrapper {
+  margin-bottom: 10px;
+}
+
+#buildingSelectWrapper label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+#buildingSelect {
+  width: 200px;
+  padding: 8px 12px;
+  background: white;
+  border: 2px solid #27ae60;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #2c3e50;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#buildingSelect:hover {
+  border-color: #229954;
+  box-shadow: 0 2px 8px rgba(39, 174, 96, 0.2);
+}
+
+#buildingSelect:focus {
+  outline: none;
+  border-color: #229954;
+  box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+}
+
 .room-btn {
   display: block;
   margin-bottom: 6px;
