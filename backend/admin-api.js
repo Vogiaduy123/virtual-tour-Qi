@@ -1128,7 +1128,7 @@ router.post("/buildings/:id/assign-rooms", (req, res) => {
       if (fs.existsSync(oldTilesDir)) {
         try { fs.renameSync(oldTilesDir, newTilesDir); } catch (e) { errors.push(`Move tiles failed for room ${roomId}: ${e.message}`); }
       }
-      room.tilesPath = `backend/tiles/${building.name}/${tilesDirName}`;
+      room.tilesPath = `tiles/${building.name}/${tilesDirName}`;
     }
 
     room.buildingId = buildingId;
@@ -1149,47 +1149,70 @@ router.patch("/rooms/:roomId", (req, res) => {
     return res.status(404).json({ success: false, error: "Room not found" });
   }
 
-  const buildings = getBuildings();
   const oldBuildingId = room.buildingId;
 
-  if (buildingId && buildingId !== oldBuildingId) {
-    const newBuilding = buildings.find(b => b.id === buildingId);
-    if (!newBuilding) return res.status(404).json({ success: false, error: "Target building not found" });
-
+  if (buildingId !== oldBuildingId) {
+    const buildings = getBuildings();
     const oldBuilding = oldBuildingId ? buildings.find(b => b.id === oldBuildingId) : null;
+    const newBuilding = buildingId ? buildings.find(b => b.id === buildingId) : null;
 
-    // Move panorama
+    if (buildingId && !newBuilding) return res.status(404).json({ success: false, error: "Target building not found" });
+
+    // --- Move panorama ---
     if (room.image) {
       const imageFilename = path.basename(room.image);
       const oldImagePath = oldBuilding
         ? path.join(UPLOADS_DIR, oldBuilding.name, imageFilename)
         : path.join(UPLOADS_DIR, imageFilename);
-      const newImageDir = path.join(UPLOADS_DIR, newBuilding.name);
-      if (!fs.existsSync(newImageDir)) fs.mkdirSync(newImageDir, { recursive: true });
-      if (fs.existsSync(oldImagePath)) {
-        try { fs.renameSync(oldImagePath, path.join(newImageDir, imageFilename)); } catch {}
+
+      if (newBuilding) {
+        const newImageDir = path.join(UPLOADS_DIR, newBuilding.name);
+        if (!fs.existsSync(newImageDir)) fs.mkdirSync(newImageDir, { recursive: true });
+        const newImagePath = path.join(newImageDir, imageFilename);
+        if (fs.existsSync(oldImagePath)) {
+          try { fs.renameSync(oldImagePath, newImagePath); } catch {}
+        }
+        room.image = `/uploads/${newBuilding.name}/${imageFilename}`;
+      } else {
+        // Unassigning: move back to root uploads
+        const newImagePath = path.join(UPLOADS_DIR, imageFilename);
+        if (fs.existsSync(oldImagePath)) {
+          try { fs.renameSync(oldImagePath, newImagePath); } catch {}
+        }
+        room.image = `/uploads/${imageFilename}`;
       }
-      room.image = `/uploads/${newBuilding.name}/${imageFilename}`;
     }
 
-    // Move tiles
+    // --- Move tiles ---
     if (room.tilesPath) {
       const tilesDirName = path.basename(room.tilesPath);
       const oldTilesDir = oldBuilding
         ? path.join(__dirname, "..", "backend", "tiles", oldBuilding.name, tilesDirName)
         : path.join(__dirname, "..", "backend", "tiles", tilesDirName);
-      const newTilesParent = path.join(__dirname, "..", "backend", "tiles", newBuilding.name);
-      if (!fs.existsSync(newTilesParent)) fs.mkdirSync(newTilesParent, { recursive: true });
-      if (fs.existsSync(oldTilesDir)) {
-        try { fs.renameSync(oldTilesDir, path.join(newTilesParent, tilesDirName)); } catch {}
+
+      if (newBuilding) {
+        const newTilesParent = path.join(__dirname, "..", "backend", "tiles", newBuilding.name);
+        if (!fs.existsSync(newTilesParent)) fs.mkdirSync(newTilesParent, { recursive: true });
+        const newTilesDir = path.join(newTilesParent, tilesDirName);
+        if (fs.existsSync(oldTilesDir)) {
+          try { fs.renameSync(oldTilesDir, newTilesDir); } catch {}
+        }
+        room.tilesPath = `tiles/${newBuilding.name}/${tilesDirName}`;
+      } else {
+        // Unassigning: move back to tiles root
+        const newTilesDir = path.join(__dirname, "..", "backend", "tiles", tilesDirName);
+        if (fs.existsSync(oldTilesDir)) {
+          try { fs.renameSync(oldTilesDir, newTilesDir); } catch {}
+        }
+        room.tilesPath = `tiles/${tilesDirName}`;
       }
-      room.tilesPath = `backend/tiles/${newBuilding.name}/${tilesDirName}`;
     }
 
-    room.buildingId = buildingId;
-  } else if (buildingId === null || buildingId === "") {
-    // Unassign from building
-    delete room.buildingId;
+    if (buildingId) {
+      room.buildingId = buildingId;
+    } else {
+      delete room.buildingId;
+    }
   }
 
   saveRooms(rooms);
