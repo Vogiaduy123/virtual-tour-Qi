@@ -57,6 +57,7 @@ if (!canUseDirectory(MEDIA_UPLOADS_DIR)) {
 /* ===== DATA FILE ===== */
 const DATA_FILE = path.join(__dirname, "../data/rooms.json");
 const MINIMAP_FILE = path.join(__dirname, "../data/minimap.json");
+const BUILDINGS_FILE = path.join(__dirname, "../data/buildings.json");
 
 function getRooms() {
   try {
@@ -68,6 +69,18 @@ function getRooms() {
 
 function saveRooms(rooms) {
   fs.writeFileSync(DATA_FILE, JSON.stringify(rooms, null, 2));
+}
+
+function getBuildings() {
+  try {
+    return JSON.parse(fs.readFileSync(BUILDINGS_FILE));
+  } catch {
+    return [];
+  }
+}
+
+function saveBuildings(buildings) {
+  fs.writeFileSync(BUILDINGS_FILE, JSON.stringify(buildings, null, 2));
 }
 
 function getMinimap() {
@@ -782,6 +795,141 @@ router.delete("/tour-scenario", (req, res) => {
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
+});
+
+/* ===== BUILDINGS MANAGEMENT ===== */
+
+// Get all buildings
+router.get("/buildings", (req, res) => {
+  res.json({ success: true, buildings: getBuildings() });
+});
+
+// Add a building
+router.post("/buildings", (req, res) => {
+  const { name } = req.body;
+  if (!name || typeof name !== "string" || name.trim() === "") {
+    return res.status(400).json({ success: false, error: "Invalid building name" });
+  }
+
+  const buildings = getBuildings();
+  const id = "bldg_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7);
+  const newBuilding = {
+    id,
+    name: name.trim(),
+    createdAt: new Date().toISOString()
+  };
+
+  buildings.push(newBuilding);
+  saveBuildings(buildings);
+
+  // Initializing folders
+  const buildingUploadsDir = path.join(UPLOADS_DIR, newBuilding.name);
+  if (!fs.existsSync(buildingUploadsDir)) {
+    fs.mkdirSync(buildingUploadsDir, { recursive: true });
+  }
+  const buildingTilesDir = path.join(__dirname, "..", "backend", "tiles", newBuilding.name);
+  if (!fs.existsSync(buildingTilesDir)) {
+    fs.mkdirSync(buildingTilesDir, { recursive: true });
+  }
+
+  res.json({ success: true, building: newBuilding });
+});
+
+// Rename a building
+router.put("/buildings/:id", (req, res) => {
+  const buildingId = req.params.id;
+  const { name } = req.body;
+
+  if (!name || typeof name !== "string" || name.trim() === "") {
+    return res.status(400).json({ success: false, error: "Invalid building name" });
+  }
+
+  const buildings = getBuildings();
+  const building = buildings.find(b => b.id === buildingId);
+
+  if (!building) {
+    return res.status(404).json({ success: false, error: "Building not found" });
+  }
+
+  const oldName = building.name;
+  const newName = name.trim();
+
+  // If name changed, we physically rename the folders
+  if (oldName !== newName) {
+    const oldUploadDir = path.join(UPLOADS_DIR, oldName);
+    const newUploadDir = path.join(UPLOADS_DIR, newName);
+    
+    if (fs.existsSync(oldUploadDir)) {
+      try {
+        fs.renameSync(oldUploadDir, newUploadDir);
+      } catch (err) {
+        console.error("Failed to rename upload dir:", err);
+      }
+    } else if (!fs.existsSync(newUploadDir)) {
+      fs.mkdirSync(newUploadDir, { recursive: true });
+    }
+
+    const oldTilesDir = path.join(__dirname, "..", "backend", "tiles", oldName);
+    const newTilesDir = path.join(__dirname, "..", "backend", "tiles", newName);
+
+    if (fs.existsSync(oldTilesDir)) {
+      try {
+        fs.renameSync(oldTilesDir, newTilesDir);
+      } catch (err) {
+        console.error("Failed to rename tiles dir:", err);
+      }
+    } else if (!fs.existsSync(newTilesDir)) {
+        fs.mkdirSync(newTilesDir, { recursive: true });
+    }
+
+    // Update rooms belonging to this building
+    const rooms = getRooms();
+    let roomsUpdated = false;
+    for (const room of rooms) {
+      if (room.buildingId === buildingId) {
+        if (room.image && room.image.includes(`/uploads/${oldName}/`)) {
+          room.image = room.image.replace(`/uploads/${oldName}/`, `/uploads/${newName}/`);
+        }
+        if (room.tilesPath && room.tilesPath.includes(`tiles/${oldName}/`)) {
+          room.tilesPath = room.tilesPath.replace(`tiles/${oldName}/`, `tiles/${newName}/`);
+        }
+        roomsUpdated = true;
+      }
+    }
+    if (roomsUpdated) saveRooms(rooms);
+
+    building.name = newName;
+    saveBuildings(buildings);
+  }
+
+  res.json({ success: true, building });
+});
+
+// Delete a building
+router.delete("/buildings/:id", (req, res) => {
+  const buildingId = req.params.id;
+  const buildings = getBuildings();
+  const index = buildings.findIndex(b => b.id === buildingId);
+
+  if (index === -1) {
+    return res.status(404).json({ success: false, error: "Building not found" });
+  }
+
+  // Handle rooms assigned to this deleted building
+  const rooms = getRooms();
+  let roomsUpdated = false;
+  for (const r of rooms) {
+    if (r.buildingId === buildingId) {
+      delete r.buildingId;
+      roomsUpdated = true;
+    }
+  }
+  if (roomsUpdated) saveRooms(rooms);
+
+  buildings.splice(index, 1);
+  saveBuildings(buildings);
+
+  res.json({ success: true });
 });
 
 module.exports = router;
