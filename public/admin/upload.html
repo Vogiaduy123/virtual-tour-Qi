@@ -532,7 +532,8 @@
 
     async function initBuildings() {
       try {
-        const res = await apiFetch('/api/buildings');
+        const rawRes = await fetch('/api/buildings');
+        const res = await rawRes.json();
         if (res && res.success && res.buildings.length > 0) {
           res.buildings.forEach(b => {
              roomBuilding.innerHTML += `<option value="${b.id}">${b.name}</option>`;

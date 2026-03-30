@@ -467,7 +467,8 @@
 
     async function loadBuildings() {
       try {
-        const res = await apiFetch('/api/buildings');
+        const rawRes = await fetch('/api/buildings');
+        const res = await rawRes.json();
         if (res && res.buildings) {
           adminBuildings = res.buildings;
           const filterSel = document.getElementById('filterBuilding');
@@ -1677,10 +1678,12 @@
       if (!confirm("Bạn có muốn chuyển phòng này sang tòa nhà khác? Các file ảnh cũng sẽ được di chuyển theo.")) return;
 
       try {
-        const res = await apiFetch(`/api/rooms/${selectedRoomId}`, {
+        const rawRes = await fetch(`/api/rooms/${selectedRoomId}`, {
            method: "PATCH",
+           headers: { "Content-Type": "application/json" },
            body: JSON.stringify({ buildingId: newBuildingId || null })
         });
+        const res = await rawRes.json();
         if (res && res.success) {
            alert("Chuyển phòng thành công!");
            await loadRooms();
