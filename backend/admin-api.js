@@ -200,10 +200,36 @@ router.post("/upload-panorama", uploadPanorama.single("panorama"), async (req, r
       return res.status(400).json({ success: false, error: "No panorama file uploaded" });
     }
 
-    const rawPath = req.file.path;
+    let rawPath = req.file.path;
     const timestamp = Date.now();
-    const outputDir = path.join("backend", "tiles", timestamp.toString());
+    let outputDir = path.join("backend", "tiles", timestamp.toString());
     const roomNameInput = req.body.name || `Room ${new Date().toLocaleDateString('vi-VN')}`;
+    let imageRelPath = "/uploads/" + req.file.filename;
+    let tilesRelPath = `tiles/${timestamp}`;
+    const buildingId = req.body.buildingId;
+
+    if (buildingId) {
+      const buildings = getBuildings();
+      const building = buildings.find(b => b.id === buildingId);
+      if (building) {
+        const bName = building.name;
+        const bUploadsDir = path.join(UPLOADS_DIR, bName);
+        if (!fs.existsSync(bUploadsDir)) fs.mkdirSync(bUploadsDir, { recursive: true });
+        
+        const bTilesDir = path.join(__dirname, "..", "backend", "tiles", bName);
+        if (!fs.existsSync(bTilesDir)) fs.mkdirSync(bTilesDir, { recursive: true });
+
+        const newRawPath = path.join(bUploadsDir, req.file.filename);
+        if (fs.existsSync(rawPath)) {
+          fs.renameSync(rawPath, newRawPath);
+          rawPath = newRawPath;
+        }
+
+        outputDir = path.join("backend", "tiles", bName, timestamp.toString());
+        imageRelPath = `/uploads/${bName}/${req.file.filename}`;
+        tilesRelPath = `tiles/${bName}/${timestamp}`;
+      }
+    }
 
     console.log("📥 Panorama uploaded:", rawPath);
     console.log("🎨 Generating tiles...");
@@ -219,12 +245,16 @@ router.post("/upload-panorama", uploadPanorama.single("panorama"), async (req, r
       const room = {
         id: timestamp,
         name: roomNameInput,
-        image: "/uploads/" + req.file.filename,
-        tilesPath: `tiles/${timestamp}`,
+        image: imageRelPath,
+        tilesPath: tilesRelPath,
         tilesConfig: config,
         floor: req.body.floor ? Number(req.body.floor) : 1,
         hotspots: []
       };
+      
+      if (buildingId) {
+        room.buildingId = buildingId;
+      }
 
       rooms.push(room);
       saveRooms(rooms);
