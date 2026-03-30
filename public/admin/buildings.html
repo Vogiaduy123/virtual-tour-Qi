@@ -5,17 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quản lý Tòa nhà - Admin</title>
   <script src="/js/admin-runtime-config.js"></script>
-  <script src="/js/admin-api-base.js"></script>
   <link rel="stylesheet" href="/css/admin-rooms.css">
   <style>
-    .btn {
-      padding: 10px 15px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600;
-    }
+    .btn { padding: 10px 15px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.2s; }
     .btn-small { padding: 6px 12px; font-size: 13px; }
+    .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    /* Modal */
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; align-items: center; justify-content: center; }
+    .modal.active { display: flex; }
+    .modal-box { background: white; border-radius: 12px; width: 520px; max-width: 95vw; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+    .modal-head { padding: 20px 24px; border-bottom: 1px solid #e1e8ed; display: flex; justify-content: space-between; align-items: center; }
+    .modal-head h3 { margin: 0; font-size: 17px; }
+    .modal-body { padding: 16px 24px; overflow-y: auto; flex: 1; }
+    .modal-foot { padding: 16px 24px; border-top: 1px solid #e1e8ed; display: flex; gap: 10px; }
+    .close-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: #7f8c8d; line-height: 1; }
+
+    /* Room checkboxes */
+    .room-check-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 6px; cursor: pointer; transition: background 0.15s; }
+    .room-check-item:hover { background: #f0f4f8; }
+    .room-check-item input[type=checkbox] { width: 16px; height: 16px; cursor: pointer; accent-color: #3498db; }
+    .room-check-label { flex: 1; }
+    .room-check-name { font-weight: 600; font-size: 14px; color: #2c3e50; }
+    .room-check-info { font-size: 12px; color: #7f8c8d; margin-top: 2px; }
+
+    .select-all-bar { display: flex; align-items: center; gap: 8px; padding: 8px 0 12px; border-bottom: 1px solid #e1e8ed; margin-bottom: 12px; }
+    .select-all-bar label { font-size: 13px; font-weight: 600; cursor: pointer; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+    .badge-blue { background: #e3f2fd; color: #1565c0; }
+    .badge-gray { background: #ecf0f1; color: #7f8c8d; }
   </style>
 </head>
 <body>
-  <!-- ===== HEADER ===== -->
+  <!-- HEADER -->
   <div class="admin-header">
     <div class="header-content">
       <div class="header-title">🏢 Virtual Tour Admin</div>
@@ -26,34 +48,59 @@
         <a href="/admin/minimap.html" class="nav-link">🗺️ Minimap</a>
         <a href="/admin/tour.html" class="nav-link special">⚡ Kịch bản</a>
         <div class="admin-menu">
-          <button class="menu-button">☰ Menu <span style="font-size: 10px;">▼</span></button>
+          <button class="menu-button">☰ Menu <span style="font-size:10px">▼</span></button>
           <div class="menu-dropdown">
             <a href="/admin/index.html" class="menu-item">🏠 Dashboard</a>
             <a href="/admin/buildings.html" class="menu-item active">🏢 Tòa nhà</a>
             <a href="/admin/upload.html" class="menu-item">📤 Upload</a>
+            <a href="/admin/rooms.html" class="menu-item">🏠 Quản lý Phòng</a>
+            <a href="/" class="menu-item" style="border-top:1px solid #e1e8ed;margin-top:8px;padding-top:16px">👁️ Xem Tour</a>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="container" style="max-width: 800px; margin: 20px auto;">
+  <div class="container" style="max-width:860px;margin:24px auto">
     <div class="panel">
       <div class="panel-header">
         <div class="panel-title">🏢 Quản lý Tòa Nhà / Phân khu</div>
-        <div class="panel-subtitle">Tạo các thư mục để gom nhóm phòng hệ thống</div>
+        <div class="panel-subtitle">Tạo và quản lý các nhóm phòng theo tòa nhà</div>
       </div>
       <div class="panel-body">
-        
-        <div style="margin-bottom: 20px; display: flex; gap: 10px;">
-          <input type="text" id="newBuildingName" placeholder="Tên tòa nhà mới (VD: Tòa A)..." style="flex: 1; padding: 10px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px;">
-          <button type="button" class="btn" style="background: #27ae60; color: white; margin: 0;" onclick="addBuilding()">➕ Thêm Tòa Nhà</button>
+
+        <!-- Add new building -->
+        <div style="margin-bottom:20px;display:flex;gap:10px">
+          <input type="text" id="newBuildingName" placeholder="Tên tòa nhà mới (VD: Tòa A)..."
+            style="flex:1;padding:10px 12px;border:1px solid #bdc3c7;border-radius:6px;font-size:14px">
+          <button class="btn" style="background:#27ae60;color:white;margin:0" onclick="addBuilding()">➕ Thêm Tòa Nhà</button>
         </div>
 
-        <div id="buildingsList" style="display: flex; flex-direction: column; gap: 10px;">
-          <!-- Rendered via JS -->
+        <div id="buildingsList" style="display:flex;flex-direction:column;gap:12px">
         </div>
 
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Gán phòng hàng loạt -->
+  <div class="modal" id="assignModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3 id="assignModalTitle">🏠 Gán phòng vào Tòa nhà</h3>
+        <button class="close-btn" onclick="closeAssignModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="select-all-bar">
+          <input type="checkbox" id="selectAllRooms" onchange="toggleSelectAll()">
+          <label for="selectAllRooms">Chọn tất cả</label>
+          <span id="selectedCount" class="badge badge-blue" style="margin-left:auto">0 đã chọn</span>
+        </div>
+        <div id="roomCheckList"></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn" style="flex:1;background:#3498db;color:white;margin:0" onclick="saveAssignment()">💾 Lưu thay đổi</button>
+        <button class="btn" style="flex:1;background:#ecf0f1;color:#2c3e50;margin:0" onclick="closeAssignModal()">Hủy</button>
       </div>
     </div>
   </div>
