@@ -33,25 +33,6 @@
       z-index: 1000;
     }
 
-    .admin-header-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .admin-header-title {
-      font-size: 22px;
-      font-weight: 700;
-      color: #2c3e50;
-    }
-
-    .admin-header-nav {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
 
     .tour-editor {
       max-width: 1200px;
@@ -509,9 +490,10 @@
 <body class="admin">
   <!-- Admin Header Bar -->
   <div class="admin-header">
-    <div class="admin-header-content">
-      <div class="admin-header-title">🏢 Virtual Tour Admin</div>
-      <div class="admin-header-nav">
+    <div class="header-content">
+      <div class="header-title">🏢 Virtual Tour Admin</div>
+      <div class="header-nav">
+        <a href="/admin/buildings.html" class="nav-link">🏢 Tòa nhà</a>
         <a href="/admin/upload.html" class="nav-link">📤 Upload</a>
         <a href="/admin/rooms.html" class="nav-link">🏠 Phòng</a>
         <a href="/admin/minimap.html" class="nav-link">🗺️ Minimap</a>
@@ -523,6 +505,7 @@
           </button>
           <div class="menu-dropdown">
             <a href="/admin/index.html" class="menu-item">🏠 Dashboard</a>
+            <a href="/admin/buildings.html" class="menu-item">🏢 Tòa nhà</a>
             <a href="/admin/upload.html" class="menu-item">📤 Upload Panorama</a>
             <a href="/admin/rooms.html" class="menu-item">🏠 Quản lý Phòng</a>
             <a href="/admin/minimap.html" class="menu-item">🗺️ Minimap</a>
