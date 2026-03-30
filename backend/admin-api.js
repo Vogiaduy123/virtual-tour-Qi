@@ -398,7 +398,112 @@ router.delete("/rooms/:roomId/hotspots/:index", (req, res) => {
   console.log(`✅ Hotspot ${index} deleted from room ${roomId}`);
   res.json({ success: true, hotspots: room.hotspots });
 });
+// UPDATE room basic properties (including buildingId)
+router.patch("/rooms/:roomId", (req, res) => {
+  const roomId = Number(req.params.roomId);
+  const { name, buildingId } = req.body;
 
+  const rooms = getRooms();
+  const room = rooms.find(r => r.id === roomId);
+
+  if (!room) {
+    return res.status(404).json({ success: false, error: "Room not found" });
+  }
+
+  // Update simple properties
+  if (name !== undefined) {
+    if (String(name).trim() === "") {
+      return res.status(400).json({ success: false, error: "Room name cannot be empty" });
+    }
+    room.name = String(name).trim();
+  }
+
+  // Update building if requested
+  if (buildingId !== undefined) {
+    const oldBuildingId = room.buildingId;
+    
+    // Only proceed if building actually changes
+    if (buildingId !== oldBuildingId) {
+      const buildings = getBuildings();
+      
+      let oldBName = null;
+      if (oldBuildingId) {
+        const oldB = buildings.find(b => b.id === oldBuildingId);
+        if (oldB) oldBName = oldB.name;
+      }
+      
+      let newBName = null;
+      if (buildingId) {
+        const newB = buildings.find(b => b.id === buildingId);
+        if (!newB) {
+          return res.status(400).json({ success: false, error: "New building not found" });
+        }
+        newBName = newB.name;
+      }
+
+      // Calculate old paths
+      let oldImagePhysPath = path.join(UPLOADS_DIR, path.basename(room.image));
+      if (oldBName && room.image.includes(`/uploads/${oldBName}/`)) {
+        oldImagePhysPath = path.join(UPLOADS_DIR, oldBName, path.basename(room.image));
+      } else if (room.image.includes("/uploads/")) {
+        // Fallback for custom nested path inside uploads if oldBName was missing but it was in a folder
+        const rel = room.image.replace("/uploads/", "");
+        oldImagePhysPath = path.join(UPLOADS_DIR, rel);
+      }
+
+      let oldTilesPhysPath = path.join(__dirname, "..", "backend", room.tilesPath);
+
+      // Now determine the new locations
+      let newImageRel = `/uploads/${path.basename(room.image)}`;
+      let newTilesRel = `tiles/${roomId}`;
+      let newImagePhysPath = path.join(UPLOADS_DIR, path.basename(room.image));
+      let newTilesPhysPath = path.join(__dirname, "..", "backend", "tiles", roomId.toString());
+
+      if (newBName) {
+        newImageRel = `/uploads/${newBName}/${path.basename(room.image)}`;
+        newImagePhysPath = path.join(UPLOADS_DIR, newBName, path.basename(room.image));
+        newTilesRel = `tiles/${newBName}/${roomId}`;
+        newTilesPhysPath = path.join(__dirname, "..", "backend", "tiles", newBName, roomId.toString());
+        
+        // Ensure new directories exist
+        const bUploadsDir = path.join(UPLOADS_DIR, newBName);
+        if (!fs.existsSync(bUploadsDir)) fs.mkdirSync(bUploadsDir, { recursive: true });
+        
+        const bTilesDir = path.join(__dirname, "..", "backend", "tiles", newBName);
+        if (!fs.existsSync(bTilesDir)) fs.mkdirSync(bTilesDir, { recursive: true });
+      }
+
+      // Move files
+      if (fs.existsSync(oldImagePhysPath) && oldImagePhysPath !== newImagePhysPath) {
+        try {
+          fs.renameSync(oldImagePhysPath, newImagePhysPath);
+        } catch (err) {
+          console.error("Failed to move room image:", err);
+        }
+      }
+
+      if (fs.existsSync(oldTilesPhysPath) && oldTilesPhysPath !== newTilesPhysPath) {
+        try {
+          fs.renameSync(oldTilesPhysPath, newTilesPhysPath);
+        } catch (err) {
+          console.error("Failed to move room tiles:", err);
+        }
+      }
+
+      // Update room object
+      room.image = newImageRel;
+      room.tilesPath = newTilesRel;
+      if (buildingId) {
+        room.buildingId = buildingId;
+      } else {
+        delete room.buildingId;
+      }
+    }
+  }
+
+  saveRooms(rooms);
+  res.json({ success: true, room });
+});
 // DELETE room
 router.delete("/rooms/:roomId", (req, res) => {
   const roomId = Number(req.params.roomId);
