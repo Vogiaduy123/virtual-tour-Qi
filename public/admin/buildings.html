@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Tòa nhà - Admin</title>
+  <script src="/js/admin-runtime-config.js"></script>
+  <script src="/js/admin-api-base.js"></script>
+  <link rel="stylesheet" href="/css/admin-rooms.css">
+  <style>
+    .btn {
+      padding: 10px 15px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600;
+    }
+    .btn-small { padding: 6px 12px; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <!-- ===== HEADER ===== -->
+  <div class="admin-header">
+    <div class="header-content">
+      <div class="header-title">🏢 Virtual Tour Admin</div>
+      <div class="header-nav">
+        <a href="/admin/buildings.html" class="nav-link active">🏢 Tòa nhà</a>
+        <a href="/admin/upload.html" class="nav-link">📤 Upload</a>
+        <a href="/admin/rooms.html" class="nav-link">🏠 Quản lý Phòng</a>
+        <a href="/admin/minimap.html" class="nav-link">🗺️ Minimap</a>
+        <a href="/admin/tour.html" class="nav-link special">⚡ Kịch bản</a>
+        <div class="admin-menu">
+          <button class="menu-button">☰ Menu <span style="font-size: 10px;">▼</span></button>
+          <div class="menu-dropdown">
+            <a href="/admin/index.html" class="menu-item">🏠 Dashboard</a>
+            <a href="/admin/buildings.html" class="menu-item active">🏢 Tòa nhà</a>
+            <a href="/admin/upload.html" class="menu-item">📤 Upload</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" style="max-width: 800px; margin: 20px auto;">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">🏢 Quản lý Tòa Nhà / Phân khu</div>
+        <div class="panel-subtitle">Tạo các thư mục để gom nhóm phòng hệ thống</div>
+      </div>
+      <div class="panel-body">
+        
+        <div style="margin-bottom: 20px; display: flex; gap: 10px;">
+          <input type="text" id="newBuildingName" placeholder="Tên tòa nhà mới (VD: Tòa A)..." style="flex: 1; padding: 10px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px;">
+          <button type="button" class="btn" style="background: #27ae60; color: white; margin: 0;" onclick="addBuilding()">➕ Thêm Tòa Nhà</button>
+        </div>
+
+        <div id="buildingsList" style="display: flex; flex-direction: column; gap: 10px;">
+          <!-- Rendered via JS -->
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/admin-buildings.js"></script>
+</body>
+</html>
