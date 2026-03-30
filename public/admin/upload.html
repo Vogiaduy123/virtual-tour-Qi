@@ -425,6 +425,7 @@
     <div class="header-content">
       <div class="header-title">🏢 Virtual Tour Admin</div>
       <div class="header-nav">
+        <a href="/admin/buildings.html" class="nav-link">🏢 Tòa nhà</a>
         <a href="/admin/upload.html" class="nav-link active">📤 Upload</a>
         <a href="/admin/rooms.html" class="nav-link">🏠 Quản lý Phòng</a>
         <a href="/admin/minimap.html" class="nav-link">🗺️ Minimap</a>
@@ -436,6 +437,7 @@
           </button>
           <div class="menu-dropdown">
             <a href="/admin/index.html" class="menu-item">🏠 Dashboard</a>
+            <a href="/admin/buildings.html" class="menu-item">🏢 Tòa nhà</a>
             <a href="/admin/upload.html" class="menu-item active">📤 Upload Panorama</a>
             <a href="/admin/rooms.html" class="menu-item">🏠 Quản lý Phòng</a>
             <a href="/admin/minimap.html" class="menu-item">🗺️ Minimap</a>
@@ -475,6 +477,13 @@
         </div>
 
         <div class="form-group">
+          <label for="roomBuilding">Tòa nhà (Tùy chọn)</label>
+          <select id="roomBuilding">
+            <option value="">--- Không có (Phòng rời) ---</option>
+          </select>
+        </div>
+
+        <div class="form-group">
           <label for="roomFloor">Tầng</label>
           <select id="roomFloor"></select>
         </div>
@@ -503,6 +512,7 @@
     const fileName = document.getElementById('fileName');
     const fileSize = document.getElementById('fileSize');
     const roomName = document.getElementById('roomName');
+    const roomBuilding = document.getElementById('roomBuilding');
     const roomFloor = document.getElementById('roomFloor');
     const uploadBtn = document.getElementById('uploadBtn');
     const resetBtn = document.getElementById('resetBtn');
@@ -515,9 +525,23 @@
     let defaultFloorId = '1';
 
     initFloors();
+    initBuildings();
 
     // Handle upload area click
     uploadArea.addEventListener('click', () => fileInput.click());
+
+    async function initBuildings() {
+      try {
+        const res = await apiFetch('/api/buildings');
+        if (res && res.success && res.buildings.length > 0) {
+          res.buildings.forEach(b => {
+             roomBuilding.innerHTML += `<option value="${b.id}">${b.name}</option>`;
+          });
+        }
+      } catch (err) {
+        console.error('Load buildings error', err);
+      }
+    }
 
     async function initFloors() {
       try {
@@ -612,6 +636,9 @@
       formData.append('panorama', selectedFile);
       formData.append('name', roomName.value);
       formData.append('floor', roomFloor.value);
+      if (roomBuilding.value) {
+        formData.append('buildingId', roomBuilding.value);
+      }
 
       try {
         consoleOutput.innerHTML += '<pre class="info">⏳ Đang upload & tạo tiles...</pre>';
