@@ -2,8 +2,8 @@
   {
     "id": 1769668397635,
     "name": "Cổng trước",
-    "image": "/uploads/panorama_1769668397631.jpg",
-    "tilesPath": "tiles/1769668397635",
+    "image": "/uploads/Công ty Qi/panorama_1769668397631.jpg",
+    "tilesPath": "tiles/Công ty Qi/1769668397635",
     "floor": 1,
     "hotspots": [
       {
@@ -88,13 +88,14 @@
         "screenX": 0.5268324607329843,
         "screenY": 0.4972677595628415
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842196224_dou2w"
   },
   {
     "id": 1769668421984,
     "name": "Cổng vào",
-    "image": "/uploads/panorama_1769668421982.jpg",
-    "tilesPath": "tiles/1769668421984",
+    "image": "/uploads/Công ty Qi/panorama_1769668421982.jpg",
+    "tilesPath": "tiles/Công ty Qi/1769668421984",
     "floor": 1,
     "hotspots": [
       {
@@ -111,13 +112,14 @@
         "rotation": 90,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842196224_dou2w"
   },
   {
     "id": 1769668457253,
     "name": "Sảnh chính",
-    "image": "/uploads/panorama_1769668457250.jpg",
-    "tilesPath": "tiles/1769668457253",
+    "image": "/uploads/Công ty Qi/panorama_1769668457250.jpg",
+    "tilesPath": "tiles/Công ty Qi/1769668457253",
     "floor": 1,
     "hotspots": [
       {
@@ -142,13 +144,14 @@
         "color": "#c2c2c2"
       }
     ],
-    "mediaHotspots": []
+    "mediaHotspots": [],
+    "buildingId": "bldg_1774842196224_dou2w"
   },
   {
     "id": 1769668497247,
     "name": "Sảnh lễ tân",
-    "image": "/uploads/panorama_1769668497246.jpg",
-    "tilesPath": "tiles/1769668497247",
+    "image": "/uploads/Công ty Qi/panorama_1769668497246.jpg",
+    "tilesPath": "backend/tiles/Công ty Qi/1769668497247",
     "floor": 1,
     "hotspots": [
       {
@@ -168,13 +171,14 @@
         "mediaUrl": "",
         "mediaType": "note"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842196224_dou2w"
   },
   {
     "id": 1769668532698,
     "name": "sảnh cầu thang",
-    "image": "/uploads/panorama_1769668532696.jpg",
-    "tilesPath": "tiles/1769668532698",
+    "image": "/uploads/Công ty Qi/panorama_1769668532696.jpg",
+    "tilesPath": "backend/tiles/Công ty Qi/1769668532698",
     "floor": 1,
     "hotspots": [
       {
@@ -191,13 +195,14 @@
         "rotation": 360,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842196224_dou2w"
   },
   {
     "id": 1769668600603,
     "name": "Thang lên tầng 1",
-    "image": "/uploads/panorama_1769668600602.jpg",
-    "tilesPath": "tiles/1769668600603",
+    "image": "/uploads/Công ty Qi/panorama_1769668600602.jpg",
+    "tilesPath": "backend/tiles/Công ty Qi/1769668600603",
     "floor": 1,
     "hotspots": [
       {
@@ -224,13 +229,14 @@
         "mediaUrl": "",
         "mediaType": "note"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842196224_dou2w"
   },
   {
     "id": 1769668639049,
     "name": "Tầng 1",
-    "image": "/uploads/panorama_1769668639048.jpg",
-    "tilesPath": "tiles/1769668639049",
+    "image": "/uploads/Công ty Qi/panorama_1769668639048.jpg",
+    "tilesPath": "backend/tiles/Công ty Qi/1769668639049",
     "floor": 2,
     "hotspots": [
       {
@@ -247,13 +253,14 @@
         "rotation": 50,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842196224_dou2w"
   },
   {
     "id": 1769668710027,
     "name": "Tầng 2",
-    "image": "/uploads/panorama_1769668710025.jpg",
-    "tilesPath": "tiles/1769668710027",
+    "image": "/uploads/Công ty Qi/panorama_1769668710025.jpg",
+    "tilesPath": "backend/tiles/Công ty Qi/1769668710027",
     "floor": 3,
     "hotspots": [
       {
@@ -287,13 +294,14 @@
         "mediaUrl": "",
         "mediaType": "note"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842196224_dou2w"
   },
   {
     "id": 1769668746757,
     "name": "Phòng Qi",
-    "image": "/uploads/panorama_1769668746756.jpg",
-    "tilesPath": "tiles/1769668746757",
+    "image": "/uploads/Công ty Qi/panorama_1769668746756.jpg",
+    "tilesPath": "backend/tiles/Công ty Qi/1769668746757",
     "floor": 3,
     "hotspots": [
       {
@@ -327,13 +335,14 @@
         "mediaUrl": "/uploads/media/media_1773196310101_Map_T2.png",
         "mediaType": "image"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842196224_dou2w"
   },
   {
     "id": 1769668791710,
     "name": "Phòng Qi_1",
-    "image": "/uploads/panorama_1769668791709.jpg",
-    "tilesPath": "tiles/1769668791710",
+    "image": "/uploads/Công ty Qi/panorama_1769668791709.jpg",
+    "tilesPath": "backend/tiles/Công ty Qi/1769668791710",
     "floor": 3,
     "hotspots": [
       {
@@ -343,13 +352,14 @@
         "rotation": 30,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842196224_dou2w"
   },
   {
     "id": 1769668822666,
     "name": "Phòng Qi_2",
-    "image": "/uploads/panorama_1769668822665.jpg",
-    "tilesPath": "tiles/1769668822666",
+    "image": "/uploads/Công ty Qi/panorama_1769668822665.jpg",
+    "tilesPath": "backend/tiles/Công ty Qi/1769668822666",
     "floor": 3,
     "hotspots": [
       {
@@ -369,13 +379,14 @@
         "mediaUrl": "",
         "mediaType": "note"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842196224_dou2w"
   },
   {
     "id": 1769668860551,
     "name": "Tầng 3",
-    "image": "/uploads/panorama_1769668860548.jpg",
-    "tilesPath": "tiles/1769668860551",
+    "image": "/uploads/Công ty Qi/panorama_1769668860548.jpg",
+    "tilesPath": "backend/tiles/Công ty Qi/1769668860551",
     "floor": 4,
     "hotspots": [
       {
@@ -392,13 +403,14 @@
         "rotation": 30,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842196224_dou2w"
   },
   {
     "id": 1769668901015,
     "name": "Tầng 3 cửa ra vào",
-    "image": "/uploads/panorama_1769668901013.jpg",
-    "tilesPath": "tiles/1769668901015",
+    "image": "/uploads/Công ty Qi/panorama_1769668901013.jpg",
+    "tilesPath": "backend/tiles/Công ty Qi/1769668901015",
     "floor": 4,
     "hotspots": [
       {
@@ -422,13 +434,14 @@
         "rotation": 30,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842196224_dou2w"
   },
   {
     "id": 1769668938397,
     "name": "Tầng 3 bàn ăn",
-    "image": "/uploads/panorama_1769668938395.jpg",
-    "tilesPath": "tiles/1769668938397",
+    "image": "/uploads/Công ty Qi/panorama_1769668938395.jpg",
+    "tilesPath": "backend/tiles/Công ty Qi/1769668938397",
     "floor": 4,
     "hotspots": [
       {
@@ -445,13 +458,14 @@
         "rotation": 30,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842196224_dou2w"
   },
   {
     "id": 1769668973593,
     "name": "Tầng 3 cà phê",
-    "image": "/uploads/panorama_1769668973592.jpg",
-    "tilesPath": "tiles/1769668973593",
+    "image": "/uploads/Công ty Qi/panorama_1769668973592.jpg",
+    "tilesPath": "backend/tiles/Công ty Qi/1769668973593",
     "floor": 4,
     "hotspots": [
       {
@@ -479,13 +493,14 @@
         "mediaUrl": "",
         "mediaType": "note"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842196224_dou2w"
   },
   {
     "id": 1769669039212,
     "name": "Tầng 3 ban công",
-    "image": "/uploads/panorama_1769669039211.jpg",
-    "tilesPath": "tiles/1769669039212",
+    "image": "/uploads/Công ty Qi/panorama_1769669039211.jpg",
+    "tilesPath": "backend/tiles/Công ty Qi/1769669039212",
     "floor": 4,
     "hotspots": [
       {
@@ -502,13 +517,14 @@
         "rotation": 0,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842196224_dou2w"
   },
   {
     "id": 1769669089476,
     "name": "Ban công",
-    "image": "/uploads/panorama_1769669089473.jpg",
-    "tilesPath": "tiles/1769669089476",
+    "image": "/uploads/Công ty Qi/panorama_1769669089473.jpg",
+    "tilesPath": "backend/tiles/Công ty Qi/1769669089476",
     "floor": 4,
     "hotspots": [
       {
@@ -532,13 +548,14 @@
         "rotation": 30,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842196224_dou2w"
   },
   {
     "id": 1769669142397,
     "name": "Ban công 1",
-    "image": "/uploads/panorama_1769669142394.jpg",
-    "tilesPath": "tiles/1769669142397",
+    "image": "/uploads/Công ty Qi/panorama_1769669142394.jpg",
+    "tilesPath": "backend/tiles/Công ty Qi/1769669142397",
     "floor": 4,
     "hotspots": [
       {
@@ -548,13 +565,14 @@
         "rotation": 30,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842196224_dou2w"
   },
   {
     "id": 1769669187612,
     "name": "Ban công 2",
-    "image": "/uploads/panorama_1769669187610.jpg",
-    "tilesPath": "tiles/1769669187612",
+    "image": "/uploads/Công ty Qi/panorama_1769669187610.jpg",
+    "tilesPath": "backend/tiles/Công ty Qi/1769669187612",
     "floor": 4,
     "hotspots": [
       {
@@ -564,13 +582,14 @@
         "rotation": 30,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842196224_dou2w"
   },
   {
     "id": 1770863102225,
     "name": "Lối vào hầm xe",
-    "image": "/uploads/panorama_1770863102110.jpg",
-    "tilesPath": "tiles/1770863102225",
+    "image": "/uploads/Sài Gòn Pearl/panorama_1770863102110.jpg",
+    "tilesPath": "backend/tiles/Sài Gòn Pearl/1770863102225",
     "floor": 1,
     "hotspots": [
       {
@@ -590,13 +609,14 @@
         "mediaUrl": "92 Nguyễn Hữu Cảnh, Saigon Pearl, Bình Thạnh, Thành phố Hồ Chí Minh 848888, Việt Nam",
         "mediaType": "note"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842399826_iw61o"
   },
   {
     "id": 1770863392271,
     "name": "Hầm Xe",
-    "image": "/uploads/panorama_1770863392194.jpg",
-    "tilesPath": "tiles/1770863392271",
+    "image": "/uploads/Sài Gòn Pearl/panorama_1770863392194.jpg",
+    "tilesPath": "backend/tiles/Sài Gòn Pearl/1770863392271",
     "floor": 2,
     "hotspots": [
       {
@@ -620,13 +640,14 @@
         "rotation": 0,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842399826_iw61o"
   },
   {
     "id": 1770863525990,
     "name": "Rẽ phải vào kho ",
-    "image": "/uploads/panorama_1770863525915.jpg",
-    "tilesPath": "tiles/1770863525990",
+    "image": "/uploads/Sài Gòn Pearl/panorama_1770863525915.jpg",
+    "tilesPath": "backend/tiles/Sài Gòn Pearl/1770863525990",
     "floor": 2,
     "hotspots": [
       {
@@ -643,13 +664,14 @@
         "rotation": 0,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842399826_iw61o"
   },
   {
     "id": 1770863650535,
     "name": "Đi thẳng vào kho",
-    "image": "/uploads/panorama_1770863650465.jpg",
-    "tilesPath": "tiles/1770863650535",
+    "image": "/uploads/Sài Gòn Pearl/panorama_1770863650465.jpg",
+    "tilesPath": "backend/tiles/Sài Gòn Pearl/1770863650535",
     "floor": 2,
     "hotspots": [
       {
@@ -666,13 +688,14 @@
         "rotation": 0,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842399826_iw61o"
   },
   {
     "id": 1770863776718,
     "name": "Lối vào kho",
-    "image": "/uploads/panorama_1770863776652.jpg",
-    "tilesPath": "tiles/1770863776718",
+    "image": "/uploads/Sài Gòn Pearl/panorama_1770863776652.jpg",
+    "tilesPath": "backend/tiles/Sài Gòn Pearl/1770863776718",
     "floor": 2,
     "hotspots": [
       {
@@ -689,13 +712,14 @@
         "rotation": 0,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842399826_iw61o"
   },
   {
     "id": 1770863896218,
     "name": "Cửa kho",
-    "image": "/uploads/panorama_1770863896151.jpg",
-    "tilesPath": "tiles/1770863896218",
+    "image": "/uploads/Sài Gòn Pearl/panorama_1770863896151.jpg",
+    "tilesPath": "backend/tiles/Sài Gòn Pearl/1770863896218",
     "floor": 2,
     "hotspots": [
       {
@@ -712,13 +736,14 @@
         "rotation": 0,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842399826_iw61o"
   },
   {
     "id": 1770863998478,
     "name": "Phòng Kho",
-    "image": "/uploads/panorama_1770863998405.jpg",
-    "tilesPath": "tiles/1770863998478",
+    "image": "/uploads/Sài Gòn Pearl/panorama_1770863998405.jpg",
+    "tilesPath": "backend/tiles/Sài Gòn Pearl/1770863998478",
     "floor": 2,
     "hotspots": [
       {
@@ -735,13 +760,14 @@
         "rotation": 0,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842399826_iw61o"
   },
   {
     "id": 1770864154219,
     "name": "Phòng Kho 2",
-    "image": "/uploads/panorama_1770864154157.jpg",
-    "tilesPath": "tiles/1770864154219",
+    "image": "/uploads/Sài Gòn Pearl/panorama_1770864154157.jpg",
+    "tilesPath": "backend/tiles/Sài Gòn Pearl/1770864154219",
     "floor": 2,
     "hotspots": [
       {
@@ -751,13 +777,14 @@
         "rotation": 0,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842399826_iw61o"
   },
   {
     "id": 1770864294741,
     "name": "Rẽ trái qua Phòng ISP",
-    "image": "/uploads/panorama_1770864294674.jpg",
-    "tilesPath": "tiles/1770864294741",
+    "image": "/uploads/Sài Gòn Pearl/panorama_1770864294674.jpg",
+    "tilesPath": "backend/tiles/Sài Gòn Pearl/1770864294741",
     "floor": 2,
     "hotspots": [
       {
@@ -774,13 +801,14 @@
         "rotation": 0,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842399826_iw61o"
   },
   {
     "id": 1770864444145,
     "name": "Đi thẳng hướng ISP",
-    "image": "/uploads/panorama_1770864444077.jpg",
-    "tilesPath": "tiles/1770864444145",
+    "image": "/uploads/Sài Gòn Pearl/panorama_1770864444077.jpg",
+    "tilesPath": "backend/tiles/Sài Gòn Pearl/1770864444145",
     "floor": 2,
     "hotspots": [
       {
@@ -797,13 +825,14 @@
         "rotation": 0,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842399826_iw61o"
   },
   {
     "id": 1770864595235,
     "name": "Rẻ trái ISP",
-    "image": "/uploads/panorama_1770864595162.jpg",
-    "tilesPath": "tiles/1770864595235",
+    "image": "/uploads/Sài Gòn Pearl/panorama_1770864595162.jpg",
+    "tilesPath": "backend/tiles/Sài Gòn Pearl/1770864595235",
     "floor": 2,
     "hotspots": [
       {
@@ -820,13 +849,14 @@
         "rotation": 0,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842399826_iw61o"
   },
   {
     "id": 1770864715503,
     "name": "Lối vào 1_ISP",
-    "image": "/uploads/panorama_1770864715437.jpg",
-    "tilesPath": "tiles/1770864715503",
+    "image": "/uploads/Sài Gòn Pearl/panorama_1770864715437.jpg",
+    "tilesPath": "backend/tiles/Sài Gòn Pearl/1770864715503",
     "floor": 2,
     "hotspots": [
       {
@@ -843,13 +873,14 @@
         "rotation": 0,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842399826_iw61o"
   },
   {
     "id": 1770864884718,
     "name": "Lối vào 2 ISP",
-    "image": "/uploads/panorama_1770864884654.jpg",
-    "tilesPath": "tiles/1770864884718",
+    "image": "/uploads/Sài Gòn Pearl/panorama_1770864884654.jpg",
+    "tilesPath": "backend/tiles/Sài Gòn Pearl/1770864884718",
     "floor": 2,
     "hotspots": [
       {
@@ -866,13 +897,14 @@
         "rotation": 0,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842399826_iw61o"
   },
   {
     "id": 1770865019913,
     "name": "Lối vào ISP",
-    "image": "/uploads/panorama_1770865019850.jpg",
-    "tilesPath": "tiles/1770865019913",
+    "image": "/uploads/Sài Gòn Pearl/panorama_1770865019850.jpg",
+    "tilesPath": "backend/tiles/Sài Gòn Pearl/1770865019913",
     "floor": 2,
     "hotspots": [
       {
@@ -889,13 +921,14 @@
         "rotation": 0,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842399826_iw61o"
   },
   {
     "id": 1770865299938,
     "name": "Cửa vào ISP",
-    "image": "/uploads/panorama_1770865299877.jpg",
-    "tilesPath": "tiles/1770865299938",
+    "image": "/uploads/Sài Gòn Pearl/panorama_1770865299877.jpg",
+    "tilesPath": "backend/tiles/Sài Gòn Pearl/1770865299938",
     "floor": 2,
     "hotspots": [
       {
@@ -912,13 +945,14 @@
         "rotation": 0,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842399826_iw61o"
   },
   {
     "id": 1770865420854,
     "name": "Phòng ISP_1",
-    "image": "/uploads/panorama_1770865420798.jpg",
-    "tilesPath": "tiles/1770865420854",
+    "image": "/uploads/Sài Gòn Pearl/panorama_1770865420798.jpg",
+    "tilesPath": "backend/tiles/Sài Gòn Pearl/1770865420854",
     "floor": 2,
     "hotspots": [
       {
@@ -935,13 +969,14 @@
         "rotation": 0,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842399826_iw61o"
   },
   {
     "id": 1770865514608,
     "name": "Phòng ISP_2",
-    "image": "/uploads/panorama_1770865514543.jpg",
-    "tilesPath": "tiles/1770865514608",
+    "image": "/uploads/Sài Gòn Pearl/panorama_1770865514543.jpg",
+    "tilesPath": "backend/tiles/Sài Gòn Pearl/1770865514608",
     "floor": 2,
     "hotspots": [
       {
@@ -951,6 +986,7 @@
         "rotation": 0,
         "color": "#c2c2c2"
       }
-    ]
+    ],
+    "buildingId": "bldg_1774842399826_iw61o"
   }
 ]
