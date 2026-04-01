@@ -139,7 +139,8 @@ async function initApp() {
     initMinimap({
       getRoomsData: () => getRoomsData(),
       getCurrentRoomId: () => currentRoomId,
-      switchRoom: switchRoom
+      switchRoom: switchRoom,
+      getViewer: getViewer
     });
 
     initSensors({
@@ -260,6 +261,9 @@ function switchRoom(roomId) {
   if (view) {
     view.removeEventListener('change', update3DPolygons);
     view.addEventListener('change', update3DPolygons);
+    // Bind minimap radar cone updates
+    view.removeEventListener('change', drawUserMinimap);
+    view.addEventListener('change', drawUserMinimap);
   }
 
   scene.switchTo();

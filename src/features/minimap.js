@@ -3,7 +3,8 @@ import { fetchMinimap } from '../core/api.js';
 let env = {
   getRoomsData: () => ({}),
   getCurrentRoomId: () => null,
-  switchRoom: (id) => {}
+  switchRoom: (id) => {},
+  getViewer: () => null
 };
 
 // Minimap elements
@@ -351,6 +352,38 @@ export function drawUserMinimap() {
     const room = env.getRoomsData()[marker.roomId];
 
     if (isCurrentRoom) {
+      // Get yaw and fov from the panorama viewer
+      const viewer = env.getViewer && env.getViewer();
+      if (viewer && viewer.view()) {
+        const view = viewer.view();
+        let currentYaw = view.yaw(); // Radians (0 is front)
+        let currentFov = view.fov(); // Radians
+        
+        // Define radar offset (typically north is top => -90 degrees / -PI/2)
+        // If rooms have specific rotations, an offset could be added here in the future
+        const radarOffset = -Math.PI / 2;
+        
+        // Ensure angle boundaries
+        const startRad = currentYaw - (currentFov / 2) + radarOffset;
+        const endRad = currentYaw + (currentFov / 2) + radarOffset;
+        const radius = 60; // Size of the cone
+        
+        // Draw the radar cone
+        minimapCtx.beginPath();
+        minimapCtx.moveTo(x, y);
+        minimapCtx.arc(x, y, radius, startRad, endRad);
+        minimapCtx.lineTo(x, y);
+        
+        const gradient = minimapCtx.createRadialGradient(x, y, 0, x, y, radius);
+        gradient.addColorStop(0, 'rgba(33, 150, 243, 0.5)'); // Slightly more opaque near the center
+        gradient.addColorStop(1, 'rgba(33, 150, 243, 0.0)'); // Fades out completely
+        
+        minimapCtx.fillStyle = gradient;
+        minimapCtx.fill();
+        minimapCtx.closePath();
+      }
+
+      // Draw the pulsing active dot underneath the radar
       minimapCtx.beginPath();
       minimapCtx.arc(x, y, 18, 0, 2 * Math.PI);
       minimapCtx.fillStyle = 'rgba(33, 150, 243, 0.3)';
