@@ -20,32 +20,37 @@ import { initMediaOverlay, createMediaHotspotOverlay, hideMediaOverlay, showMedi
 
 /* ===== HELPERS ===== */
 /**
- * Creates a clean SVG double-chevron arrow for navigation hotspots.
+ * Creates a navigation arrow element for hotspots.
+ * If the hotspot has a custom iconUrl, uses that image.
+ * Otherwise falls back to the built-in SVG double-chevron.
  */
-function createChevronArrow() {
+function createNavArrow(hs) {
   const wrap = document.createElement("div");
   wrap.className = "hotspot-arrow";
-  wrap.innerHTML = `
-    <svg viewBox="0 0 44 36" width="44" height="36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <polyline
-        points="8,20 22,6 36,20"
-        fill="none"
-        stroke="rgba(255,255,255,0.95)"
-        stroke-width="4.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      />
-      <polyline
-        points="8,32 22,18 36,32"
-        fill="none"
-        stroke="rgba(255,255,255,0.5)"
-        stroke-width="4.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      />
-    </svg>
-  `.trim();
+
+  if (hs && hs.iconUrl) {
+    // Custom uploaded arrow image
+    const img = document.createElement("img");
+    img.src = hs.iconUrl;
+    img.className = "hotspot-arrow-img";
+    img.alt = "";
+    img.draggable = false;
+    img.onerror = () => {
+      // Fallback to default SVG if image fails to load
+      wrap.innerHTML = defaultChevronSVG();
+    };
+    wrap.appendChild(img);
+  } else {
+    wrap.innerHTML = defaultChevronSVG();
+  }
   return wrap;
+}
+
+function defaultChevronSVG() {
+  return `<svg viewBox="0 0 44 36" width="44" height="36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <polyline points="8,20 22,6 36,20" fill="none" stroke="rgba(255,255,255,0.95)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <polyline points="8,32 22,18 36,32" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
 }
 
 
@@ -295,10 +300,8 @@ function addHotspots(roomId) {
     const yawRad = degToRad(hs.yaw);
     const pitchRad = degToRad(-hs.pitch);
 
-    // Always use the built-in SVG chevron arrow (default)
-    // iconUrl from admin is intentionally ignored for navigation hotspots
-    // to prevent duplicate arrows issue
-    el.appendChild(createChevronArrow());
+    // Use custom arrow if iconUrl is set, otherwise use built-in SVG chevron
+    el.appendChild(createNavArrow(hs));
 
     el.onclick = (e) => {
       e.stopPropagation();

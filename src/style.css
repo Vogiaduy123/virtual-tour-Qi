@@ -224,6 +224,28 @@ body.admin #pano>* {
   transform: scale(1.3);
 }
 
+/* Custom arrow image for navigation hotspots */
+.hotspot-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.hotspot-arrow-img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+  transition: filter 0.2s ease;
+}
+
+.hotspot:hover .hotspot-arrow-img {
+  filter: drop-shadow(0 2px 8px rgba(255,255,255,0.6)) brightness(1.15);
+}
+
+
 /* ===== AUTO TOUR CONTROLS (viewer overlay) ===== */
 .auto-tour-control {
   position: absolute;
