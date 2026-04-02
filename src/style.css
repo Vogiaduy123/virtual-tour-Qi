@@ -1510,9 +1510,9 @@ body.admin #pano>* {
 
 .floor-current-name {
   padding: 6px 12px;
-  background: linear-gradient(135deg, #F1A623 0%, #2980b9 100%);
+  background: #2B3278;
   color: white;
-  border: 2px solid #F1A623;
+  border: 2px solid #2B3278;
   border-radius: 6px;
   font-size: 13px;
   font-weight: 700;
@@ -1554,9 +1554,9 @@ body.admin #pano>* {
 }
 
 .floor-tab.active {
-  background: linear-gradient(135deg, #F1A623 0%, #2980b9 100%);
+  background: #2B3278;
   color: white;
-  border-color: #F1A623;
+  border-color: #2B3278;
 }
 
 #userMinimapContainer {
