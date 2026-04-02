@@ -375,8 +375,8 @@ export function drawUserMinimap() {
         minimapCtx.lineTo(x, y);
         
         const gradient = minimapCtx.createRadialGradient(x, y, 0, x, y, radius);
-        gradient.addColorStop(0, 'rgba(33, 150, 243, 0.5)'); // Slightly more opaque near the center
-        gradient.addColorStop(1, 'rgba(33, 150, 243, 0.0)'); // Fades out completely
+        gradient.addColorStop(0, 'rgba(241, 166, 35, 0.5)'); // Slightly more opaque near the center
+        gradient.addColorStop(1, 'rgba(241, 166, 35, 0.0)'); // Fades out completely
         
         minimapCtx.fillStyle = gradient;
         minimapCtx.fill();
@@ -386,7 +386,7 @@ export function drawUserMinimap() {
       // Draw the pulsing active dot underneath the radar
       minimapCtx.beginPath();
       minimapCtx.arc(x, y, 18, 0, 2 * Math.PI);
-      minimapCtx.fillStyle = 'rgba(33, 150, 243, 0.3)';
+      minimapCtx.fillStyle = 'rgba(241, 166, 35, 0.3)';
       minimapCtx.fill();
     }
 
@@ -394,7 +394,7 @@ export function drawUserMinimap() {
     minimapCtx.arc(x, y, 12, 0, 2 * Math.PI);
 
     if (isCurrentRoom) {
-      minimapCtx.fillStyle = '#2196F3';
+      minimapCtx.fillStyle = '#F1A623';
     } else {
       minimapCtx.fillStyle = marker.roomId ? '#4CAF50' : '#999';
     }
@@ -411,7 +411,7 @@ export function drawUserMinimap() {
     minimapCtx.fillText(index + 1, x, y);
 
     if (room) {
-      minimapCtx.fillStyle = isCurrentRoom ? '#2196F3' : '#000';
+      minimapCtx.fillStyle = isCurrentRoom ? '#F1A623' : '#000';
       minimapCtx.font = isCurrentRoom ? 'bold 11px Arial' : '11px Arial';
       minimapCtx.fillText(room.name, x, y + 22);
     }
