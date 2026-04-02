@@ -65,13 +65,17 @@
     }
 
     .nav-link.active {
-      background: linear-gradient(135deg, #F1A623 0%, #D68F17 100%);
+      background: #F1A623;
       color: white;
     }
 
     .nav-link.special {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: #2B3278;
       color: white;
+    }
+
+    .nav-link.special:hover {
+      background: #1a1f4d;
     }
 
     .menu-button {
@@ -81,7 +85,7 @@
       font-weight: 600;
       cursor: pointer;
       border: none;
-      background: #2196F3;
+      background: #2B3278;
       color: white;
       display: flex;
       align-items: center;
@@ -94,7 +98,7 @@
     }
 
     .menu-button:hover {
-      background: #0b7dda;
+      background: #1a1f4d; /* Use dark navy on hover */
       transform: translateY(-1px);
     }
 
@@ -272,7 +276,7 @@
 
     .panel-header {
       padding: 18px 20px;
-      background: linear-gradient(135deg, #F1A623 0%, #D68F17 100%);
+      background: #2B3278;
       color: white;
     }
 
@@ -311,18 +315,19 @@
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #F1A623 0%, #D68F17 100%);
+      background: #F1A623;
       color: white;
-      box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+      box-shadow: 0 2px 8px rgba(241, 166, 35, 0.2);
     }
 
     .btn-primary:hover {
-      box-shadow: 0 4px 16px rgba(52, 152, 219, 0.3);
+      background: #D68F17;
+      box-shadow: 0 4px 16px rgba(241, 166, 35, 0.3);
       transform: translateY(-1px);
     }
 
     .btn-success {
-      background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+      background: #27ae60;
       color: white;
       box-shadow: 0 2px 8px rgba(39, 174, 96, 0.2);
     }
@@ -342,12 +347,12 @@
     }
 
     .btn-edit {
-      background: linear-gradient(135deg, #F1A623 0%, #D68F17 100%);
+      background: #2B3278;
       color: white;
     }
 
     .btn-danger {
-      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      background: #e74c3c;
       color: white;
     }
 
