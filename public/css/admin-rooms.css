@@ -64,15 +64,9 @@
       transform: translateY(-1px);
     }
 
-    .nav-link.active {
-      background: #F1A623;
-      color: white;
-    }
+    .nav-link.active { background: #2B3278; color: white; }
 
-    .nav-link.special {
-      background: #2B3278;
-      color: white;
-    }
+    .nav-link.special { background: #2B3278; color: white; }
 
     .nav-link.special:hover {
       background: #1a1f4d;
@@ -314,14 +308,12 @@
       transform: translateY(1px);
     }
 
-    .btn-primary {
-      background: #F1A623;
+    .btn-primary { background: #2B3278;
       color: white;
       box-shadow: 0 2px 8px rgba(241, 166, 35, 0.2);
     }
 
-    .btn-primary:hover {
-      background: #D68F17;
+    .btn-primary:hover { background: #1a1f4d;
       box-shadow: 0 4px 16px rgba(241, 166, 35, 0.3);
       transform: translateY(-1px);
     }
@@ -346,8 +338,7 @@
       margin-bottom: 0;
     }
 
-    .btn-edit {
-      background: #2B3278;
+    .btn-edit { background: #2B3278;
       color: white;
     }
 

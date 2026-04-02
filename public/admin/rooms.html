@@ -16,7 +16,10 @@
   <!-- ===== HEADER ===== -->
   <div class="admin-header">
     <div class="header-content">
-      <div class="header-title">🏢 Virtual Tour Admin</div>
+      <div class="header-title" style="display: flex; align-items: center; gap: 10px;">
+        <img src="/images/logo-qi.png" alt="Qi" style="height: 30px; object-fit: contain;">
+        <span style="color:#2B3278; font-size:18px;">VR Admin</span>
+      </div>
       <div class="header-nav">
         <a href="/admin/buildings.html" class="nav-link">🏢 Tòa nhà</a>
         <a href="/admin/upload.html" class="nav-link">📤 Upload</a>
@@ -67,13 +70,13 @@
         <div class="sidebar-header">🌡️ CẢM BIẾN MÔI TRƯỜNG</div>
         <div class="sidebar-content">
           <button class="btn" id="addSensorBtn"
-            style="margin-bottom: 10px; background: linear-gradient(135deg, #FF6B6B 0%, #EE5A6F 100%); color: white;">➕
+            style="margin-bottom: 10px; background: #2B3278; color: white;">➕
             Thêm thiết bị IoT</button>
           <div
             style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 8px; background: #f8f9fa; border-radius: 6px; font-size: 11px;">
             <span id="autoRefreshStatus">🔄 Auto-refresh: OFF</span>
             <button class="btn" onclick="toggleAutoRefresh()"
-              style="padding: 4px 8px; font-size: 10px; margin: 0; background: #3498db; color: white;">Toggle</button>
+              style="padding: 4px 8px; font-size: 10px; margin: 0; background: #2B3278; color: white;">Toggle</button>
           </div>
           <div id="sensorsList"></div>
         </div>
@@ -100,7 +103,7 @@
               <select id="editRoomBuilding" style="flex: 1; padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 13px;">
                 <option value="">-- Phòng rời (không có) --</option>
               </select>
-              <button class="btn btn-small" onclick="saveRoomBuilding()" style="background: #3498db; color: white; display: inline-block; width: auto; margin:0;">💾 Đổi Tòa Nhà</button>
+              <button class="btn btn-small" onclick="saveRoomBuilding()" style="background: #2B3278; color: white; display: inline-block; width: auto; margin:0;">💾 Đổi Tòa Nhà</button>
             </div>
 
             <div id="panoramaViewer" class="panorama-viewer"></div>
@@ -114,7 +117,7 @@
 
             <div class="hotspots-list" id="hotspotsList"></div>
 
-            <h4 style="font-size: 13px; color: #2c3e50; margin-top: 20px; margin-bottom: 10px; font-weight: 600;">📚 Tư
+            <h4 style="font-size: 13px; color: #2B3278; margin-top: 20px; margin-bottom: 10px; font-weight: 600;">📚 Tư
               liệu của Phòng:</h4>
             <div class="hotspots-list" id="mediaHotspotsList"></div>
           </div>
@@ -164,16 +167,16 @@
         <div
           style="background: #f8f9fa; border: 1px solid #e1e8ed; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h4 style="margin: 0; font-size: 14px; color: #2c3e50;">⚙️ Cấu hình API cho phòng này</h4>
+            <h4 style="margin: 0; font-size: 14px; color: #2B3278;">⚙️ Cấu hình API cho phòng này</h4>
             <button type="button" id="toggleApiConfig" onclick="toggleApiConfigSection()"
-              style="padding: 6px 12px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📝
+              style="padding: 6px 12px; background: #2B3278; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📝
               Chỉnh sửa</button>
           </div>
 
           <div id="apiConfigSection" style="display: none;">
             <!-- OpenWeatherMap Config -->
             <div style="background: white; border-radius: 6px; padding: 12px; margin-bottom: 10px;">
-              <h5 style="margin: 0 0 10px; font-size: 13px; color: #3498db;">🌤️ OpenWeatherMap API</h5>
+              <h5 style="margin: 0 0 10px; font-size: 13px; color: #2B3278;">🌤️ OpenWeatherMap API</h5>
               <div style="margin-bottom: 8px;">
                 <label style="display: block; margin-bottom: 3px; font-size: 12px; font-weight: 600;">API URL:</label>
                 <input type="text" id="roomWeatherUrl" placeholder="https://api.openweathermap.org/data/2.5/weather"
@@ -282,7 +285,7 @@
             <small style="color: #7f8c8d; font-size: 12px;">URL để lấy ảnh tĩnh từ camera</small>
             <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
               <button type="button" class="btn btn-small" onclick="previewCameraStream()"
-                style="background: #3498db; color: white; margin: 0;">🎥 Xem stream</button>
+                style="background: #2B3278; color: white; margin: 0;">🎥 Xem stream</button>
               <button type="button" class="btn btn-small" onclick="checkCameraStreamUrl()"
                 style="background: #8e44ad; color: white; margin: 0;">📡 Kiểm tra URL</button>
             </div>
@@ -325,7 +328,7 @@
           <button type="submit" class="btn" style="flex: 1; margin-bottom: 0; background: #FF6B6B; color: white;">💾
             Lưu</button>
           <button type="button" class="btn" onclick="closeSensorModal()"
-            style="flex: 1; margin-bottom: 0; background: #ecf0f6; color: #2c3e50;">Hủy</button>
+            style="flex: 1; margin-bottom: 0; background: #ecf0f6; color: #2B3278;">Hủy</button>
         </div>
       </form>
     </div>
@@ -382,7 +385,7 @@
           <div style="display: flex; gap: 8px; margin-bottom: 8px; align-items: center;">
             <input type="text" id="hotspotIconUrl" placeholder="https://... hoặc /uploads/media/...">
             <label class="btn"
-              style="margin: 0; white-space: nowrap; background: #ecf0f6; color: #2c3e50; cursor: pointer;">
+              style="margin: 0; white-space: nowrap; background: #ecf0f6; color: #2B3278; cursor: pointer;">
               📁 Chọn ảnh
               <input type="file" id="hotspotIconFile" accept="image/*" style="display: none;">
             </label>
@@ -393,7 +396,7 @@
         <div style="display: flex; gap: 10px;">
           <button type="submit" class="btn btn-primary" style="flex: 1; margin-bottom: 0;">💾 Lưu</button>
           <button type="button" class="btn" onclick="document.getElementById('hotspotModal').classList.remove('active')"
-            style="flex: 1; margin-bottom: 0; background: #ecf0f6; color: #2c3e50;">Hủy</button>
+            style="flex: 1; margin-bottom: 0; background: #ecf0f6; color: #2B3278;">Hủy</button>
         </div>
       </form>
     </div>
@@ -437,10 +440,10 @@
         <div id="fileUploadSection" class="form-group">
           <label>Upload file:</label>
           <div
-            style="background: #f8f9fa; border: 2px dashed #3498db; border-radius: 6px; padding: 20px; text-align: center; cursor: pointer;"
+            style="background: #f8f9fa; border: 2px dashed #2B3278; border-radius: 6px; padding: 20px; text-align: center; cursor: pointer;"
             onclick="document.getElementById('mediaFileInput').click()">
             <div style="font-size: 28px; margin-bottom: 8px;">📁</div>
-            <div id="mediaUploadHint" style="color: #3498db; font-weight: 600; font-size: 13px;">Chọn file</div>
+            <div id="mediaUploadHint" style="color: #2B3278; font-weight: 600; font-size: 13px;">Chọn file</div>
             <div id="mediaFileInfo" style="color: #7f8c8d; font-size: 11px; margin-top: 6px;"></div>
           </div>
           <input type="file" id="mediaFileInput" style="display: none;" onchange="handleMediaFileSelect(event)">
@@ -465,17 +468,17 @@
 
         <!-- Polygon highlight section — only shown for 3d type -->
         <div id="polygonHighlightSection" style="display:none; margin-bottom:16px;">
-          <label style="display:block; margin-bottom:6px; font-weight:600; color:#2c3e50; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">
+          <label style="display:block; margin-bottom:6px; font-weight:600; color:#2B3278; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">
             🔷 Vùng Highlight 3D (tùy chọn)
           </label>
-          <div style="background:#f0f7ff; border:1px solid #3498db; border-radius:6px; padding:12px;">
+          <div style="background:#f0f7ff; border:1px solid #2B3278; border-radius:6px; padding:12px;">
             <p style="font-size:12px; color:#555; margin-bottom:10px;">
               Vẽ vùng bao quanh vật thể trên ảnh 360 để tạo highlight màu xanh trong tour.<br>
               <em>Cần ít nhất 3 điểm. Sau khi bật vẽ, click lên ảnh panorama phía trên để đánh điểm.</em>
             </p>
             <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;">
               <button type="button" id="polygonDrawBtn" onclick="togglePolygonDrawMode()"
-                style="padding:7px 12px; background:#3498db; color:white; border:none; border-radius:5px; font-size:12px; font-weight:600; cursor:pointer;">
+                style="padding:7px 12px; background:#2B3278; color:white; border:none; border-radius:5px; font-size:12px; font-weight:600; cursor:pointer;">
                 ✏️ Bắt đầu vẽ
               </button>
               <button type="button" onclick="undoPolygonPoint()"
@@ -487,7 +490,7 @@
                 🗑️ Xóa tất cả
               </button>
             </div>
-            <div id="polygonStatus" style="font-size:11px; color:#3498db; min-height:16px;"></div>
+            <div id="polygonStatus" style="font-size:11px; color:#2B3278; min-height:16px;"></div>
           </div>
         </div>
 
@@ -495,7 +498,7 @@
           <button type="submit" class="btn" style="flex: 1; margin-bottom: 0; background: #27ae60; color: white;">💾
             Lưu</button>
           <button type="button" class="btn" onclick="closeMediaHotspotModal()"
-            style="flex: 1; margin-bottom: 0; background: #ecf0f6; color: #2c3e50;">Hủy</button>
+            style="flex: 1; margin-bottom: 0; background: #ecf0f6; color: #2B3278;">Hủy</button>
         </div>
       </form>
     </div>

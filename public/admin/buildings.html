@@ -34,7 +34,7 @@
     .building-card-name {
       font-weight: 700;
       font-size: 16px;
-      color: #2c3e50;
+      color: #2B3278;
     }
     .building-card-meta {
       font-size: 12px;
@@ -65,7 +65,7 @@
 
     .add-bar input:focus {
       outline: none;
-      border-color: #3498db;
+      border-color: #2B3278;
       box-shadow: 0 0 0 3px rgba(52,152,219,0.1);
     }
 
@@ -93,7 +93,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: linear-gradient(135deg, #3498db, #2980b9);
+      background: #2B3278;
       border-radius: 12px 12px 0 0;
     }
 
@@ -147,7 +147,7 @@
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
-      color: #2c3e50;
+      color: #2B3278;
     }
 
     .count-badge {
@@ -177,7 +177,7 @@
       width: 16px;
       height: 16px;
       cursor: pointer;
-      accent-color: #3498db;
+      accent-color: #2B3278;
       flex-shrink: 0;
     }
 
@@ -185,7 +185,7 @@
     .room-check-name {
       font-weight: 600;
       font-size: 14px;
-      color: #2c3e50;
+      color: #2B3278;
     }
     .room-check-info {
       font-size: 12px;
@@ -211,7 +211,10 @@
   <!-- ===== HEADER ===== -->
   <div class="admin-header">
     <div class="header-content">
-      <div class="header-title">🏢 Virtual Tour Admin</div>
+      <div class="header-title" style="display: flex; align-items: center; gap: 10px;">
+        <img src="/images/logo-qi.png" alt="Qi" style="height: 30px; object-fit: contain;">
+        <span style="color:#2B3278; font-size:18px;">VR Admin</span>
+      </div>
       <div class="header-nav">
         <a href="/admin/buildings.html" class="nav-link active">🏢 Tòa nhà</a>
         <a href="/admin/upload.html" class="nav-link">📤 Upload</a>
@@ -273,7 +276,7 @@
       </div>
       <div class="assign-modal-foot">
         <button class="btn btn-primary" style="flex:1;margin:0" onclick="saveAssignment()">💾 Lưu thay đổi</button>
-        <button class="btn" style="flex:1;margin:0;background:#ecf0f1;color:#2c3e50" onclick="closeAssignModal()">Hủy</button>
+        <button class="btn" style="flex:1;margin:0;background:#ecf0f1;color:#2B3278" onclick="closeAssignModal()">Hủy</button>
       </div>
     </div>
   </div>

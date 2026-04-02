@@ -13,7 +13,7 @@
       background: #f5f7fa;
       margin: 0;
       padding: 0;
-      color: #2c3e50;
+      color: #2B3278;
     }
 
     .tour-editor {
@@ -47,7 +47,7 @@
     }
 
     .scenario-info {
-      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+      background: #2B3278;
       padding: 22px;
       border-radius: 12px;
       border: 1px solid #e2eaf3;
@@ -63,13 +63,13 @@
       font-size: 16px;
       margin-top: 6px;
       background: #fff;
-      color: #2c3e50;
+      color: #2B3278;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .scenario-info input:focus {
       outline: none;
-      border-color: #3498db;
+      border-color: #2B3278;
       box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.12);
     }
 
@@ -83,7 +83,7 @@
       margin-bottom: 14px;
       font-size: 18px;
       font-weight: 700;
-      color: #2c3e50;
+      color: #2B3278;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -153,7 +153,7 @@
     }
 
     .stop-number {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: #2B3278;
       color: white;
       width: 32px;
       height: 32px;
@@ -229,7 +229,7 @@
     .add-stop-btn {
       width: 100%;
       padding: 15px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: #2B3278;
       color: white;
       border: none;
       border-radius: 8px;
@@ -319,7 +319,7 @@
       cursor: pointer;
       border: none;
       background: #ecf0f6;
-      color: #2c3e50;
+      color: #2B3278;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -334,15 +334,9 @@
       transform: translateY(-1px);
     }
 
-    .nav-link.active {
-      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-      color: white;
-    }
+    .nav-link.active { background: #2B3278; color: white; }
 
-    .nav-link.special {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-    }
+    .nav-link.special { background: #2B3278; color: white; }
 
     .admin-menu {
       position: relative;
@@ -356,7 +350,7 @@
       font-weight: 600;
       cursor: pointer;
       border: none;
-      background: #2196F3;
+      background: #2B3278;
       color: white;
       display: flex;
       align-items: center;
@@ -369,7 +363,7 @@
     }
 
     .menu-button:hover {
-      background: #0b7dda;
+      background: #1a1f4d;
       transform: translateY(-1px);
     }
 
@@ -401,7 +395,7 @@
       gap: 10px;
       padding: 12px 16px;
       text-decoration: none;
-      color: #2c3e50;
+      color: #2B3278;
       font-size: 13px;
       font-weight: 500;
       transition: all 0.2s ease;
@@ -419,7 +413,7 @@
 
     .menu-item.active {
       background: #e3e9f3;
-      color: #3498db;
+      color: #2B3278;
       font-weight: 600;
     }
   </style>
@@ -428,7 +422,10 @@
   <!-- Admin Header Bar -->
   <div class="admin-header">
     <div class="header-content">
-      <div class="header-title">🏢 Virtual Tour Admin</div>
+      <div class="header-title" style="display: flex; align-items: center; gap: 10px;">
+        <img src="/images/logo-qi.png" alt="Qi" style="height: 30px; object-fit: contain;">
+        <span style="color:#2B3278; font-size:18px;">VR Admin</span>
+      </div>
       <div class="header-nav">
         <a href="/admin/buildings.html" class="nav-link">🏢 Tòa nhà</a>
         <a href="/admin/upload.html" class="nav-link">📤 Upload</a>
