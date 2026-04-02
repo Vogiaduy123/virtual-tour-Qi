@@ -4,27 +4,24 @@ let currentAssignBuildingId = null;
 
 // ===== INIT =====
 document.addEventListener("DOMContentLoaded", async () => {
-  await Promise.all([loadBuildings(), loadAllRooms()]);
+  await refreshData();
 });
 
-async function loadBuildings() {
+async function refreshData() {
   try {
-    const res = await fetch('/api/admin/buildings').then(r => r.json());
-    if (res && res.success) {
-      buildings = res.buildings;
-      renderBuildings();
+    const [bRes, rRes] = await Promise.all([
+      fetch('/api/admin/buildings').then(r => r.json()),
+      fetch('/api/rooms').then(r => r.json())
+    ]);
+    
+    if (bRes && bRes.success) {
+      buildings = bRes.buildings;
     }
+    allRooms = Array.isArray(rRes) ? rRes : [];
+    
+    renderBuildings();
   } catch (err) {
-    console.error("Lỗi khi load tòa nhà:", err);
-  }
-}
-
-async function loadAllRooms() {
-  try {
-    const res = await fetch('/api/rooms').then(r => r.json());
-    allRooms = Array.isArray(res) ? res : [];
-  } catch (err) {
-    console.error("Lỗi khi load phòng:", err);
+    console.error("Lỗi khi tải dữ liệu:", err);
   }
 }
 
@@ -79,7 +76,7 @@ async function addBuilding() {
 
     if (res && res.success) {
       input.value = "";
-      await loadBuildings();
+      await refreshData();
     } else {
       alert(res.error || "Thêm thất bại");
     }
@@ -102,7 +99,7 @@ async function editBuilding(id, currentName) {
     }).then(r => r.json());
 
     if (res && res.success) {
-      await Promise.all([loadBuildings(), loadAllRooms()]);
+      await refreshData();
     } else {
       alert(res.error || "Sửa thất bại.");
     }
@@ -121,7 +118,7 @@ async function deleteBuilding(id, name) {
     }).then(r => r.json());
 
     if (res && res.success) {
-      await Promise.all([loadBuildings(), loadAllRooms()]);
+      await refreshData();
     } else {
       alert(res.error || "Xóa thất bại.");
     }
@@ -243,7 +240,7 @@ async function saveAssignment() {
         : '';
       alert(`✅ Đã gán ${checkedIds.length} phòng thành công!${errMsg}`);
       closeAssignModal();
-      await Promise.all([loadAllRooms(), loadBuildings()]);
+      await refreshData();
     } else {
       alert("Lỗi: " + (res?.error || "Không rõ"));
     }
